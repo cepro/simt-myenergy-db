@@ -8,5 +8,5 @@ $BIN_DIR/db-up
 
 $BIN_DIR/template-supa-migrations ./local-dev.env
 
-cd ../../supabase/sqitch
+cd sqitch
 sqitch deploy

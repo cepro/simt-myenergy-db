@@ -1,40 +1,27 @@
-# simt-supabase
+# myenergy-db
 
-[![Supabase CI](https://github.com/cepro/simt-supabase/actions/workflows/supabase-ci.yml/badge.svg)](https://github.com/cepro/simt-supabase/actions/workflows/supabase-ci.yml)
+[![Supabase CI](https://github.com/cepro/myenergy-db/actions/workflows/supabase-ci.yml/badge.svg)](https://github.com/cepro/myenergy-db/actions/workflows/supabase-ci.yml)
 
 Config, SQL, functions for the supabase database.
 
 ## Scripts
 
-- db-up - start both supabase and timescaledb local instances
-- db-down - stop both supabase and timescaledb
-- db-reset - run ts-reset then supa-reset
+- db-up - start supabase local instance
+- db-down - stop supabase local instance
+- db-reset - run supa-reset
 - supa-up - start supabase local
 - supa-down - stop supabase local
 - supa-reset - run 'supabase db reset' to reset the db
 - supa-seed - seed data into supabase for local development
-- ts-up - start timescaledb local
-- ts-down - stop timescaledb local
-- ts-reset - run 'sqitch revert' and 'sqitch deploy' to reset the db
-- flows-diff-local - diff local flows database for schema changes
-- supa-diff-local - diff local supabase database for schema changes
-- template-flows-migrations - substitute variables into flows sqitch migration
-  scripts
-- template-supa-migrations - substitute variables into supabase sqitch migration
-  scripts
+- supa-diff-local - diff local supabase database for schema changes scripts
+- template-supa-migrations - substitute variables into supabase sqitch migration scripts
 
 ## Migrations
 
-A set of migration scripts is maintained for timescaledb and supabase
-separately.
+A set of migration scripts is maintained for supabase.
 
 [Sqitch](https://sqitch.org) is used to manage migrations include applying
 deployments and rollbacks.
-
-### Generate Migration from Diff
-
-see bin/flows-diff-local which will generate a SQL diff between the currently
-running local database and a database at the state of the migration files.
 
 ## NOTIFY/LISTEN
 

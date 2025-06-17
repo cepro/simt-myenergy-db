@@ -41,7 +41,7 @@ jobs:
       - name: Generate variable injected files from supabase templates
         run: bin/template-supa-migrations ./local-dev.env
       - name: Supabase Migrations
-        run: cd supabase/sqitch && sqitch deploy --verbose && cd -
+        run: cd sqitch && sqitch deploy --verbose && cd -
       - name: create .pgpass for seed script
         run: mkdir -p /tmp/psql-script/ && echo "*:*:postgres:postgres:postgres" > /tmp/psql-script/.pgpass && chmod 0600 /tmp/psql-script/.pgpass
       # - name: Flows Seed

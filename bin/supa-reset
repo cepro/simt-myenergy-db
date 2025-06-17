@@ -1,6 +1,6 @@
 #!/bin/sh
 set -e
-cd supabase/sqitch
+cd sqitch
 sqitch revert -y
 ../../bin/supa-remove-seed-data
 sqitch deploy
