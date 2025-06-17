@@ -1,0 +1,2 @@
+#!/bin/sh
+supabase db lint --schema public,flows

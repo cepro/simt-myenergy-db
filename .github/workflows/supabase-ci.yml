@@ -1,0 +1,54 @@
+name: Supabase CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Sqitch install
+        run: docker pull sqitch/sqitch && curl -L https://git.io/JJKCn -o /usr/local/bin/sqitch && chmod +x /usr/local/bin/sqitch && sqitch --help
+
+      # - name: Start Timescale
+      #   run: bin/ts-up
+      # Looking at the logs it takes about 15 seconds so give a little buffer.
+      # IF we don't do this the migrations below fail.
+      # - name: Wait Timescale
+      #   run: sleep 25
+      # - name: Generate variable injected files from timescale templates
+      #   run: bin/template-flows-migrations ./local-dev.env
+      # - name: Timescale Migrations
+      #   run: cd flows/sqitch && sqitch deploy --verbose && cd -
+
+      # uncomment the following to be able to ssh in and investigate an issue:
+      #
+      # - name: Setup tmate session
+      #   if: success() || failure()
+      #   uses: mxschmitt/action-tmate@v3
+
+      - name: Start Supabase
+        run: bin/supa-up
+      - name: Generate variable injected files from supabase templates
+        run: bin/template-supa-migrations ./local-dev.env
+      - name: Supabase Migrations
+        run: cd supabase/sqitch && sqitch deploy --verbose && cd -
+      - name: create .pgpass for seed script
+        run: mkdir -p /tmp/psql-script/ && echo "*:*:postgres:postgres:postgres" > /tmp/psql-script/.pgpass && chmod 0600 /tmp/psql-script/.pgpass
+      # - name: Flows Seed
+      #   run: bin/ts-seed
+      - name: Supabase Seed
+        run: bin/supa-seed
+      - name: Supabase Lint
+        run: bin/supa-lint
+      - name: Supabase Test
+        run: supabase db test

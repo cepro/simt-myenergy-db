@@ -1,0 +1,22 @@
+#!/bin/sh
+
+DUMP_FILE=/db/supabase-remote-data-`date +%s`.sql
+HOST_DIR=`pwd`/dumps
+
+. `dirname $0`/library.sh
+
+docker run \
+        --rm -it \
+        --network host \
+        -v $HOST_DIR:/db postgres:17-alpine \
+    pg_dump \
+        --host db.$SUPA_PROJECT_ID.supabase.co \
+        --port 5432 \
+        --dbname=postgres \
+        --username=postgres \
+        --file=$DUMP_FILE \
+        --schema=public \
+        --data-only \
+        --inserts --column-inserts
+
+echo "Dumped to $HOST_DIR/`basename $DUMP_FILE`"

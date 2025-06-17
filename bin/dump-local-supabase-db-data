@@ -1,0 +1,20 @@
+#!/bin/sh
+
+DUMP_FILE=/db/supabase-local-data-`date +%s`.sql
+HOST_DIR=`pwd`/dumps
+
+docker run \
+        --rm -it \
+        --network host \
+        -v $HOST_DIR:/db postgres:17-alpine \
+    pg_dump \
+        --host 0.0.0.0 \
+        --port 54322 \
+        --dbname=postgres \
+        --username=postgres \
+        --file=$DUMP_FILE \
+        --schema=public \
+        --data-only \
+        --inserts --column-inserts
+
+echo "Dumped to $HOST_DIR/`basename $DUMP_FILE`"

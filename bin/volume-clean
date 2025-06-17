@@ -1,0 +1,7 @@
+#!/bin/sh
+. `dirname $0`/library.sh
+
+for volume in $(docker volume ls --filter label=com.supabase.cli.project=$SUPA_PROJECT_ID --format "{{.Name}}"); do
+  docker volume rm $volume
+done
+

@@ -1,0 +1,12 @@
+#!/bin/sh
+# This script spins up a local development environment and runs the migrations
+
+set -e
+BIN_DIR=`dirname $0`
+
+$BIN_DIR/db-up
+
+$BIN_DIR/template-supa-migrations ./local-dev.env
+
+cd ../../supabase/sqitch
+sqitch deploy

@@ -1,0 +1,42 @@
+#!/bin/sh
+
+#
+# Mint supabase JWTs given using the JWT secret (find under Settings > API in Supabase dashboard).
+#
+
+if ! type jwt >/dev/null; then
+  echo "\nThe jwt tool is NOT installed.\n\nsee https://github.com/mike-engel/jwt-cli for installation details.\n"
+  exit 1
+fi
+
+if [ -z "$4" ]
+then
+  echo "\nUsage: jwt-create <jwt secret file> <expiry - days from today> <subject - auth.users.id> <role> [email]\n"
+  echo "NOTE: if the JWT is for an auth.users user then use authenticated for the role and add the email as the final argument.\n"
+  exit 2 
+fi
+
+# instead of using @file with --secret, read from file into env variable first
+# signatures were invalid when I used --secret @file ... 
+JWT_SECRET=`cat $1`
+
+EXPIRY_DAYS=$2
+NOW_SECONDS=`date +"%s"`
+EXPIRY=$(( $NOW_SECONDS + $EXPIRY_DAYS * 60 * 60 * 24 ))
+SUBJECT=$3
+
+EXTRA_PROPS="--payload role=$4"
+if [ -n "$5" ]
+then
+    EXTRA_PROPS="$EXTRA_PROPS --payload email=$5"
+fi
+
+
+jwt encode \
+    --alg HS256 \
+    --secret "$JWT_SECRET" \
+    --iss cepro.energy \
+    --sub $SUBJECT \
+    --exp=$EXPIRY \
+    $EXTRA_PROPS \
+    '{"app_metadata": {"cepro_user": false}}'

@@ -1,0 +1,8 @@
+#!/bin/sh
+set -e
+
+PROJECT_ROOT=`dirname $0`/..
+SCRIPT_DIR=$PROJECT_ROOT/supabase/sqitch/seed
+SCRIPT_FILE=seed.sql
+
+$PROJECT_ROOT/bin/supa-psql $SCRIPT_DIR $SCRIPT_FILE

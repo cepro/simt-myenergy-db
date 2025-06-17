@@ -1,0 +1,25 @@
+#!/bin/sh
+
+if [ -z "$1" ]
+then
+  echo "No backup file specified"
+  return 1
+fi
+
+DUMP_FILE=$1
+
+HOST_DIR=/tmp/supa-restore
+mkdir -p $HOST_DIR
+cp $DUMP_FILE $HOST_DIR
+
+docker run \
+        --rm -it \
+        --network host \
+        -v $HOST_DIR:/db postgres:17-alpine \
+    psql \
+        --log-file=/db/restore.log \
+        --host 0.0.0.0 \
+        --port 54322 \
+        --username=postgres \
+        --file=/db/$DUMP_FILE
+

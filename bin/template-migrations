@@ -1,0 +1,29 @@
+#!/bin/sh
+
+MIGRATIONS_FOLDER=$1
+ENV_FILE=$2
+
+# source variables from a file if passed
+# add 'export' to each line before invoking
+if [ -n "$ENV_FILE" ]
+then
+    # add export to start of all lines starting with A-Z.
+    # this avoids commented or blank lines.
+    sed -e 's/^\([A-Z]\)/export \1/' $ENV_FILE  > /tmp/template-vars.sh
+    . /tmp/template-vars.sh
+fi
+
+# Function to template either the 'sqitch/deploy', 'sqitch/revert' or 'sqitch/verify' directories
+template_sqitch_folder () {
+    for TEMPLATE_FILE in $MIGRATIONS_FOLDER/sqitch/$1/*.template
+    do
+        [ -f "$TEMPLATE_FILE" ] || break
+        FILE=${TEMPLATE_FILE%".template"}
+        echo "Templating file '$TEMPLATE_FILE'..."
+        envsubst < "$TEMPLATE_FILE" > "$FILE"
+    done
+}
+
+template_sqitch_folder "deploy"
+template_sqitch_folder "revert"
+template_sqitch_folder "verify"

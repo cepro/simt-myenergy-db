@@ -1,0 +1,36 @@
+#!/bin/sh
+set -e
+
+if [ -z "$1" ] || [ -z "$2" ]; then
+    echo "Usage: $0 script_dir script_file"
+    exit 1
+fi
+
+SCRIPT_DIR=$1
+SCRIPT_FILE=$2
+
+SQL_FILE=$SCRIPT_DIR/$SCRIPT_FILE
+
+. `dirname $0`/library.sh
+
+HOST_DIR=/tmp/psql-script
+mkdir -p $HOST_DIR
+cp $SQL_FILE $HOST_DIR
+
+if [ "$CI" = true ]; then
+    PG_PASS_FILE=$HOST_DIR/.pgpass
+else
+    PG_PASS_FILE=~/.pgpass
+fi
+
+docker run --rm \
+        --network host \
+        -v $HOST_DIR:/db \
+        -v $PG_PASS_FILE:/root/.pgpass:ro \
+    postgres:17-alpine \
+    psql \
+        -v ON_ERROR_STOP=1 \
+        --host 0.0.0.0 \
+        --port 54322 \
+        --username=postgres \
+        --file=/db/$SCRIPT_FILE

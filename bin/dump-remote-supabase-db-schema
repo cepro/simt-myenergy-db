@@ -1,0 +1,23 @@
+#!/bin/sh
+
+DUMP_FILE=/db/supabase-remote-schema-`date +%s`.sql
+HOST_DIR=`pwd`/dumps
+
+. `dirname $0`/library.sh
+
+docker run \
+        --rm -it \
+        --network host \
+        -v $HOST_DIR:/db public.ecr.aws/supabase/postgres:17.4.1.041 \
+    pg_dump \
+        --verbose \
+        --host aws-0-eu-west-2.pooler.supabase.com \
+        --port 6543 \
+        --dbname=postgres \
+        --username=postgres.pqlwxerasppsyleweruk \
+        --file=$DUMP_FILE \
+        --schema=public \
+        --schema=flows \
+        --clean --if-exists --schema-only
+
+echo "Dumped to $HOST_DIR/`basename $DUMP_FILE`"
