@@ -24,7 +24,7 @@ SELECT is((SELECT count(*)::int FROM mg_meter_readings), 0, 'select on mg_meter_
 SELECT is((SELECT count(*)::int FROM market_data), 0, 'select on market_data');
 
 SELECT throws_ok(
-    $$ select * from public.sites $$,
+    $$ select * from public.escos $$,
     'permission denied for table sites'
 );
 SELECT throws_ok(

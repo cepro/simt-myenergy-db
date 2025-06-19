@@ -65,11 +65,6 @@ INSERT INTO auth.users (instance_id,id,aud,"role",email,encrypted_password,email
 	 ('00000000-0000-0000-0000-000000000000','a1c6eed4-c8e0-4fc7-89a5-a82d205c8b67','authenticated','authenticated','ownocc1@hm.ce','$2a$10$cZLO5G/mDKm4kUbLBbV4t.aqpKy4Lf3N42LMFvAYslfMBiwgVueP6','2024-04-03 13:11:04.654429+10',NULL,'',NULL,'',NULL,'','',NULL,NULL,'{"provider": "email", "providers": ["email"]}','{}',NULL,'2024-04-03 13:11:04.650956+10','2024-04-03 13:11:04.654734+10',NULL,NULL,'','',NULL,'',0,NULL,'',NULL,false,NULL),
 	 ('00000000-0000-0000-0000-000000000000','5898adc6-8e43-4ccf-a6ba-6ed325888093','authenticated','authenticated','ownoccsea@hm.ce','$2a$10$jrUSw9L8qZgdkbstjeWmL.zkp/l5abY1eSutVDUJM52cNZgVrMb5e','2024-04-03 13:11:30.308916+10',NULL,'',NULL,'',NULL,'','',NULL,NULL,'{"provider": "email", "providers": ["email"]}','{}',NULL,'2024-04-03 13:11:30.306769+10','2024-04-03 13:11:30.309095+10',NULL,NULL,'','',NULL,'',0,NULL,'',NULL,false,NULL);
 
-INSERT INTO "public"."sites" ("id", "created_at", "name", "code", "app_url") VALUES
-	('1983d7d6-3753-4289-99c7-b2b924940007', '2023-02-16 11:02:09.146859', 'Water Lilies', 'wlce', 'http://0.0.0.0:4242'),
-	('9216abca-eeff-462b-8029-75319b24643a', '2023-02-16 11:02:21.370932', 'Hazelmead', 'hmce', 'http://0.0.0.0:4242'),
-	('5da9223f-d1ba-499f-8128-0e49d5464b98', '2023-02-16 11:02:28.872783', 'Owen Square', 'osce', null);
-
 INSERT INTO "public"."regions" ("code", "name") VALUES
     ('south_west', 'South West'),
     ('south_east', 'South East'),

@@ -31,6 +31,7 @@ docker run --rm \
     psql \
         -v ON_ERROR_STOP=1 \
         --host 0.0.0.0 \
-        --port 54322 \
-        --username=postgres \
+        --port 5432 \
+        --dbname postgres \
+        --username=supabase_admin.your-tenant-id \
         --file=/db/$SCRIPT_FILE
