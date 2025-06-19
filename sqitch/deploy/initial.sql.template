@@ -3367,22 +3367,6 @@ $$;
 ALTER FUNCTION public.validate_solar_credit_allocation_ratios() OWNER TO postgres;
 
 
-
-CREATE VIEW flows.sites WITH (security_invoker='on') AS
- SELECT sites.id,
-    sites.created_at,
-    sites.name,
-    sites.code
-   FROM public.sites;
-
-
-ALTER VIEW flows.sites OWNER TO postgres;
-
-
-ALTER TABLE public.account_audit_logs OWNER TO postgres;
-
-
-
 CREATE VIEW public.account_contract_meter_flattened AS
  SELECT public.generate_v4_uuid_from_hash(concat(e.code, p.plot, c.email, a.id)) AS id,
     e.code,
@@ -3711,10 +3695,6 @@ CREATE VIEW public.meters_with_incorrect_tariffs WITH (security_invoker='on') AS
 ALTER VIEW public.meters_with_incorrect_tariffs OWNER TO postgres;
 
 
-ALTER TABLE ONLY public.account_audit_logs
-    ADD CONSTRAINT account_audit_logs_pk PRIMARY KEY (id);
-
-
 
 ALTER TABLE ONLY public.account_events
     ADD CONSTRAINT account_events_pk PRIMARY KEY (id);
@@ -3878,11 +3858,6 @@ ALTER TABLE ONLY public.regions
 
 ALTER TABLE ONLY public.regions
     ADD CONSTRAINT region_unique UNIQUE (name);
-
-
-
-ALTER TABLE ONLY public.sites
-    ADD CONSTRAINT sites_pkey PRIMARY KEY (id);
 
 
 
@@ -4302,11 +4277,6 @@ ALTER TABLE ONLY public.properties
 
 
 ALTER TABLE ONLY public.properties
-    ADD CONSTRAINT properties_site_fkey FOREIGN KEY (site) REFERENCES public.sites(id);
-
-
-
-ALTER TABLE ONLY public.properties
     ADD CONSTRAINT properties_solar_meter_fkey FOREIGN KEY (solar_meter) REFERENCES public.meters(id) ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 
@@ -4515,10 +4485,6 @@ CREATE POLICY "Enable read access for all users" ON public.regions FOR SELECT US
 
 
 
-CREATE POLICY "Enable read access for all users" ON public.sites FOR SELECT USING (true);
-
-
-
 CREATE POLICY "Users can see term escos mappings for escos they have accounts " ON public.contract_terms_esco FOR SELECT TO authenticated USING ((esco IN ( SELECT properties.esco
    FROM public.properties
   WHERE (properties.id IN ( SELECT accounts.property
@@ -4534,9 +4500,6 @@ CREATE POLICY "Users can see terms for escos they have accounts in or all if c" 
    FROM public.customers
   WHERE ((customers.email = auth.email()) AND (customers.cepro_user = true))))));
 
-
-
-ALTER TABLE public.account_audit_logs ENABLE ROW LEVEL SECURITY;
 
 
 ALTER TABLE public.account_events ENABLE ROW LEVEL SECURITY;
@@ -4623,9 +4586,6 @@ ALTER TABLE public.properties ENABLE ROW LEVEL SECURITY;
 
 
 ALTER TABLE public.regions ENABLE ROW LEVEL SECURITY;
-
-
-ALTER TABLE public.sites ENABLE ROW LEVEL SECURITY;
 
 
 ALTER TABLE public.solar_credit_tariffs ENABLE ROW LEVEL SECURITY;
@@ -4901,18 +4861,6 @@ GRANT ALL ON FUNCTION public.updated_at_now() TO service_role;
 GRANT SELECT ON TABLE flows.meter_registry TO public_backend;
 GRANT SELECT ON TABLE flows.meter_shadows TO public_backend;
 GRANT SELECT ON TABLE flows.meter_shadows_tariffs TO public_backend;
-
-
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE public.sites TO anon;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE public.sites TO authenticated;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE public.sites TO service_role;
-GRANT SELECT ON TABLE public.sites TO public_backend;
-GRANT SELECT ON TABLE public.sites TO flows;
-
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE public.account_audit_logs TO anon;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE public.account_audit_logs TO authenticated;
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE public.account_audit_logs TO service_role;
-
 
 
 GRANT ALL ON SEQUENCE public.account_number_seq TO anon;
