@@ -200,36 +200,6 @@ ALTER TYPE myenergy.topup_status_enum OWNER TO tsdbadmin;
 
 
 
-create type flows.market_data_input as (time timestamptz, type integer, value float4);
-
-CREATE FUNCTION flows.insert_market_data_batch(data flows.market_data_input[]) RETURNS void
-    LANGUAGE plpgsql
-    AS $$
-DECLARE
-    last_value FLOAT;
-    data_record flows.market_data_input;
-    epsilon FLOAT := 1e-6;  -- Define a small threshold for "nearly equal"
-BEGIN
-     -- Loop through each row in the input array
-    FOREACH data_record IN ARRAY data LOOP
-
-        -- Get the last inserted value (most recent)
-        SELECT value INTO last_value
-	    FROM flows.market_data
-	    WHERE type = data_record.type and time = data_record.time
-	    ORDER BY created_at DESC
-	    LIMIT 1;
-
-	    -- If the table is empty or the value has changed, insert the new row
-        IF last_value IS NULL OR ABS(last_value - data_record.value) > epsilon THEN
-            INSERT INTO flows.market_data (time, type, value)
-            VALUES (data_record.time, data_record.type, data_record.value);
-        END IF;
-    END LOOP;
-END;
-$$;
-
-ALTER FUNCTION flows.insert_market_data_batch(data flows.market_data_input[]) OWNER TO tsdbadmin;
 
 
 CREATE FUNCTION flows.sync_flows_to_public_meters() RETURNS void
