@@ -201,8 +201,7 @@ ALTER TYPE myenergy.topup_status_enum OWNER TO tsdbadmin;
 
 
 
-
-CREATE FUNCTION flows.sync_flows_to_public_meters() RETURNS void
+CREATE FUNCTION myenergy.sync_flows_to_public_meters() RETURNS void
     LANGUAGE plpgsql
     AS $$
 BEGIN
