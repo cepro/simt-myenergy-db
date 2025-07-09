@@ -43,7 +43,7 @@ CREATE TYPE myenergy.account_event_type_enum AS ENUM (
 );
 
 
-ALTER TYPE myenergy.account_event_type_enum OWNER TO tsdbadmin;
+ALTER TYPE myenergy.account_event_type_enum OWNER TO :"adminrole";
 
 
 CREATE TYPE myenergy.account_role_type_enum AS ENUM (
@@ -52,7 +52,7 @@ CREATE TYPE myenergy.account_role_type_enum AS ENUM (
 );
 
 
-ALTER TYPE myenergy.account_role_type_enum OWNER TO tsdbadmin;
+ALTER TYPE myenergy.account_role_type_enum OWNER TO :"adminrole";
 
 
 CREATE TYPE myenergy.account_status_enum AS ENUM (
@@ -62,7 +62,7 @@ CREATE TYPE myenergy.account_status_enum AS ENUM (
 );
 
 
-ALTER TYPE myenergy.account_status_enum OWNER TO tsdbadmin;
+ALTER TYPE myenergy.account_status_enum OWNER TO :"adminrole";
 
 
 CREATE TYPE myenergy.account_type_enum AS ENUM (
@@ -72,7 +72,7 @@ CREATE TYPE myenergy.account_type_enum AS ENUM (
 );
 
 
-ALTER TYPE myenergy.account_type_enum OWNER TO tsdbadmin;
+ALTER TYPE myenergy.account_type_enum OWNER TO :"adminrole";
 
 
 CREATE TYPE myenergy.circuit_type_enum AS ENUM (
@@ -82,7 +82,7 @@ CREATE TYPE myenergy.circuit_type_enum AS ENUM (
 );
 
 
-ALTER TYPE myenergy.circuit_type_enum OWNER TO tsdbadmin;
+ALTER TYPE myenergy.circuit_type_enum OWNER TO :"adminrole";
 
 
 CREATE TYPE myenergy.contract_subtype_enum AS ENUM (
@@ -91,7 +91,7 @@ CREATE TYPE myenergy.contract_subtype_enum AS ENUM (
 );
 
 
-ALTER TYPE myenergy.contract_subtype_enum OWNER TO tsdbadmin;
+ALTER TYPE myenergy.contract_subtype_enum OWNER TO :"adminrole";
 
 
 CREATE TYPE myenergy.contract_type_enum AS ENUM (
@@ -101,7 +101,7 @@ CREATE TYPE myenergy.contract_type_enum AS ENUM (
 );
 
 
-ALTER TYPE myenergy.contract_type_enum OWNER TO tsdbadmin;
+ALTER TYPE myenergy.contract_type_enum OWNER TO :"adminrole";
 
 
 CREATE TYPE myenergy.customer_invite_status_enum AS ENUM (
@@ -110,7 +110,7 @@ CREATE TYPE myenergy.customer_invite_status_enum AS ENUM (
 );
 
 
-ALTER TYPE myenergy.customer_invite_status_enum OWNER TO tsdbadmin;
+ALTER TYPE myenergy.customer_invite_status_enum OWNER TO :"adminrole";
 
 
 CREATE TYPE myenergy.customer_status_enum AS ENUM (
@@ -124,7 +124,7 @@ CREATE TYPE myenergy.customer_status_enum AS ENUM (
 );
 
 
-ALTER TYPE myenergy.customer_status_enum OWNER TO tsdbadmin;
+ALTER TYPE myenergy.customer_status_enum OWNER TO :"adminrole";
 
 
 CREATE TYPE myenergy.monthly_costs_compute_query_result_row_type AS (
@@ -137,7 +137,7 @@ CREATE TYPE myenergy.monthly_costs_compute_query_result_row_type AS (
 );
 
 
-ALTER TYPE myenergy.monthly_costs_compute_query_result_row_type OWNER TO tsdbadmin;
+ALTER TYPE myenergy.monthly_costs_compute_query_result_row_type OWNER TO :"adminrole";
 
 
 CREATE TYPE myenergy.payment_status_enum AS ENUM (
@@ -150,7 +150,7 @@ CREATE TYPE myenergy.payment_status_enum AS ENUM (
 );
 
 
-ALTER TYPE myenergy.payment_status_enum OWNER TO tsdbadmin;
+ALTER TYPE myenergy.payment_status_enum OWNER TO :"adminrole";
 
 
 CREATE TYPE myenergy.property_tenure_enum AS ENUM (
@@ -160,7 +160,7 @@ CREATE TYPE myenergy.property_tenure_enum AS ENUM (
 );
 
 
-ALTER TYPE myenergy.property_tenure_enum OWNER TO tsdbadmin;
+ALTER TYPE myenergy.property_tenure_enum OWNER TO :"adminrole";
 
 
 CREATE TYPE myenergy.topup_event_enum AS ENUM (
@@ -172,7 +172,7 @@ CREATE TYPE myenergy.topup_event_enum AS ENUM (
 );
 
 
-ALTER TYPE myenergy.topup_event_enum OWNER TO tsdbadmin;
+ALTER TYPE myenergy.topup_event_enum OWNER TO :"adminrole";
 
 
 CREATE TYPE myenergy.topup_source_enum AS ENUM (
@@ -183,7 +183,7 @@ CREATE TYPE myenergy.topup_source_enum AS ENUM (
 );
 
 
-ALTER TYPE myenergy.topup_source_enum OWNER TO tsdbadmin;
+ALTER TYPE myenergy.topup_source_enum OWNER TO :"adminrole";
 
 
 CREATE TYPE myenergy.topup_status_enum AS ENUM (
@@ -196,7 +196,7 @@ CREATE TYPE myenergy.topup_status_enum AS ENUM (
 );
 
 
-ALTER TYPE myenergy.topup_status_enum OWNER TO tsdbadmin;
+ALTER TYPE myenergy.topup_status_enum OWNER TO :"adminrole";
 
 
 
@@ -219,7 +219,7 @@ END;
 $$;
 
 
-ALTER FUNCTION flows.sync_flows_to_public_meters() OWNER TO tsdbadmin;
+ALTER FUNCTION flows.sync_flows_to_public_meters() OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.account_check_contract_terms_and_esco() RETURNS trigger
@@ -252,7 +252,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.account_check_contract_terms_and_esco() OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.account_check_contract_terms_and_esco() OWNER TO :"adminrole";
 
 
 
@@ -266,7 +266,7 @@ CREATE TABLE myenergy.customer_accounts (
 );
 
 
-ALTER TABLE myenergy.customer_accounts OWNER TO tsdbadmin;
+ALTER TABLE myenergy.customer_accounts OWNER TO :"adminrole";
 
 
 
@@ -280,7 +280,7 @@ CREATE TABLE myenergy.escos (
 );
 
 
-ALTER TABLE myenergy.escos OWNER TO tsdbadmin;
+ALTER TABLE myenergy.escos OWNER TO :"adminrole";
 
 
 CREATE TABLE myenergy.meters (
@@ -294,7 +294,7 @@ CREATE TABLE myenergy.meters (
 );
 
 
-ALTER TABLE myenergy.meters OWNER TO tsdbadmin;
+ALTER TABLE myenergy.meters OWNER TO :"adminrole";
 
 
 CREATE TABLE myenergy.properties (
@@ -312,7 +312,7 @@ CREATE TABLE myenergy.properties (
 );
 
 
-ALTER TABLE myenergy.properties OWNER TO tsdbadmin;
+ALTER TABLE myenergy.properties OWNER TO :"adminrole";
 
 
 COMMENT ON COLUMN myenergy.properties.tenure IS 'Indicates the property tenure type: separate_owner_and_occupier, single_owner_occupier, or shared_ownership';
@@ -334,7 +334,7 @@ CREATE TABLE myenergy.customers (
 );
 
 
-ALTER TABLE myenergy.customers OWNER TO tsdbadmin;
+ALTER TABLE myenergy.customers OWNER TO :"adminrole";
 
 
 COMMENT ON COLUMN myenergy.customers.exiting IS 'An operator can set this flag to true when a customer wants to exit cepro as supplier. This will result in the customer status updating to ''exiting'' also.';
@@ -360,7 +360,7 @@ CREATE FUNCTION myenergy.customer() RETURNS uuid
 $$;
 
 
-ALTER FUNCTION myenergy.customer() OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.customer() OWNER TO :"adminrole";
 
 
 GRANT ALL ON FUNCTION myenergy.customer() TO anon;
@@ -379,7 +379,7 @@ CREATE FUNCTION myenergy.accounts() RETURNS uuid[]
 $$;
 
 
-ALTER FUNCTION myenergy.accounts() OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.accounts() OWNER TO :"adminrole";
 
 
 
@@ -478,7 +478,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.customer_status(new_customer_row myenergy.customers) OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.customer_status(new_customer_row myenergy.customers) OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.customer_status_update_on_auth_users_trigger() RETURNS trigger
@@ -498,7 +498,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.customer_status_update_on_auth_users_trigger() OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.customer_status_update_on_auth_users_trigger() OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.customer_status_update_on_trigger() RETURNS trigger
@@ -514,7 +514,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.customer_status_update_on_trigger() OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.customer_status_update_on_trigger() OWNER TO :"adminrole";
 
 
 
@@ -554,7 +554,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.accounts_current_contract_update_customer_status_trigger() OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.accounts_current_contract_update_customer_status_trigger() OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.accounts_generate_name_for_trigger() RETURNS trigger
@@ -578,7 +578,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.accounts_generate_name_for_trigger() OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.accounts_generate_name_for_trigger() OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.add_account(account_type myenergy.account_type_enum, property_id uuid, owner_id uuid, occupier_id uuid, contract_terms_id uuid, no_contract boolean) RETURNS uuid
@@ -637,7 +637,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.add_account(account_type myenergy.account_type_enum, property_id uuid, owner_id uuid, occupier_id uuid, contract_terms_id uuid, no_contract boolean) OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.add_account(account_type myenergy.account_type_enum, property_id uuid, owner_id uuid, occupier_id uuid, contract_terms_id uuid, no_contract boolean) OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.add_account(account_type myenergy.account_type_enum, property_id uuid, customer_id uuid, account_role myenergy.account_role_type_enum, contract_terms_id uuid, no_contract boolean) RETURNS uuid
@@ -669,7 +669,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.add_account(account_type myenergy.account_type_enum, property_id uuid, customer_id uuid, account_role myenergy.account_role_type_enum, contract_terms_id uuid, no_contract boolean) OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.add_account(account_type myenergy.account_type_enum, property_id uuid, customer_id uuid, account_role myenergy.account_role_type_enum, contract_terms_id uuid, no_contract boolean) OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.add_meter(property_id uuid, serial text, is_supply boolean) RETURNS uuid
@@ -700,7 +700,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.add_meter(property_id uuid, serial text, is_supply boolean) OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.add_meter(property_id uuid, serial text, is_supply boolean) OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.add_property(plot_number text, esco_id uuid, solar_meter_serial text, supply_meter_serial text, description text, is_owner_occupied boolean, preonboard_only boolean) RETURNS text
@@ -793,7 +793,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.add_property(plot_number text, esco_id uuid, solar_meter_serial text, supply_meter_serial text, description text, is_owner_occupied boolean, preonboard_only boolean) OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.add_property(plot_number text, esco_id uuid, solar_meter_serial text, supply_meter_serial text, description text, is_owner_occupied boolean, preonboard_only boolean) OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.auth_user_id_for_customer(email text) RETURNS jsonb
@@ -807,7 +807,7 @@ CREATE FUNCTION myenergy.auth_user_id_for_customer(email text) RETURNS jsonb
 $$;
 
 
-ALTER FUNCTION myenergy.auth_user_id_for_customer(email text) OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.auth_user_id_for_customer(email text) OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.benchmark_month_standing_charge(region_in text, month_in date) RETURNS numeric
@@ -834,7 +834,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.benchmark_month_standing_charge(region_in text, month_in date) OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.benchmark_month_standing_charge(region_in text, month_in date) OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.benchmark_tariffs_generate_tariffs() RETURNS trigger
@@ -854,7 +854,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.benchmark_tariffs_generate_tariffs() OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.benchmark_tariffs_generate_tariffs() OWNER TO :"adminrole";
 
 
 COMMENT ON FUNCTION myenergy.benchmark_tariffs_generate_tariffs() IS 'Trigger function that calls generate_customer_tariffs_new_quarter when a benchmark tariff is inserted or updated.
@@ -882,7 +882,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.benchmark_unit_rate(region_in text, month_in date) OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.benchmark_unit_rate(region_in text, month_in date) OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.change_property_owner(property_id uuid, new_owner uuid) RETURNS void
@@ -903,7 +903,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.change_property_owner(property_id uuid, new_owner uuid) OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.change_property_owner(property_id uuid, new_owner uuid) OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.check_property_setup(property_id uuid) RETURNS SETOF text
@@ -932,7 +932,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.check_property_setup(property_id uuid) OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.check_property_setup(property_id uuid) OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.check_unique_properties_meters() RETURNS trigger
@@ -953,7 +953,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.check_unique_properties_meters() OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.check_unique_properties_meters() OWNER TO :"adminrole";
 
 
 
@@ -964,7 +964,7 @@ CREATE TABLE myenergy.circuit_meter (
 );
 
 
-ALTER TABLE myenergy.circuit_meter OWNER TO tsdbadmin;
+ALTER TABLE myenergy.circuit_meter OWNER TO :"adminrole";
 
 
 CREATE TABLE myenergy.circuits (
@@ -975,7 +975,7 @@ CREATE TABLE myenergy.circuits (
 );
 
 
-ALTER TABLE myenergy.circuits OWNER TO tsdbadmin;
+ALTER TABLE myenergy.circuits OWNER TO :"adminrole";
 
 
 CREATE TABLE myenergy.contract_terms_esco (
@@ -984,7 +984,7 @@ CREATE TABLE myenergy.contract_terms_esco (
 );
 
 
-ALTER TABLE myenergy.contract_terms_esco OWNER TO tsdbadmin;
+ALTER TABLE myenergy.contract_terms_esco OWNER TO :"adminrole";
 
 
 CREATE TABLE myenergy.customer_events (
@@ -995,7 +995,7 @@ CREATE TABLE myenergy.customer_events (
 );
 
 
-ALTER TABLE myenergy.customer_events OWNER TO tsdbadmin;
+ALTER TABLE myenergy.customer_events OWNER TO :"adminrole";
 
 
 
@@ -1012,7 +1012,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.customer_invites_status(accessed_at timestamp with time zone, expires_at timestamp with time zone) OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.customer_invites_status(accessed_at timestamp with time zone, expires_at timestamp with time zone) OWNER TO :"adminrole";
 
 
 
@@ -1027,7 +1027,7 @@ CREATE TABLE myenergy.customer_invites (
 );
 
 
-ALTER TABLE myenergy.customer_invites OWNER TO tsdbadmin;
+ALTER TABLE myenergy.customer_invites OWNER TO :"adminrole";
 
 
 COMMENT ON COLUMN myenergy.customer_invites.accessed_at IS 'Set to the timestamp the invite was accessed at /customer/invite/<backend>. This immediately expires the token.';
@@ -1042,7 +1042,7 @@ CREATE SEQUENCE myenergy.account_number_seq
     CACHE 1;
 
 
-ALTER SEQUENCE myenergy.account_number_seq OWNER TO tsdbadmin;
+ALTER SEQUENCE myenergy.account_number_seq OWNER TO :"adminrole";
 
 
 CREATE TABLE myenergy.accounts (
@@ -1059,7 +1059,7 @@ CREATE TABLE myenergy.accounts (
 );
 
 
-ALTER TABLE myenergy.accounts OWNER TO tsdbadmin;
+ALTER TABLE myenergy.accounts OWNER TO :"adminrole";
 
 
 COMMENT ON COLUMN myenergy.accounts.name IS 'Human readable name of the account generated from triggers';
@@ -1080,7 +1080,7 @@ CREATE TABLE myenergy.contracts (
 );
 
 
-ALTER TABLE myenergy.contracts OWNER TO tsdbadmin;
+ALTER TABLE myenergy.contracts OWNER TO :"adminrole";
 
 
 COMMENT ON COLUMN myenergy.contracts.type IS 'Also in the terms but required here as initially terms may not be associated with the contract. The customer will choose which terms later.';
@@ -1105,7 +1105,7 @@ CREATE FUNCTION myenergy.properties_by_account() RETURNS uuid[]
 $$;
 
 
-ALTER FUNCTION myenergy.properties_by_account() OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.properties_by_account() OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.properties_owned() RETURNS uuid[]
@@ -1117,7 +1117,7 @@ CREATE FUNCTION myenergy.properties_owned() RETURNS uuid[]
 $$;
 
 
-ALTER FUNCTION myenergy.properties_owned() OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.properties_owned() OWNER TO :"adminrole";
 
 
 
@@ -1131,7 +1131,7 @@ CREATE FUNCTION myenergy.circuits() RETURNS uuid[]
 $$;
 
 
-ALTER FUNCTION myenergy.circuits() OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.circuits() OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.contract_check_contract_terms_and_esco() RETURNS trigger
@@ -1164,7 +1164,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.contract_check_contract_terms_and_esco() OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.contract_check_contract_terms_and_esco() OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.contracts_signed_update_customer_status() RETURNS trigger
@@ -1189,7 +1189,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.contracts_signed_update_customer_status() OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.contracts_signed_update_customer_status() OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.create_user(email text, password text) RETURNS void
@@ -1214,7 +1214,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.create_user(email text, password text) OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.create_user(email text, password text) OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.customer_email_update_for_trigger() RETURNS trigger
@@ -1228,7 +1228,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.customer_email_update_for_trigger() OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.customer_email_update_for_trigger() OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.customer_invites_generate_invite_url() RETURNS trigger
@@ -1265,7 +1265,7 @@ CREATE FUNCTION myenergy.customer_invites_generate_invite_url() RETURNS trigger
     $$;
 
 
-ALTER FUNCTION myenergy.customer_invites_generate_invite_url() OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.customer_invites_generate_invite_url() OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.customer_invites_insert_from_customer() RETURNS trigger
@@ -1278,7 +1278,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.customer_invites_insert_from_customer() OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.customer_invites_insert_from_customer() OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.customer_jwt_token_hook(event jsonb) RETURNS jsonb
@@ -1314,7 +1314,7 @@ CREATE FUNCTION myenergy.customer_jwt_token_hook(event jsonb) RETURNS jsonb
 $$;
 
 
-ALTER FUNCTION myenergy.customer_jwt_token_hook(event jsonb) OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.customer_jwt_token_hook(event jsonb) OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.customer_registration() RETURNS trigger
@@ -1330,7 +1330,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.customer_registration() OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.customer_registration() OWNER TO :"adminrole";
 
 SET default_tablespace = '';
 
@@ -1360,7 +1360,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.customer_tariffs_compute_rates() OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.customer_tariffs_compute_rates() OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.customer_tariffs_create_all_for_month(month_in date, discount_rate_in integer) RETURNS void
@@ -1378,7 +1378,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.customer_tariffs_create_all_for_month(month_in date, discount_rate_in integer) OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.customer_tariffs_create_all_for_month(month_in date, discount_rate_in integer) OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.customer_update_log_on_trigger() RETURNS trigger
@@ -1446,7 +1446,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.customer_update_log_on_trigger() OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.customer_update_log_on_trigger() OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.days_in_month(month_in date) RETURNS integer
@@ -1467,7 +1467,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.days_in_month(month_in date) OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.days_in_month(month_in date) OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.days_in_month_all(month_in date) RETURNS integer
@@ -1481,7 +1481,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.days_in_month_all(month_in date) OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.days_in_month_all(month_in date) OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.decrypt_notification(encrypted_message text, encryption_password text) RETURNS text
@@ -1498,7 +1498,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.decrypt_notification(encrypted_message text, encryption_password text) OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.decrypt_notification(encrypted_message text, encryption_password text) OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.delete_customer(customer_email text) RETURNS void
@@ -1512,7 +1512,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.delete_customer(customer_email text) OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.delete_customer(customer_email text) OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.delete_property(property_id uuid) RETURNS void
@@ -1549,7 +1549,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.delete_property(property_id uuid) OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.delete_property(property_id uuid) OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.delete_property_and_customers(property_id uuid) RETURNS void
@@ -1581,7 +1581,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.delete_property_and_customers(property_id uuid) OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.delete_property_and_customers(property_id uuid) OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.diff_rows(old_row jsonb, new_row jsonb) RETURNS jsonb
@@ -1606,7 +1606,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.diff_rows(old_row jsonb, new_row jsonb) OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.diff_rows(old_row jsonb, new_row jsonb) OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.email_for_auth_user_id(authuserid text) RETURNS text
@@ -1617,7 +1617,7 @@ CREATE FUNCTION myenergy.email_for_auth_user_id(authuserid text) RETURNS text
 $$;
 
 
-ALTER FUNCTION myenergy.email_for_auth_user_id(authuserid text) OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.email_for_auth_user_id(authuserid text) OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.generate_allocated_solar_credits(month_in date) RETURNS void
@@ -1745,7 +1745,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.generate_allocated_solar_credits(month_in date) OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.generate_allocated_solar_credits(month_in date) OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.generate_new_quarter_tariffs(month_in date) RETURNS void
@@ -1870,7 +1870,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.generate_new_quarter_tariffs(month_in date) OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.generate_new_quarter_tariffs(month_in date) OWNER TO :"adminrole";
 
 
 COMMENT ON FUNCTION myenergy.generate_new_quarter_tariffs(month_in date) IS 'Generates both microgrid and customer tariffs for a new quarter.
@@ -1899,7 +1899,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.generate_random_meter_serial() OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.generate_random_meter_serial() OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.generate_v4_uuid_from_hash(input_text text) RETURNS uuid
@@ -1924,7 +1924,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.generate_v4_uuid_from_hash(input_text text) OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.generate_v4_uuid_from_hash(input_text text) OWNER TO :"adminrole";
 
 
 CREATE TABLE myenergy.contract_terms (
@@ -1942,7 +1942,7 @@ CREATE TABLE myenergy.contract_terms (
 );
 
 
-ALTER TABLE myenergy.contract_terms OWNER TO tsdbadmin;
+ALTER TABLE myenergy.contract_terms OWNER TO :"adminrole";
 
 
 COMMENT ON TABLE myenergy.contract_terms IS 'Stores the terms of a given contract version and the id of the associated document template in docuseal.
@@ -2019,7 +2019,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.get_contract_terms_for_esco(esco_param text) OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.get_contract_terms_for_esco(esco_param text) OWNER TO :"adminrole";
 
 
 COMMENT ON FUNCTION myenergy.get_contract_terms_for_esco(esco_param text) IS 'Gets all contract terms for a given ESCO, identified either by UUID or code.
@@ -2043,7 +2043,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.get_property_owners_for_auth_user(email_in text) OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.get_property_owners_for_auth_user(email_in text) OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.log_array_of_uuid(uuids uuid[], label text) RETURNS void
@@ -2061,7 +2061,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.log_array_of_uuid(uuids uuid[], label text) OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.log_array_of_uuid(uuids uuid[], label text) OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.log_customer_event(event_type text, old_row myenergy.customers, new_row myenergy.customers) RETURNS void
@@ -2077,7 +2077,7 @@ CREATE FUNCTION myenergy.log_customer_event(event_type text, old_row myenergy.cu
 $$;
 
 
-ALTER FUNCTION myenergy.log_customer_event(event_type text, old_row myenergy.customers, new_row myenergy.customers) OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.log_customer_event(event_type text, old_row myenergy.customers, new_row myenergy.customers) OWNER TO :"adminrole";
 
 
 CREATE TABLE myenergy.payments (
@@ -2096,7 +2096,7 @@ CREATE TABLE myenergy.payments (
 );
 
 
-ALTER TABLE myenergy.payments OWNER TO tsdbadmin;
+ALTER TABLE myenergy.payments OWNER TO :"adminrole";
 
 
 COMMENT ON COLUMN myenergy.payments.scheduled_at IS 'Approximate time to submit this payment to Stripe. Exact time submitted will be captured in submitted_at.';
@@ -2120,7 +2120,7 @@ CREATE TABLE myenergy.microgrid_tariffs (
 );
 
 
-ALTER TABLE myenergy.microgrid_tariffs OWNER TO tsdbadmin;
+ALTER TABLE myenergy.microgrid_tariffs OWNER TO :"adminrole";
 
 
 COMMENT ON TABLE myenergy.microgrid_tariffs IS 'Microgrid tariffs stores tariff discounts against the benchmark.
@@ -2151,7 +2151,7 @@ CREATE TABLE myenergy.monthly_costs (
 );
 
 
-ALTER TABLE myenergy.monthly_costs OWNER TO tsdbadmin;
+ALTER TABLE myenergy.monthly_costs OWNER TO :"adminrole";
 
 
 CREATE TABLE myenergy.monthly_usage (
@@ -2161,7 +2161,7 @@ CREATE TABLE myenergy.monthly_usage (
 );
 
 
-ALTER TABLE myenergy.monthly_usage OWNER TO tsdbadmin;
+ALTER TABLE myenergy.monthly_usage OWNER TO :"adminrole";
 
 
 CREATE TABLE myenergy.payment_events (
@@ -2172,7 +2172,7 @@ CREATE TABLE myenergy.payment_events (
 );
 
 
-ALTER TABLE myenergy.payment_events OWNER TO tsdbadmin;
+ALTER TABLE myenergy.payment_events OWNER TO :"adminrole";
 
 
 CREATE TABLE myenergy.places (
@@ -2183,7 +2183,7 @@ CREATE TABLE myenergy.places (
 );
 
 
-ALTER TABLE myenergy.places OWNER TO tsdbadmin;
+ALTER TABLE myenergy.places OWNER TO :"adminrole";
 
 
 CREATE TABLE myenergy.postgres_notifications (
@@ -2194,7 +2194,7 @@ CREATE TABLE myenergy.postgres_notifications (
 );
 
 
-ALTER TABLE myenergy.postgres_notifications OWNER TO tsdbadmin;
+ALTER TABLE myenergy.postgres_notifications OWNER TO :"adminrole";
 
 
 CREATE TABLE myenergy.regions (
@@ -2203,7 +2203,7 @@ CREATE TABLE myenergy.regions (
 );
 
 
-ALTER TABLE myenergy.regions OWNER TO tsdbadmin;
+ALTER TABLE myenergy.regions OWNER TO :"adminrole";
 
 
 COMMENT ON TABLE myenergy.regions IS 'Regions of UK as used in the Ofgem energy price caps: https://www.ofgem.gov.uk/energy-advice-households/get-energy-price-cap-standing-charges-and-unit-rates-region';
@@ -2220,7 +2220,7 @@ CREATE TABLE myenergy.solar_credit_allocation (
 );
 
 
-ALTER TABLE myenergy.solar_credit_allocation OWNER TO tsdbadmin;
+ALTER TABLE myenergy.solar_credit_allocation OWNER TO :"adminrole";
 
 
 CREATE TABLE myenergy.solar_credit_tariffs (
@@ -2234,7 +2234,7 @@ CREATE TABLE myenergy.solar_credit_tariffs (
 );
 
 
-ALTER TABLE myenergy.solar_credit_tariffs OWNER TO tsdbadmin;
+ALTER TABLE myenergy.solar_credit_tariffs OWNER TO :"adminrole";
 
 
 COMMENT ON TABLE myenergy.solar_credit_tariffs IS 'Stores the solar credit tariffs that determine how much credit customers receive for their solar generation';
@@ -2259,7 +2259,7 @@ CREATE TABLE myenergy.solar_installation (
 );
 
 
-ALTER TABLE myenergy.solar_installation OWNER TO tsdbadmin;
+ALTER TABLE myenergy.solar_installation OWNER TO :"adminrole";
 
 
 CREATE TABLE myenergy.topup_events (
@@ -2270,7 +2270,7 @@ CREATE TABLE myenergy.topup_events (
 );
 
 
-ALTER TABLE myenergy.topup_events OWNER TO tsdbadmin;
+ALTER TABLE myenergy.topup_events OWNER TO :"adminrole";
 
 
 CREATE TABLE myenergy.topups (
@@ -2290,7 +2290,7 @@ CREATE TABLE myenergy.topups (
 );
 
 
-ALTER TABLE myenergy.topups OWNER TO tsdbadmin;
+ALTER TABLE myenergy.topups OWNER TO :"adminrole";
 
 
 COMMENT ON COLUMN myenergy.topups.notes IS 'Notes about the topup. eg. reason for gift.';
@@ -2305,7 +2305,7 @@ CREATE TABLE myenergy.topups_monthly_solar_credits (
 );
 
 
-ALTER TABLE myenergy.topups_monthly_solar_credits OWNER TO tsdbadmin;
+ALTER TABLE myenergy.topups_monthly_solar_credits OWNER TO :"adminrole";
 
 
 COMMENT ON TABLE myenergy.topups_monthly_solar_credits IS 'Links monthly solar credits to topups that were created from them';
@@ -2319,7 +2319,7 @@ CREATE TABLE myenergy.topups_payments (
 );
 
 
-ALTER TABLE myenergy.topups_payments OWNER TO tsdbadmin;
+ALTER TABLE myenergy.topups_payments OWNER TO :"adminrole";
 
 
 COMMENT ON TABLE myenergy.topups_payments IS 'Links payments to topups that were created from them';
@@ -2334,7 +2334,7 @@ CREATE TABLE myenergy.transaction_statuses (
 );
 
 
-ALTER TABLE myenergy.transaction_statuses OWNER TO tsdbadmin;
+ALTER TABLE myenergy.transaction_statuses OWNER TO :"adminrole";
 
 
 CREATE TABLE myenergy.transactions (
@@ -2349,7 +2349,7 @@ CREATE TABLE myenergy.transactions (
 );
 
 
-ALTER TABLE myenergy.transactions OWNER TO tsdbadmin;
+ALTER TABLE myenergy.transactions OWNER TO :"adminrole";
 
 
 CREATE TABLE myenergy.wallets (
@@ -2363,7 +2363,7 @@ CREATE TABLE myenergy.wallets (
 );
 
 
-ALTER TABLE myenergy.wallets OWNER TO tsdbadmin;
+ALTER TABLE myenergy.wallets OWNER TO :"adminrole";
 
 
 
@@ -2380,7 +2380,7 @@ CREATE FUNCTION myenergy.log_payment_event(event_type text, old_row myenergy.pay
 $$;
 
 
-ALTER FUNCTION myenergy.log_payment_event(event_type text, old_row myenergy.payments, new_row myenergy.payments) OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.log_payment_event(event_type text, old_row myenergy.payments, new_row myenergy.payments) OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.log_postgres_notification(channel text, notify_or_listen text, payload text) RETURNS void
@@ -2394,7 +2394,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.log_postgres_notification(channel text, notify_or_listen text, payload text) OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.log_postgres_notification(channel text, notify_or_listen text, payload text) OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.meter_prepay_status_change() RETURNS trigger
@@ -2427,7 +2427,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.meter_prepay_status_change() OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.meter_prepay_status_change() OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.meters_missing_future_tariffs(esco_code_in text) RETURNS TABLE(serial text, meter_id uuid, customer_id uuid, customer_email text, esco_code text, tariff_period_start date, customer_unit_rate numeric, customer_standing_charge numeric, emergency_credit numeric, debt_recovery_rate numeric, ecredit_button_threshold numeric, current_future_standing_charge numeric, current_future_unit_rate_a numeric, current_future_unit_rate_b numeric, current_future_activation_datetime timestamp without time zone)
@@ -2542,7 +2542,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.meters_missing_future_tariffs(esco_code_in text) OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.meters_missing_future_tariffs(esco_code_in text) OWNER TO :"adminrole";
 
 
 COMMENT ON FUNCTION myenergy.meters_missing_future_tariffs(esco_code_in text) IS 'Identifies meters that should have future tariffs set but either don''t have them or 
@@ -2580,7 +2580,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.meters_with_incorrect_threshold_settings() OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.meters_with_incorrect_threshold_settings() OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.meters_with_unsynced_emergency_credit_settings(esco_filter text) RETURNS TABLE(serial text, active_ecredit_availability text, active_debt_recovery_rate text, active_emergency_credit text, expected_ecredit_availability text, expected_debt_recovery_rate text, expected_emergency_credit text)
@@ -2617,7 +2617,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.meters_with_unsynced_emergency_credit_settings(esco_filter text) OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.meters_with_unsynced_emergency_credit_settings(esco_filter text) OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.microgrid_month_standing_charge(esco_code_in text, month_in date) RETURNS numeric
@@ -2645,7 +2645,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.microgrid_month_standing_charge(esco_code_in text, month_in date) OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.microgrid_month_standing_charge(esco_code_in text, month_in date) OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.microgrid_tariffs_compute_rates() RETURNS trigger
@@ -2670,7 +2670,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.microgrid_tariffs_compute_rates() OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.microgrid_tariffs_compute_rates() OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.microgrid_unit_rate(esco_code_in text, month_in date) RETURNS numeric
@@ -2694,7 +2694,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.microgrid_unit_rate(esco_code_in text, month_in date) OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.microgrid_unit_rate(esco_code_in text, month_in date) OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.monthly_costs_compute(month_in date) RETURNS void
@@ -2824,7 +2824,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.monthly_costs_compute(month_in date) OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.monthly_costs_compute(month_in date) OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.monthly_costs_compute_totals() RETURNS trigger
@@ -2848,7 +2848,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.monthly_costs_compute_totals() OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.monthly_costs_compute_totals() OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.monthly_solar_credits_compute_credit() RETURNS trigger
@@ -2911,7 +2911,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.monthly_solar_credits_compute_credit() OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.monthly_solar_credits_compute_credit() OWNER TO :"adminrole";
 
 
 CREATE TABLE myenergy.monthly_solar_credits (
@@ -2928,7 +2928,7 @@ CREATE TABLE myenergy.monthly_solar_credits (
 );
 
 
-ALTER TABLE myenergy.monthly_solar_credits OWNER TO tsdbadmin;
+ALTER TABLE myenergy.monthly_solar_credits OWNER TO :"adminrole";
 
 
 COMMENT ON TABLE myenergy.monthly_solar_credits IS 'Stores the monthly solar credits computed for properties with solar installations';
@@ -2961,7 +2961,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.monthly_solar_credits_unapplied(month_in text) OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.monthly_solar_credits_unapplied(month_in text) OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.notify_encrypted(channel text, message text, encryption_password text) RETURNS void
@@ -2980,7 +2980,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.notify_encrypted(channel text, message text, encryption_password text) OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.notify_encrypted(channel text, message text, encryption_password text) OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.payment_insert_log_on_trigger() RETURNS trigger
@@ -2993,7 +2993,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.payment_insert_log_on_trigger() OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.payment_insert_log_on_trigger() OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.payment_update_log_on_trigger() RETURNS trigger
@@ -3006,7 +3006,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.payment_update_log_on_trigger() OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.payment_update_log_on_trigger() OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.solar_credit_tariff_by_esco(esco_id uuid) RETURNS numeric
@@ -3032,7 +3032,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.solar_credit_tariff_by_esco(esco_id uuid) OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.solar_credit_tariff_by_esco(esco_id uuid) OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.solar_credit_tariffs_compute_daily_credit() RETURNS trigger
@@ -3055,7 +3055,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.solar_credit_tariffs_compute_daily_credit() OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.solar_credit_tariffs_compute_daily_credit() OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.submittable_payments() RETURNS SETOF myenergy.payments
@@ -3069,7 +3069,7 @@ CREATE FUNCTION myenergy.submittable_payments() RETURNS SETOF myenergy.payments
 $$;
 
 
-ALTER FUNCTION myenergy.submittable_payments() OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.submittable_payments() OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.sync_flows_to_public_circuits() RETURNS void
@@ -3106,7 +3106,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.sync_flows_to_public_circuits() OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.sync_flows_to_public_circuits() OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.sync_flows_to_public_escos() RETURNS void
@@ -3118,7 +3118,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.sync_flows_to_public_escos() OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.sync_flows_to_public_escos() OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.sync_flows_to_public_monthly_usage() RETURNS void
@@ -3140,7 +3140,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.sync_flows_to_public_monthly_usage() OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.sync_flows_to_public_monthly_usage() OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.topups_payments_check_payment_unique() RETURNS trigger
@@ -3163,7 +3163,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.topups_payments_check_payment_unique() OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.topups_payments_check_payment_unique() OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.update_property_tenure() RETURNS trigger
@@ -3226,7 +3226,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.update_property_tenure() OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.update_property_tenure() OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.update_solar_credit_applied_at() RETURNS trigger
@@ -3251,7 +3251,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.update_solar_credit_applied_at() OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.update_solar_credit_applied_at() OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.updated_at_now() RETURNS trigger
@@ -3266,7 +3266,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.updated_at_now() OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.updated_at_now() OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.validate_allocation_ratio() RETURNS trigger
@@ -3284,7 +3284,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.validate_allocation_ratio() OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.validate_allocation_ratio() OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.validate_solar_credit_allocation_ratios() RETURNS trigger
@@ -3304,7 +3304,7 @@ END;
 $$;
 
 
-ALTER FUNCTION myenergy.validate_solar_credit_allocation_ratios() OWNER TO tsdbadmin;
+ALTER FUNCTION myenergy.validate_solar_credit_allocation_ratios() OWNER TO :"adminrole";
 
 
 CREATE VIEW myenergy.account_contract_meter_flattened AS
@@ -3339,7 +3339,7 @@ CREATE VIEW myenergy.account_contract_meter_flattened AS
   WHERE ((c.id = ca.customer) AND (ca.account = a.id) AND (a.property = p.id) AND (p.esco = e.id) AND (p.supply_meter = m.id));
 
 
-ALTER VIEW myenergy.account_contract_meter_flattened OWNER TO tsdbadmin;
+ALTER VIEW myenergy.account_contract_meter_flattened OWNER TO :"adminrole";
 
 
 CREATE VIEW myenergy.property_base_view AS
@@ -3354,7 +3354,7 @@ CREATE VIEW myenergy.property_base_view AS
      JOIN myenergy.escos e ON ((p.esco = e.id)));
 
 
-ALTER VIEW myenergy.property_base_view OWNER TO tsdbadmin;
+ALTER VIEW myenergy.property_base_view OWNER TO :"adminrole";
 
 
 CREATE VIEW myenergy.property_solar_view AS
@@ -3396,7 +3396,7 @@ CREATE VIEW myenergy.property_solar_view AS
           WHERE (ca.role = 'occupier'::myenergy.account_role_type_enum)) soc ON ((a.id = soc.account)));
 
 
-ALTER VIEW myenergy.property_solar_view OWNER TO tsdbadmin;
+ALTER VIEW myenergy.property_solar_view OWNER TO :"adminrole";
 
 
 CREATE VIEW myenergy.property_supply_view AS
@@ -3441,7 +3441,7 @@ CREATE VIEW myenergy.property_supply_view AS
           WHERE (ca.role = 'occupier'::myenergy.account_role_type_enum)) soc ON ((a.id = soc.account)));
 
 
-ALTER VIEW myenergy.property_supply_view OWNER TO tsdbadmin;
+ALTER VIEW myenergy.property_supply_view OWNER TO :"adminrole";
 
 
 CREATE VIEW myenergy.account_contract_meter_row_per_property AS
@@ -3489,7 +3489,7 @@ CREATE VIEW myenergy.account_contract_meter_row_per_property AS
      LEFT JOIN myenergy.property_supply_view p ON ((b.property_id = p.property_id)));
 
 
-ALTER VIEW myenergy.account_contract_meter_row_per_property OWNER TO tsdbadmin;
+ALTER VIEW myenergy.account_contract_meter_row_per_property OWNER TO :"adminrole";
 
 
 CREATE TABLE myenergy.account_events (
@@ -3501,7 +3501,7 @@ CREATE TABLE myenergy.account_events (
 );
 
 
-ALTER TABLE myenergy.account_events OWNER TO tsdbadmin;
+ALTER TABLE myenergy.account_events OWNER TO :"adminrole";
 
 
 CREATE TABLE myenergy.benchmark_tariffs (
@@ -3513,7 +3513,7 @@ CREATE TABLE myenergy.benchmark_tariffs (
 );
 
 
-ALTER TABLE myenergy.benchmark_tariffs OWNER TO tsdbadmin;
+ALTER TABLE myenergy.benchmark_tariffs OWNER TO :"adminrole";
 
 
 COMMENT ON TABLE myenergy.benchmark_tariffs IS 'Energy price cap rates (for direct debit / single rate / southern western region) as published at https://www.ofgem.gov.uk/information-consumers/energy-advice-households/get-energy-price-cap-standing-charges-and-unit-rates-region';
@@ -3551,7 +3551,7 @@ CREATE VIEW myenergy.customer_supply_status AS
   WHERE ((c.id = ca.customer) AND (a.type = 'supply'::myenergy.account_type_enum) AND (ca.account = a.id) AND (a.property = p.id) AND (p.esco = e.id) AND (p.supply_meter = m.id));
 
 
-ALTER VIEW myenergy.customer_supply_status OWNER TO tsdbadmin;
+ALTER VIEW myenergy.customer_supply_status OWNER TO :"adminrole";
 
 
 CREATE TABLE myenergy.customer_tariffs (
@@ -3564,7 +3564,7 @@ CREATE TABLE myenergy.customer_tariffs (
 );
 
 
-ALTER TABLE myenergy.customer_tariffs OWNER TO tsdbadmin;
+ALTER TABLE myenergy.customer_tariffs OWNER TO :"adminrole";
 
 
 COMMENT ON TABLE myenergy.customer_tariffs IS 'Customer tariffs are computed as a discount on benchmark_tariffs.
@@ -3584,7 +3584,7 @@ CREATE TABLE myenergy.gifts (
 );
 
 
-ALTER TABLE myenergy.gifts OWNER TO tsdbadmin;
+ALTER TABLE myenergy.gifts OWNER TO :"adminrole";
 
 
 COMMENT ON TABLE myenergy.gifts IS 'Stores gift amounts given to customers';
@@ -3614,7 +3614,7 @@ CREATE VIEW myenergy.meter_tariffs WITH (security_invoker='on') AS
   WHERE ((ct.customer = ca.customer) AND (a.id = ca.account) AND (a.property = p.id) AND (m.id = p.supply_meter) AND (p.esco = e.id));
 
 
-ALTER VIEW myenergy.meter_tariffs OWNER TO tsdbadmin;
+ALTER VIEW myenergy.meter_tariffs OWNER TO :"adminrole";
 
 
 CREATE VIEW myenergy.meters_with_incorrect_tariffs WITH (security_invoker='on') AS
@@ -3632,7 +3632,7 @@ CREATE VIEW myenergy.meters_with_incorrect_tariffs WITH (security_invoker='on') 
           WHERE ((td.period_start < now()) AND (td.serial = t.serial)))) AND ((((s.tariffs_active ->> 'unit_rate_element_a'::text))::numeric <> t.unit_rate) OR (((s.tariffs_active ->> 'unit_rate_element_b'::text))::numeric <> t.unit_rate) OR (((s.tariffs_active ->> 'standing_charge'::text))::numeric <> t.standing_charge)));
 
 
-ALTER VIEW myenergy.meters_with_incorrect_tariffs OWNER TO tsdbadmin;
+ALTER VIEW myenergy.meters_with_incorrect_tariffs OWNER TO :"adminrole";
 
 
 
