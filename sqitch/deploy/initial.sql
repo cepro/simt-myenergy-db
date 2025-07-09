@@ -2,7 +2,6 @@ CREATE SCHEMA IF NOT EXISTS flows;
 
 CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;
 CREATE EXTENSION IF NOT EXISTS timescaledb_toolkit with schema "extensions";
-CREATE EXTENSION IF NOT EXISTS pg_cron;
 
 -- required to allow authenticator to switch into role flows
 -- without this we will see 'permission denied to set role "public_backend"' from postgREST
