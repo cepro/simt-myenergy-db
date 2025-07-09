@@ -10,26 +10,26 @@ GRANT flows to authenticator;
 
 ALTER ROLE grafanareader SET search_path = public,flows;
 
-CREATE ROLE public_backend WITH bypassrls;
+-- CREATE ROLE public_backend WITH bypassrls;
 
-GRANT USAGE ON SCHEMA public TO public_backend;
+-- GRANT USAGE ON SCHEMA public TO public_backend;
 
--- required to allow authenticator to switch into role public_backend
--- without this we will see 'permission denied to set role "public_backend"' from postgREST
--- see https://supabase.com/docs/guides/database/postgres/roles#authenticator
-GRANT public_backend to authenticator;
+-- -- required to allow authenticator to switch into role public_backend
+-- -- without this we will see 'permission denied to set role "public_backend"' from postgREST
+-- -- see https://supabase.com/docs/guides/database/postgres/roles#authenticator
+-- GRANT public_backend to authenticator;
 
---
--- pg_graphql privs required for public_backend: 
---
+-- --
+-- -- pg_graphql privs required for public_backend: 
+-- --
 
-grant usage on schema graphql_public to public_backend;
-grant usage on schema graphql to public_backend;
+-- grant usage on schema graphql_public to public_backend;
+-- grant usage on schema graphql to public_backend;
 
-alter default privileges in schema graphql_public grant all on functions to public_backend;
-alter default privileges in schema graphql grant all on functions to public_backend;
+-- alter default privileges in schema graphql_public grant all on functions to public_backend;
+-- alter default privileges in schema graphql grant all on functions to public_backend;
 
-COMMENT ON SCHEMA public IS '@graphql({"max_rows": 100})';
+-- COMMENT ON SCHEMA public IS '@graphql({"max_rows": 100})';
 
 
 CREATE TYPE public.account_event_type_enum AS ENUM (
