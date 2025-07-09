@@ -199,37 +199,6 @@ CREATE TYPE myenergy.topup_status_enum AS ENUM (
 ALTER TYPE myenergy.topup_status_enum OWNER TO tsdbadmin;
 
 
-CREATE FUNCTION flows.get_meters_for_cli(esco_filter text, feeder_filter text) RETURNS TABLE(id uuid, ip_address text, serial text, name text, esco text, csq integer, health text, hardware text, feeder text)
-    LANGUAGE plpgsql
-    AS $$
-	BEGIN
-		RETURN QUERY
-		SELECT 
-			mr.id as id, host(mr.ip_address) as ip_address,
-			mr.serial as serial,
-			mr.name as name, 
-			e.code as esco,
-			ms.csq as csq,
-			ms.health::text as health,
-			mr.hardware as hardware,
-			fr."name" 
-		FROM 
-			flows.meter_registry mr
-			JOIN flows.meter_shadows ms ON mr.id = ms.id
-			LEFT JOIN flows.escos e ON mr.esco = e.id
-			LEFT JOIN flows.service_head_meter shm ON mr.id = shm.meter
-			LEFT JOIN flows.service_head_registry shr ON shr.id = shm.service_head
-			LEFT JOIN flows.feeder_registry fr ON shr.feeder = fr.id
-		WHERE 
-			(esco_filter is null OR e.code = esco_filter) AND
-			mr.mode = 'active' AND
-			(feeder_filter is null OR fr.name = feeder_filter OR (feeder_filter = 'null' AND shr.feeder IS NULL));
-	END;
-	$$;
-
-
-ALTER FUNCTION flows.get_meters_for_cli(esco_filter text, feeder_filter text) OWNER TO postgres;
-
 
 create type flows.market_data_input as (time timestamptz, type integer, value float4);
 
