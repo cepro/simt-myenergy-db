@@ -13,7 +13,7 @@ GRANT flows to authenticator;
 
 ALTER ROLE grafanareader SET search_path = public,flows,myenergy;
 
--- CREATE ROLE public_backend WITH bypassrls;
+CREATE ROLE public_backend; -- WITH bypassrls;
 
 -- GRANT USAGE ON SCHEMA public TO public_backend;
 
