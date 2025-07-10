@@ -219,7 +219,7 @@ END;
 $$;
 
 
-ALTER FUNCTION flows.sync_flows_to_public_meters() OWNER TO :"adminrole";
+ALTER FUNCTION myenergy.sync_flows_to_public_meters() OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.account_check_contract_terms_and_esco() RETURNS trigger
@@ -486,7 +486,7 @@ CREATE FUNCTION myenergy.customer_status_update_on_auth_users_trigger() RETURNS 
     AS $$
 DECLARE
     customer myenergy.customers;
-    new_status "public"."customer_status_enum";
+    new_status "myenergy"."customer_status_enum";
 BEGIN
     SELECT * FROM myenergy.customers WHERE email = NEW.email INTO customer;
     IF customer IS NOT NULL THEN
@@ -524,15 +524,15 @@ CREATE FUNCTION myenergy.accounts_current_contract_update_customer_status_trigge
 DECLARE
      customer_id uuid;
      customer_row myenergy.customers;
-     new_status "public"."customer_status_enum";
+     new_status "myenergy"."customer_status_enum";
 BEGIN
     FOR customer_id IN 
         SELECT "customer" 
-        FROM "public"."customer_accounts" 
+        FROM "myenergy"."customer_accounts" 
         WHERE account = NEW.id
     LOOP
         -- Get customer record
-        SELECT * FROM "public"."customers" 
+        SELECT * FROM "myenergy"."customers" 
         WHERE id = customer_id 
         INTO customer_row;
         
@@ -1173,14 +1173,14 @@ CREATE FUNCTION myenergy.contracts_signed_update_customer_status() RETURNS trigg
 DECLARE
      customer_id uuid;
      customer_row myenergy.customers;
-     new_status "public"."customer_status_enum";
+     new_status "myenergy"."customer_status_enum";
 BEGIN
     IF OLD.signed_date is null AND NEW.signed_date IS NOT NULL THEN
-        SELECT "customer" FROM "public"."customer_accounts" WHERE account IN (
+        SELECT "customer" FROM "myenergy"."customer_accounts" WHERE account IN (
             SELECT id FROM myenergy.accounts WHERE current_contract = NEW.id
         )
         INTO customer_id;
-        SELECT * FROM "public"."customers" WHERE id = customer_id INTO customer_row;
+        SELECT * FROM "myenergy"."customers" WHERE id = customer_id INTO customer_row;
         SELECT myenergy.customer_status(customer_row) INTO new_status;
         UPDATE myenergy.customers SET status = new_status WHERE id = customer_id;
     END IF;
