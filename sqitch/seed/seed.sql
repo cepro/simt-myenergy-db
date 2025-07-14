@@ -65,10 +65,10 @@ INSERT INTO auth.users (instance_id,id,aud,"role",email,encrypted_password,email
 	 ('00000000-0000-0000-0000-000000000000','a1c6eed4-c8e0-4fc7-89a5-a82d205c8b67','authenticated','authenticated','ownocc1@hm.ce','$2a$10$cZLO5G/mDKm4kUbLBbV4t.aqpKy4Lf3N42LMFvAYslfMBiwgVueP6','2024-04-03 13:11:04.654429+10',NULL,'',NULL,'',NULL,'','',NULL,NULL,'{"provider": "email", "providers": ["email"]}','{}',NULL,'2024-04-03 13:11:04.650956+10','2024-04-03 13:11:04.654734+10',NULL,NULL,'','',NULL,'',0,NULL,'',NULL,false,NULL),
 	 ('00000000-0000-0000-0000-000000000000','5898adc6-8e43-4ccf-a6ba-6ed325888093','authenticated','authenticated','ownoccsea@hm.ce','$2a$10$jrUSw9L8qZgdkbstjeWmL.zkp/l5abY1eSutVDUJM52cNZgVrMb5e','2024-04-03 13:11:30.308916+10',NULL,'',NULL,'',NULL,'','',NULL,NULL,'{"provider": "email", "providers": ["email"]}','{}',NULL,'2024-04-03 13:11:30.306769+10','2024-04-03 13:11:30.309095+10',NULL,NULL,'','',NULL,'',0,NULL,'',NULL,false,NULL);
 
-INSERT INTO "myenergy"."sites" ("id", "created_at", "name", "code", "app_url") VALUES
-	('1983d7d6-3753-4289-99c7-b2b924940007', '2023-02-16 11:02:09.146859', 'Water Lilies', 'wlce', 'http://0.0.0.0:4242'),
-	('9216abca-eeff-462b-8029-75319b24643a', '2023-02-16 11:02:21.370932', 'Hazelmead', 'hmce', 'http://0.0.0.0:4242'),
-	('5da9223f-d1ba-499f-8128-0e49d5464b98', '2023-02-16 11:02:28.872783', 'Owen Square', 'osce', null);
+-- INSERT INTO "myenergy"."sites" ("id", "created_at", "name", "code", "app_url") VALUES
+-- 	('1983d7d6-3753-4289-99c7-b2b924940007', '2023-02-16 11:02:09.146859', 'Water Lilies', 'wlce', 'http://0.0.0.0:4242'),
+-- 	('9216abca-eeff-462b-8029-75319b24643a', '2023-02-16 11:02:21.370932', 'Hazelmead', 'hmce', 'http://0.0.0.0:4242'),
+-- 	('5da9223f-d1ba-499f-8128-0e49d5464b98', '2023-02-16 11:02:28.872783', 'Owen Square', 'osce', null);
 
 INSERT INTO "myenergy"."regions" ("code", "name") VALUES
     ('south_west', 'South West'),
@@ -162,15 +162,15 @@ SELECT myenergy.sync_flows_to_public_circuits();
 -- solar_installation
 
 INSERT INTO "myenergy"."solar_installation" ("property", "mcs", "declared_net_capacity", "commissioning_date") VALUES
-    ((SELECT id FROM properties where plot = 'Plot-11' and esco = '527eed5d-2f81-4abe-a7f4-6fff8ac72703'), 
+    ((SELECT id FROM myenergy.properties where plot = 'Plot-11' and esco = '527eed5d-2f81-4abe-a7f4-6fff8ac72703'), 
         'MCS111', 3.45, '2024-12-31'),
-    ((SELECT id FROM properties where plot = 'Plot-12' and esco = '527eed5d-2f81-4abe-a7f4-6fff8ac72703'), 
+    ((SELECT id FROM myenergy.properties where plot = 'Plot-12' and esco = '527eed5d-2f81-4abe-a7f4-6fff8ac72703'), 
         'MCS222', 4.55, '2024-12-31'),
-    ((SELECT id FROM properties where plot = 'Plot-13' and esco = '527eed5d-2f81-4abe-a7f4-6fff8ac72703'), 
+    ((SELECT id FROM myenergy.properties where plot = 'Plot-13' and esco = '527eed5d-2f81-4abe-a7f4-6fff8ac72703'), 
         'MCS333', 5.95, '2024-12-31'),
-    ((SELECT id FROM properties where plot = 'Plot-01' and esco = '363ff821-3a56-4b43-8227-8e53c45fbcdb'), 
+    ((SELECT id FROM myenergy.properties where plot = 'Plot-01' and esco = '363ff821-3a56-4b43-8227-8e53c45fbcdb'), 
         'MCS010', 5.10, '2024-12-31'),
-    ((SELECT id FROM properties where plot = 'Plot-SEA-Landlord' and esco = '363ff821-3a56-4b43-8227-8e53c45fbcdb'), 
+    ((SELECT id FROM myenergy.properties where plot = 'Plot-SEA-Landlord' and esco = '363ff821-3a56-4b43-8227-8e53c45fbcdb'), 
         'MCS000', 6.25, '2024-12-31');
 
 
@@ -179,48 +179,48 @@ INSERT INTO "myenergy"."solar_installation" ("property", "mcs", "declared_net_ca
 --
 
 update myenergy.properties 
-    set owner = (select id from customers where email = 'own11_13@wl.ce')
+    set owner = (select id from myenergy.customers where email = 'own11_13@wl.ce')
     where plot in ('Plot-11', 'Plot-13') 
     and esco = '527eed5d-2f81-4abe-a7f4-6fff8ac72703';
 update myenergy.properties 
-    set owner = (select id from customers where email = 'ownocc12@wl.ce') 
+    set owner = (select id from myenergy.customers where email = 'ownocc12@wl.ce') 
     where plot = 'Plot-12' and esco = '527eed5d-2f81-4abe-a7f4-6fff8ac72703';
 
 update myenergy.properties 
-    set owner = (select id from customers where email = 'ownocc1@hm.ce') 
+    set owner = (select id from myenergy.customers where email = 'ownocc1@hm.ce') 
     where plot = 'Plot-01' and esco = '363ff821-3a56-4b43-8227-8e53c45fbcdb';
 update myenergy.properties 
-    set owner = (select id from customers where email = 'ownoccsea@hm.ce') 
+    set owner = (select id from myenergy.customers where email = 'ownoccsea@hm.ce') 
     where plot = 'Plot-SEA-Landlord' and esco = '363ff821-3a56-4b43-8227-8e53c45fbcdb';
 
 
 update myenergy.customer_accounts 
-	set customer = (select id from customers where email = 'own11_13@wl.ce')
-	where customer = (select id from customers where email = 'plot11owner-wlce@change.me');
+	set customer = (select id from myenergy.customers where email = 'own11_13@wl.ce')
+	where customer = (select id from myenergy.customers where email = 'plot11owner-wlce@change.me');
 update myenergy.customer_accounts 
-	set customer = (select id from customers where email = 'own11_13@wl.ce')
-	where customer = (select id from customers where email = 'plot13owner-wlce@change.me');
+	set customer = (select id from myenergy.customers where email = 'own11_13@wl.ce')
+	where customer = (select id from myenergy.customers where email = 'plot13owner-wlce@change.me');
 
 update myenergy.customer_accounts 
-    set customer = (select id from customers where email = 'occ11@wl.ce')
-    where customer = (select id from customers where email = 'plot11occupier-wlce@change.me');
+    set customer = (select id from myenergy.customers where email = 'occ11@wl.ce')
+    where customer = (select id from myenergy.customers where email = 'plot11occupier-wlce@change.me');
 update myenergy.customer_accounts 
-    set customer = (select id from customers where email = 'occ13@wl.ce')
-    where customer = (select id from customers where email = 'plot13occupier-wlce@change.me');
+    set customer = (select id from myenergy.customers where email = 'occ13@wl.ce')
+    where customer = (select id from myenergy.customers where email = 'plot13occupier-wlce@change.me');
 
 update myenergy.customer_accounts 
-    set customer = (select id from customers where email = 'ownocc12@wl.ce')
-    where customer = (select id from customers where email = 'plot12owner-wlce@change.me');
+    set customer = (select id from myenergy.customers where email = 'ownocc12@wl.ce')
+    where customer = (select id from myenergy.customers where email = 'plot12owner-wlce@change.me');
 
 update myenergy.customer_accounts 
-    set customer = (select id from customers where email = 'ownocc1@hm.ce')
-    where customer = (select id from customers where email = 'plot01owner-hmce@change.me');
+    set customer = (select id from myenergy.customers where email = 'ownocc1@hm.ce')
+    where customer = (select id from myenergy.customers where email = 'plot01owner-hmce@change.me');
 update myenergy.customer_accounts 
-    set customer = (select id from customers where email = 'ownoccsea@hm.ce')
-    where customer = (select id from customers where email = 'plotSEA-Landlordowner-hmce@change.me');
+    set customer = (select id from myenergy.customers where email = 'ownoccsea@hm.ce')
+    where customer = (select id from myenergy.customers where email = 'plotSEA-Landlordowner-hmce@change.me');
 
--- clean up replaced customers
-DELETE FROM customers where email in (
+-- clean up replaced myenergy.customers
+DELETE FROM myenergy.customers where email in (
     'plot11owner-wlce@change.me',
     'plot13owner-wlce@change.me',
     'plot11occupier-wlce@change.me',
@@ -232,17 +232,17 @@ DELETE FROM customers where email in (
 
 -- setup 2 prelive status customers by signing their supply contracts (occ11@wl.ce, occ13@wl.ce)
 -- setup 1 live customer by signing both solar contracts (own11_13@wl.ce)
-UPDATE contracts set signed_date = '2024-01-01 00:00 +00'
-WHERE id in (select current_contract from accounts where id in (
-    select account from customer_accounts where customer in (
-        select id from customers where email in ('occ11@wl.ce', 'occ13@wl.ce', 'own11_13@wl.ce')
+UPDATE myenergy.contracts set signed_date = '2024-01-01 00:00 +00'
+WHERE id in (select current_contract from myenergy.accounts where id in (
+    select account from myenergy.customer_accounts where customer in (
+        select id from myenergy.customers where email in ('occ11@wl.ce', 'occ13@wl.ce', 'own11_13@wl.ce')
     )
 )) and "type" in ('supply', 'solar'); -- both contracts
 
 
 -- Create customer_invites for one WLCE and one HMCE user to check conditional invite URL generation
-INSERT INTO customer_invites (customer) VALUES ('ef9007fa-4084-4775-b4f1-1c0710fc0511');
-INSERT INTO customer_invites (customer) VALUES ('b4cf2b22-cc04-4c86-a910-c601cfdfc244');
+INSERT INTO myenergy.customer_invites (customer) VALUES ('ef9007fa-4084-4775-b4f1-1c0710fc0511');
+INSERT INTO myenergy.customer_invites (customer) VALUES ('b4cf2b22-cc04-4c86-a910-c601cfdfc244');
 
 
 -- Historical rates (pre 2024) from https://www.gov.uk/search/all?keywords=Energy+Price+Guarantee%3A+regional+rates&order=relevance
@@ -304,25 +304,25 @@ INSERT INTO myenergy.microgrid_tariffs (esco,period_start,discount_rate_basis_po
 
 INSERT INTO myenergy.customer_tariffs (customer,period_start,discount_rate_basis_points) VALUES
 	 -- Plot11 occupier
-	 ((select id from customers where email = 'occ11@wl.ce')::uuid,'2024-04-01',0),
-	 ((select id from customers where email = 'occ11@wl.ce')::uuid,'2024-07-01',0),
-	 ((select id from customers where email = 'occ11@wl.ce')::uuid,'2024-10-01',0),
+	 ((select id from myenergy.customers where email = 'occ11@wl.ce')::uuid,'2024-04-01',0),
+	 ((select id from myenergy.customers where email = 'occ11@wl.ce')::uuid,'2024-07-01',0),
+	 ((select id from myenergy.customers where email = 'occ11@wl.ce')::uuid,'2024-10-01',0),
 	 -- Plot13 occupier
-	 ((select id from customers where email = 'occ13@wl.ce')::uuid,'2024-04-01',100),
-	 ((select id from customers where email = 'occ13@wl.ce')::uuid,'2024-07-01',100),
-	 ((select id from customers where email = 'occ13@wl.ce')::uuid,'2024-10-01',100),
+	 ((select id from myenergy.customers where email = 'occ13@wl.ce')::uuid,'2024-04-01',100),
+	 ((select id from myenergy.customers where email = 'occ13@wl.ce')::uuid,'2024-07-01',100),
+	 ((select id from myenergy.customers where email = 'occ13@wl.ce')::uuid,'2024-10-01',100),
 	 -- ownocc12@wl.ce
-	 ((select id from customers where email = 'ownocc12@wl.ce')::uuid,'2024-04-01',0),
-	 ((select id from customers where email = 'ownocc12@wl.ce')::uuid,'2024-07-01',0),
-	 ((select id from customers where email = 'ownocc12@wl.ce')::uuid,'2024-10-01',0),
+	 ((select id from myenergy.customers where email = 'ownocc12@wl.ce')::uuid,'2024-04-01',0),
+	 ((select id from myenergy.customers where email = 'ownocc12@wl.ce')::uuid,'2024-07-01',0),
+	 ((select id from myenergy.customers where email = 'ownocc12@wl.ce')::uuid,'2024-10-01',0),
 	 -- ownocc1@hm.ce
-	 ((select id from customers where email = 'ownocc1@hm.ce')::uuid,'2024-04-01',100),
-	 ((select id from customers where email = 'ownocc1@hm.ce')::uuid,'2024-07-01',0),
-	 ((select id from customers where email = 'ownocc1@hm.ce')::uuid,'2024-10-01',0),
+	 ((select id from myenergy.customers where email = 'ownocc1@hm.ce')::uuid,'2024-04-01',100),
+	 ((select id from myenergy.customers where email = 'ownocc1@hm.ce')::uuid,'2024-07-01',0),
+	 ((select id from myenergy.customers where email = 'ownocc1@hm.ce')::uuid,'2024-10-01',0),
 	 -- ownoccsea@hm.ce (use 25 so we get 6 decimal place value which test adjustment to 5 decimal places)
-     ((select id from customers where email = 'ownoccsea@hm.ce')::uuid,'2024-04-01',25),
-	 ((select id from customers where email = 'ownoccsea@hm.ce')::uuid,'2024-07-01',25),
-	 ((select id from customers where email = 'ownoccsea@hm.ce')::uuid,'2024-10-01',25);
+     ((select id from myenergy.customers where email = 'ownoccsea@hm.ce')::uuid,'2024-04-01',25),
+	 ((select id from myenergy.customers where email = 'ownoccsea@hm.ce')::uuid,'2024-07-01',25),
+	 ((select id from myenergy.customers where email = 'ownoccsea@hm.ce')::uuid,'2024-10-01',25);
  
 -- monthly_costs_compute will insert rows in monthly_costs table:
 select myenergy.monthly_costs_compute('2024-05-01'::date);
@@ -334,37 +334,37 @@ select myenergy.monthly_costs_compute('2024-08-01'::date);
 
 INSERT INTO "myenergy"."topups" ("id", "meter", "amount_pence", "status", "source", "notes", "token", "reference", "acquired_at", "used_at", "created_at", "updated_at") VALUES
     -- Plot12 WLCE
-    ('0330d28c-74a6-4f17-961e-0316d71a8c0d', (SELECT id FROM meters where serial = 'EML2137580762'), '7129', 'completed', 'gift', 'notes abc', '07550128313424780340', 'plot12 topup 1', '2024-12-10 03:44:11+00', '2024-12-22 19:05:11+00', '2024-12-11 10:39:51.56564+00', '2024-12-22 19:39:51.56564+00'),
-    ('08384d5d-44b8-4acf-a177-69629fe5c183', (SELECT id FROM meters where serial = 'EML2137580762'), '7986', 'completed', 'gift', 'notes xyz', '70496331128691663932', 'plot12 topup 2', '2024-12-20 07:52:06+00', '2024-12-22 19:05:12+00', '2024-12-22 19:43:40.862228+00', '2024-12-22 19:43:40.862228+00'),
-    ('d579749d-8711-4cef-a9b9-62be6887ef40', (SELECT id FROM meters where serial = 'EML2137580762'), '3456', 'completed', 'solar_credit', 'march credit', '098063311286916643857', 'plot12 solar credit', '2025-03-01 01:11:06+00', '2025-03-01 01:11:06+00', '2025-03-01 01:11:06+00', '2025-03-01 01:11:06+00'),
+    ('0330d28c-74a6-4f17-961e-0316d71a8c0d', (SELECT id FROM myenergy.meters where serial = 'EML2137580762'), '7129', 'completed', 'gift', 'notes abc', '07550128313424780340', 'plot12 topup 1', '2024-12-10 03:44:11+00', '2024-12-22 19:05:11+00', '2024-12-11 10:39:51.56564+00', '2024-12-22 19:39:51.56564+00'),
+    ('08384d5d-44b8-4acf-a177-69629fe5c183', (SELECT id FROM myenergy.meters where serial = 'EML2137580762'), '7986', 'completed', 'gift', 'notes xyz', '70496331128691663932', 'plot12 topup 2', '2024-12-20 07:52:06+00', '2024-12-22 19:05:12+00', '2024-12-22 19:43:40.862228+00', '2024-12-22 19:43:40.862228+00'),
+    ('d579749d-8711-4cef-a9b9-62be6887ef40', (SELECT id FROM myenergy.meters where serial = 'EML2137580762'), '3456', 'completed', 'solar_credit', 'march credit', '098063311286916643857', 'plot12 solar credit', '2025-03-01 01:11:06+00', '2025-03-01 01:11:06+00', '2025-03-01 01:11:06+00', '2025-03-01 01:11:06+00'),
     -- Plot11 WLCE
-    ('425db671-6d4d-4d69-a472-77643d3d7249', (SELECT id FROM meters where serial = 'EML2137580768'), '9161', 'completed', 'gift', 'notes def', '55297858608314461894', 'plot11 topup 1', '2024-12-12 04:38:02+00', '2024-12-12 05:00:00+00', '2024-12-18 04:21:18.74163+00', '2024-12-18 04:27:22.395673+00');
+    ('425db671-6d4d-4d69-a472-77643d3d7249', (SELECT id FROM myenergy.meters where serial = 'EML2137580768'), '9161', 'completed', 'gift', 'notes def', '55297858608314461894', 'plot11 topup 1', '2024-12-12 04:38:02+00', '2024-12-12 05:00:00+00', '2024-12-18 04:21:18.74163+00', '2024-12-18 04:27:22.395673+00');
 
 INSERT INTO "myenergy"."gifts" ("customer_id", "amount_pence", "reason") VALUES 
-    ((select id from customers where email = 'ownocc12@wl.ce'), '7129', 'sign up bonus'),
-    ((select id from customers where email = 'ownocc12@wl.ce'), '7986', 'sign up bonus 2'),
-    ((select id from customers where email = 'occ11@wl.ce'), '9161', 'sign up bonus');
+    ((select id from myenergy.customers where email = 'ownocc12@wl.ce'), '7129', 'sign up bonus'),
+    ((select id from myenergy.customers where email = 'ownocc12@wl.ce'), '7986', 'sign up bonus 2'),
+    ((select id from myenergy.customers where email = 'occ11@wl.ce'), '9161', 'sign up bonus');
 
 -- payments
 
 INSERT INTO "myenergy"."payments" ("id", "account", "amount_pence", "status", "payment_intent", "description", "created_at", "updated_at") VALUES 
      -- Plot 11 supply account
      ('194363dc-09ba-4867-bfb6-84f5bbef5d68', 
-        (SELECT account from customer_accounts 
-            where customer = (select id from customers where email = 'occ11@wl.ce')
+        (SELECT account from myenergy.customer_accounts 
+            where customer = (select id from myenergy.customers where email = 'occ11@wl.ce')
             and role = 'occupier'
-            and account in (select id from accounts where type = 'supply')),
+            and account in (select id from myenergy.accounts where type = 'supply')),
         '7129', 'succeeded', 'pi_3QYtqEIcs3SlrEZh1DJGobnu', 'top up plot 11 1', '2024-12-22 19:52:34.994497+00', '2024-12-22 19:52:34.994497+00'),
      ('7df1c422-592d-4d3c-aeaa-3ca89adabace',
-        (SELECT account from customer_accounts 
-            where customer = (select id from customers where email = 'occ11@wl.ce')
+        (SELECT account from myenergy.customer_accounts 
+            where customer = (select id from myenergy.customers where email = 'occ11@wl.ce')
             and role = 'occupier'
-            and account in (select id from accounts where type = 'supply')),
+            and account in (select id from myenergy.accounts where type = 'supply')),
         '7986', 'processing', 'pi_3QYuLOIcs3SlrEZh1h5r1BtB', 'top up plot 11 2', '2024-12-22 19:51:29.659833+00', '2024-12-22 19:54:12.317468+00'),
      -- Plot 12
      ('e8001ece-2d74-40db-8785-67c3ee2f6857',
-        (SELECT account from customer_accounts 
-            where customer = (select id from customers where email = 'ownocc12@wl.ce')
+        (SELECT account from myenergy.customer_accounts 
+            where customer = (select id from myenergy.customers where email = 'ownocc12@wl.ce')
                 and role = 'occupier'),
         '9161', 'succeeded', 'pi_3QYuUNIcs3SlrEZh1LZm3Wrj', 'top up plot 12 1', '2024-12-22 19:49:56.010935+00', '2024-12-22 19:49:56.010935+00');
 
@@ -379,9 +379,9 @@ INSERT INTO myenergy.solar_credit_tariffs (esco, period_start, credit_pence_per_
 	 ('363ff821-3a56-4b43-8227-8e53c45fbcdb'::uuid,'2025-03-01',7900);
 
 INSERT INTO myenergy.monthly_solar_credits (property_id,"month") VALUES
-	 ((select id from properties where esco = '527eed5d-2f81-4abe-a7f4-6fff8ac72703' and plot = 'Plot-12'), '2025-01-01'),
-	 ((select id from properties where esco = '527eed5d-2f81-4abe-a7f4-6fff8ac72703' and plot = 'Plot-12'), '2025-02-01'),
-	 ((select id from properties where esco = '527eed5d-2f81-4abe-a7f4-6fff8ac72703' and plot = 'Plot-12'), '2025-03-01');
+	 ((select id from myenergy.properties where esco = '527eed5d-2f81-4abe-a7f4-6fff8ac72703' and plot = 'Plot-12'), '2025-01-01'),
+	 ((select id from myenergy.properties where esco = '527eed5d-2f81-4abe-a7f4-6fff8ac72703' and plot = 'Plot-12'), '2025-02-01'),
+	 ((select id from myenergy.properties where esco = '527eed5d-2f81-4abe-a7f4-6fff8ac72703' and plot = 'Plot-12'), '2025-03-01');
 
 
 INSERT INTO myenergy.solar_credit_allocation 

@@ -1,7 +1,9 @@
 BEGIN;
+
+SET search_path TO myenergy, flows, public, extensions;
+
 SELECT plan(16);
 
-SET search_path TO flows,extensions,public;
 
 SELECT is((SELECT current_role), 'postgres', 'intial role');
 

@@ -1,7 +1,9 @@
 BEGIN;
+
+SET search_path TO myenergy,extensions,public;
+
 SELECT plan(2);
 
-SET search_path TO extensions,public;
 
 SELECT is((SELECT count(*)::int FROM customer_invites), 2, 'customer_invites total');
 SELECT is(

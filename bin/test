@@ -1,0 +1,2 @@
+#!/bin/sh
+bin/pg_prove -h localhost -p 15432 -d postgres -U postgres -v supabase/tests/*.sql

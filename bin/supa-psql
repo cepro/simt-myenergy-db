@@ -23,14 +23,14 @@ else
     PG_PASS_FILE=~/.pgpass
 fi
 
-docker run --rm \
-        --network host \
+docker run -it --rm \
+        --network supabase-timescale_default \
         -v $HOST_DIR:/db \
         -v $PG_PASS_FILE:/root/.pgpass:ro \
     postgres:17-alpine \
     psql \
         -v ON_ERROR_STOP=1 \
-        --host 0.0.0.0 \
-        --port 54322 \
+        --host db \
+        --port 5432 \
         --username=postgres \
         --file=/db/$SCRIPT_FILE

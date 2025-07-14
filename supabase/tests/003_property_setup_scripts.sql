@@ -1,7 +1,8 @@
 BEGIN;
-SELECT plan(5);
 
-SET search_path TO flows,extensions,public;
+SET search_path TO extensions, myenergy, public;
+
+SELECT plan(5);
 
 SELECT is((SELECT current_role), 'postgres', 'intial role');
 
@@ -27,11 +28,11 @@ RETURNS TEXT AS $$
     );
 $$ LANGUAGE sql;
 
-SELECT property_has_supply_meter((select id from properties where description = '15 Water Lilies')::uuid);
-SELECT property_has_solar_meter((select id from properties where description = '15 Water Lilies')::uuid);
+SELECT property_has_supply_meter((select id from myenergy.properties where description = '15 Water Lilies')::uuid);
+SELECT property_has_solar_meter((select id from myenergy.properties where description = '15 Water Lilies')::uuid);
 
-SELECT property_has_supply_meter((select id from properties where description = '17 Hazelmead')::uuid);
-SELECT property_has_solar_meter((select id from properties where description = '17 Hazelmead')::uuid);
+SELECT property_has_supply_meter((select id from myenergy.properties where description = '17 Hazelmead')::uuid);
+SELECT property_has_solar_meter((select id from myenergy.properties where description = '17 Hazelmead')::uuid);
 
 
 

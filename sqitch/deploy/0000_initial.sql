@@ -623,7 +623,7 @@ BEGIN
     -- Create contract if needed
     IF no_contract is false THEN
         INSERT INTO myenergy.contracts (terms, "type")
-            VALUES (contract_terms_id, account_type::text::contract_type_enum)
+            VALUES (contract_terms_id, account_type::text::myenergy.contract_type_enum)
             RETURNING id INTO contract_id;
 
         UPDATE myenergy.accounts
@@ -656,7 +656,7 @@ BEGIN
   
   IF no_contract is false THEN
       INSERT INTO myenergy.contracts (terms, "type")
-        VALUES (contract_terms_id, account_type::text::contract_type_enum)
+        VALUES (contract_terms_id, account_type::text::myenergy.contract_type_enum)
         RETURNING id INTO contract_id;
 
       UPDATE myenergy.accounts
@@ -749,7 +749,7 @@ BEGIN
 
         -- Create solar account
         SELECT myenergy.add_account(
-            'solar'::account_type_enum,
+            'solar'::myenergy.account_type_enum,
             property_id,
             owner_id,
             occupier_id,
@@ -766,7 +766,7 @@ BEGIN
     -- Get latest supply contract terms
     WITH latest_supply_terms_by_esco AS (
         select cte.terms, ct.version 
-        from contract_terms ct, contract_terms_esco cte
+        from myenergy.contract_terms ct, myenergy.contract_terms_esco cte
         where cte.esco = esco_id
         and cte.terms = ct.id
         and ct."type" = 'supply'
@@ -776,7 +776,7 @@ BEGIN
 
     -- Create supply account
     SELECT myenergy.add_account(
-        'supply'::account_type_enum,
+        'supply'::myenergy.account_type_enum,
         property_id,
         owner_id,
         occupier_id,
@@ -796,18 +796,18 @@ $$;
 ALTER FUNCTION myenergy.add_property(plot_number text, esco_id uuid, solar_meter_serial text, supply_meter_serial text, description text, is_owner_occupied boolean, preonboard_only boolean) OWNER TO :"adminrole";
 
 
-CREATE FUNCTION myenergy.auth_user_id_for_customer(email text) RETURNS jsonb
-    LANGUAGE sql STABLE SECURITY DEFINER
-    SET search_path TO ''
-    AS $$
-    SELECT jsonb_build_object(
-        'id', (SELECT to_jsonb(u.id) FROM auth.users u WHERE u.email = auth_user_id_for_customer."email"),
-        'phone', (SELECT to_jsonb(u.phone) FROM auth.users u WHERE u.email = auth_user_id_for_customer."email")
-    );
-$$;
+-- CREATE FUNCTION myenergy.auth_user_id_for_customer(email text) RETURNS jsonb
+--     LANGUAGE sql STABLE SECURITY DEFINER
+--     SET search_path TO ''
+--     AS $$
+--     SELECT jsonb_build_object(
+--         'id', (SELECT to_jsonb(u.id) FROM auth.users u WHERE u.email = auth_user_id_for_customer."email"),
+--         'phone', (SELECT to_jsonb(u.phone) FROM auth.users u WHERE u.email = auth_user_id_for_customer."email")
+--     );
+-- $$;
 
 
-ALTER FUNCTION myenergy.auth_user_id_for_customer(email text) OWNER TO :"adminrole";
+-- ALTER FUNCTION myenergy.auth_user_id_for_customer(email text) OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.benchmark_month_standing_charge(region_in text, month_in date) RETURNS numeric
@@ -1004,9 +1004,9 @@ CREATE FUNCTION myenergy.customer_invites_status(accessed_at timestamp with time
     AS $$
 BEGIN
     IF accessed_at is not null OR expires_at < now() THEN 
-        RETURN 'expired'::customer_invite_status_enum;
+        RETURN 'expired'::myenergy.customer_invite_status_enum;
     ELSE
-        RETURN 'pending'::customer_invite_status_enum;
+        RETURN 'pending'::myenergy.customer_invite_status_enum;
     END IF;
 END;
 $$;
@@ -1230,26 +1230,26 @@ $$;
 
 ALTER FUNCTION myenergy.customer_email_update_for_trigger() OWNER TO :"adminrole";
 
-
-CREATE FUNCTION myenergy.customer_invites_generate_invite_url() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$
+CREATE OR REPLACE FUNCTION myenergy.customer_invites_generate_invite_url()
+ RETURNS trigger
+ LANGUAGE plpgsql
+AS $function$
     DECLARE
         app_url text;
     BEGIN
         SELECT e.app_url
-        FROM escos e
+        FROM myenergy.escos e
         WHERE e.id IN (
-            SELECT esco FROM properties WHERE owner = NEW.customer
+            SELECT esco FROM myenergy.properties WHERE owner = NEW.customer
         ) INTO app_url;
 
         IF app_url is null THEN
             SELECT e.app_url
             FROM escos e
             WHERE e.id IN (
-                SELECT esco FROM properties WHERE id IN (
-                    SELECT property FROM accounts WHERE id IN (
-                        SELECT account FROM customer_accounts WHERE customer = NEW.customer
+                SELECT esco FROM myenergy.properties WHERE id IN (
+                    SELECT property FROM myenergy.accounts WHERE id IN (
+                        SELECT account FROM myenergy.customer_accounts WHERE customer = NEW.customer
                     )
                 )
             ) INTO app_url;
@@ -1262,7 +1262,8 @@ CREATE FUNCTION myenergy.customer_invites_generate_invite_url() RETURNS trigger
             RAISE EXCEPTION 'No esco is associated with this customer yet so an invite cannot be created';
         END IF;
     END;
-    $$;
+    $function$
+;
 
 
 ALTER FUNCTION myenergy.customer_invites_generate_invite_url() OWNER TO :"adminrole";
@@ -4276,144 +4277,232 @@ ALTER TABLE ONLY myenergy.topups_payments
 
 
 
-CREATE POLICY "Authenticated users can read microgrid tariffs" ON myenergy.microgrid_tariffs FOR SELECT TO authenticated USING ((esco IN ( SELECT p.esco
-   FROM myenergy.properties p
-  WHERE (p.id IN ( SELECT a.property
-           FROM myenergy.accounts a,
-            myenergy.customer_accounts ca
-          WHERE ((ca.customer = myenergy.customer()) AND (a.id = ca.account)))))));
-
-
-
-CREATE POLICY "Authenticated users can read solar credit tariffs" ON myenergy.solar_credit_tariffs FOR SELECT TO authenticated USING ((esco IN ( SELECT p.esco
-   FROM myenergy.properties p
-  WHERE (p.id IN ( SELECT a.property
-           FROM myenergy.accounts a,
-            myenergy.customer_accounts ca
-          WHERE ((ca.customer = myenergy.customer()) AND (a.id = ca.account)))))));
-
-
-
-CREATE POLICY "Authenticated users can read tariffs" ON myenergy.benchmark_tariffs FOR SELECT TO authenticated USING (true);
-
-
-
-CREATE POLICY "Authenticated users can read their customer_tariffs only" ON myenergy.customer_tariffs FOR SELECT TO authenticated USING ((customer = myenergy.customer()));
-
-
-
-CREATE POLICY "Customer can view solar installations for their properties" ON myenergy.solar_installation FOR SELECT TO authenticated USING ((property IN ( SELECT properties.id
-   FROM myenergy.properties)));
-
-
-
-CREATE POLICY "Customer can view their own meters" ON myenergy.meters FOR SELECT TO authenticated USING ((id IN ( SELECT properties.supply_meter
-   FROM myenergy.properties
-UNION
- SELECT properties.solar_meter
-   FROM myenergy.properties)));
-
-
-
-CREATE POLICY "Customers can read their own and property owners records" ON myenergy.customers FOR SELECT TO authenticated USING (((email = auth.email()) OR (id IN ( SELECT myenergy.get_property_owners_for_auth_user(auth.email()) AS get_property_owners_for_auth_user))));
-
-
-
-CREATE POLICY "Customers can update their wallets topup preferences only" ON myenergy.wallets FOR UPDATE TO authenticated USING ((id IN ( SELECT meters.wallet
-   FROM myenergy.meters
-  WHERE (meters.id IN ( SELECT properties.supply_meter
-           FROM myenergy.properties
-          WHERE (properties.id IN ( SELECT accounts.property
-                   FROM myenergy.accounts)))))));
-
-
-
-CREATE POLICY "Customers can view their own accounts only" ON myenergy.accounts FOR SELECT TO authenticated USING ((id IN ( SELECT customer_accounts.account
-   FROM myenergy.customer_accounts)));
-
-
-
-CREATE POLICY "Customers can view their own circuit_meter records only" ON myenergy.circuit_meter FOR SELECT TO authenticated USING ((meter_id IN ( SELECT meters.id
-   FROM myenergy.meters)));
-
-
-
-CREATE POLICY "Customers can view their own circuits only" ON myenergy.circuits FOR SELECT TO authenticated USING ((id IN ( SELECT circuit_meter.circuit_id
-   FROM myenergy.circuit_meter)));
-
-
-
-CREATE POLICY "Customers can view their own contracts only" ON myenergy.contracts FOR SELECT TO authenticated USING ((id IN ( SELECT accounts.current_contract
-   FROM myenergy.accounts
-  WHERE (accounts.id = ANY (myenergy.accounts())))));
-
-
-
-CREATE POLICY "Customers can view their own customer_accounts" ON myenergy.customer_accounts FOR SELECT TO authenticated USING ((customer = myenergy.customer()));
-
-
-
-CREATE POLICY "Customers can view their own gifts" ON myenergy.gifts FOR SELECT TO authenticated USING ((customer_id = myenergy.customer()));
-
-
-
-CREATE POLICY "Customers can view their own monthly customer costs only" ON myenergy.monthly_costs FOR SELECT TO authenticated USING ((customer_id = myenergy.customer()));
-
-
-
-CREATE POLICY "Customers can view their own monthly solar credits" ON myenergy.monthly_solar_credits FOR SELECT TO authenticated USING ((property_id IN ( SELECT a.property
-   FROM myenergy.accounts a
-  WHERE (a.id IN ( SELECT ca.account
-           FROM myenergy.customer_accounts ca
-          WHERE (ca.customer = myenergy.customer()))))));
-
-
-
-CREATE POLICY "Customers can view their own monthly usage only" ON myenergy.monthly_usage FOR SELECT TO authenticated USING ((circuit_id IN ( SELECT circuits.id
-   FROM myenergy.circuits)));
-
-
-
-CREATE POLICY "Customers can view their own payment topups" ON myenergy.topups_payments FOR SELECT TO authenticated USING ((payment_id IN ( SELECT p.id
-   FROM ((myenergy.payments p
-     JOIN myenergy.accounts a ON ((p.account = a.id)))
-     JOIN myenergy.customer_accounts ca ON ((ca.account = a.id)))
-  WHERE (ca.customer = myenergy.customer()))));
-
-
-
-CREATE POLICY "Customers can view their own payments only" ON myenergy.payments USING ((account IN ( SELECT customer_accounts.account
-   FROM myenergy.customer_accounts
-  WHERE (customer_accounts.customer = myenergy.customer()))));
-
-
-
-CREATE POLICY "Customers can view their own properties or all if cepro user" ON myenergy.properties FOR SELECT TO authenticated USING (((id = ANY (myenergy.properties_by_account())) OR (id = ANY (myenergy.properties_owned())) OR (EXISTS ( SELECT 1
-   FROM myenergy.customers
-  WHERE ((customers.email = auth.email()) AND (customers.cepro_user = true))))));
-
-
-
-CREATE POLICY "Customers can view their own solar credits topups" ON myenergy.topups_monthly_solar_credits FOR SELECT TO authenticated USING ((month_solar_credit_id IN ( SELECT m.id
-   FROM ((myenergy.monthly_solar_credits m
-     JOIN myenergy.accounts a ON ((a.property = m.property_id)))
-     JOIN myenergy.customer_accounts ca ON ((ca.account = a.id)))
-  WHERE (ca.customer = myenergy.customer()))));
-
-
-
-CREATE POLICY "Customers can view their own topups only" ON myenergy.topups USING ((meter IN ( SELECT meters.id
-   FROM myenergy.meters)));
-
-
-
-CREATE POLICY "Customers can view their own wallets only" ON myenergy.wallets FOR SELECT TO authenticated USING ((id IN ( SELECT meters.wallet
-   FROM myenergy.meters
-  WHERE (meters.id IN ( SELECT properties.supply_meter
-           FROM myenergy.properties
-          WHERE (properties.id IN ( SELECT accounts.property
-                   FROM myenergy.accounts
-                  WHERE (accounts.id = ANY (myenergy.accounts())))))))));
+CREATE OR REPLACE FUNCTION myenergy.is_backend_user() 
+RETURNS boolean 
+LANGUAGE sql 
+SECURITY INVOKER
+STABLE
+AS $$
+    SELECT current_user = 'grafanareader' or (
+	    SELECT current_user = 'authenticated' and (select current_setting('request.jwt.claim.role', true) = 'public_backend')
+    );
+$$;
+
+COMMENT ON FUNCTION myenergy.is_backend_user() IS 
+'Helper function to determine if the current user should bypass RLS policies. 
+Returns true for public_backend, grafanareader, or members of rls_bypass_role.';
+
+CREATE POLICY "Customers can read their own and property owners records" 
+ON myenergy.customers FOR SELECT TO authenticated 
+USING (
+    myenergy.is_backend_user() 
+    OR (email = auth.email()) 
+    OR (id IN (SELECT myenergy.get_property_owners_for_auth_user(auth.email())))
+);
+
+CREATE POLICY "Customers can view their own accounts only" 
+ON myenergy.accounts FOR SELECT TO authenticated 
+USING (
+    myenergy.is_backend_user() 
+    OR (id IN (SELECT customer_accounts.account FROM myenergy.customer_accounts))
+);
+
+
+CREATE POLICY "Customers can view their own circuits only" 
+ON myenergy.circuits FOR SELECT TO authenticated 
+USING (
+    myenergy.is_backend_user() 
+    OR (id IN (SELECT circuit_meter.circuit_id FROM myenergy.circuit_meter))
+);
+
+
+CREATE POLICY "Customers can view their own circuit_meter records only" 
+ON myenergy.circuit_meter FOR SELECT TO authenticated 
+USING (
+    myenergy.is_backend_user() 
+    OR (meter_id IN (SELECT meters.id FROM myenergy.meters))
+);
+
+
+CREATE POLICY "Customers can view their own contracts only" 
+ON myenergy.contracts FOR SELECT TO authenticated 
+USING (
+    myenergy.is_backend_user() 
+    OR (id IN (SELECT accounts.current_contract FROM myenergy.accounts WHERE accounts.id = ANY (myenergy.accounts())))
+);
+
+
+CREATE POLICY "Customers can view their own customer_accounts" 
+ON myenergy.customer_accounts FOR SELECT TO authenticated 
+USING (
+    myenergy.is_backend_user() 
+    OR (customer = myenergy.customer())
+);
+
+
+CREATE POLICY "customer_invites policy" 
+ON myenergy.customer_invites FOR SELECT TO authenticated 
+USING (
+    myenergy.is_backend_user() 
+    OR (customer = myenergy.customer())
+);
+
+
+CREATE POLICY "Customers can view their own gifts" 
+ON myenergy.gifts FOR SELECT TO authenticated 
+USING (
+    myenergy.is_backend_user() 
+    OR (customer_id = myenergy.customer())
+);
+
+
+CREATE POLICY "Customer can view their own meters" 
+ON myenergy.meters FOR SELECT TO authenticated 
+USING (
+    myenergy.is_backend_user() 
+    OR (id IN (SELECT properties.supply_meter FROM myenergy.properties UNION SELECT properties.solar_meter FROM myenergy.properties))
+);
+
+
+CREATE POLICY "Customers can view their own monthly customer costs only" 
+ON myenergy.monthly_costs FOR SELECT TO authenticated 
+USING (
+    myenergy.is_backend_user() 
+    OR (customer_id = myenergy.customer())
+);
+
+
+CREATE POLICY "Customers can view their own monthly solar credits" 
+ON myenergy.monthly_solar_credits FOR SELECT TO authenticated 
+USING (
+    myenergy.is_backend_user() 
+    OR (property_id IN (SELECT a.property FROM myenergy.accounts a WHERE a.id IN (SELECT ca.account FROM myenergy.customer_accounts ca WHERE ca.customer = myenergy.customer())))
+);
+
+
+CREATE POLICY "Customers can view their own monthly usage only" 
+ON myenergy.monthly_usage FOR SELECT TO authenticated 
+USING (
+    myenergy.is_backend_user() 
+    OR (circuit_id IN (SELECT circuits.id FROM myenergy.circuits))
+);
+
+
+CREATE POLICY "Customers can view their own payments only" 
+ON myenergy.payments FOR SELECT TO authenticated 
+USING (
+    myenergy.is_backend_user() 
+    OR (account IN (SELECT customer_accounts.account FROM myenergy.customer_accounts WHERE customer_accounts.customer = myenergy.customer()))
+);
+
+
+CREATE POLICY "Customers can view their own properties or all if cepro user" 
+ON myenergy.properties FOR SELECT TO authenticated 
+USING (
+    myenergy.is_backend_user() 
+    OR (id = ANY (myenergy.properties_by_account())) 
+    OR (id = ANY (myenergy.properties_owned())) 
+    OR (EXISTS (SELECT 1 FROM myenergy.customers WHERE customers.email = auth.email() AND customers.cepro_user = true))
+);
+
+
+CREATE POLICY "Customer can view solar installations for their properties" 
+ON myenergy.solar_installation FOR SELECT TO authenticated 
+USING (
+    myenergy.is_backend_user() 
+    OR (property IN (SELECT properties.id FROM myenergy.properties))
+);
+
+
+CREATE POLICY "Customers can view their own topups only" 
+ON myenergy.topups FOR SELECT TO authenticated 
+USING (
+    myenergy.is_backend_user() 
+    OR (meter IN (SELECT meters.id FROM myenergy.meters))
+);
+
+
+CREATE POLICY "Customers can view their own solar credits topups" 
+ON myenergy.topups_monthly_solar_credits FOR SELECT TO authenticated 
+USING (
+    myenergy.is_backend_user() 
+    OR (month_solar_credit_id IN (SELECT m.id FROM myenergy.monthly_solar_credits m JOIN myenergy.accounts a ON a.property = m.property_id JOIN myenergy.customer_accounts ca ON ca.account = a.id WHERE ca.customer = myenergy.customer()))
+);
+
+
+CREATE POLICY "Customers can view their own payment topups" 
+ON myenergy.topups_payments FOR SELECT TO authenticated 
+USING (
+    myenergy.is_backend_user() 
+    OR (payment_id IN (SELECT p.id FROM myenergy.payments p JOIN myenergy.accounts a ON p.account = a.id JOIN myenergy.customer_accounts ca ON ca.account = a.id WHERE ca.customer = myenergy.customer()))
+);
+
+
+CREATE POLICY "Customers can view their own wallets only" 
+ON myenergy.wallets FOR SELECT TO authenticated 
+USING (
+    myenergy.is_backend_user() 
+    OR (id IN (SELECT meters.wallet FROM myenergy.meters WHERE meters.id IN (SELECT properties.supply_meter FROM myenergy.properties WHERE properties.id IN (SELECT accounts.property FROM myenergy.accounts WHERE accounts.id = ANY (myenergy.accounts())))))
+);
+
+CREATE POLICY "Customers can update their wallets topup preferences only" 
+ON myenergy.wallets FOR UPDATE TO authenticated 
+USING (
+    myenergy.is_backend_user() 
+    OR (id IN (SELECT meters.wallet FROM myenergy.meters WHERE meters.id IN (SELECT properties.supply_meter FROM myenergy.properties WHERE properties.id IN (SELECT accounts.property FROM myenergy.accounts))))
+);
+
+
+CREATE POLICY "Authenticated users can read their customer_tariffs only" 
+ON myenergy.customer_tariffs FOR SELECT TO authenticated 
+USING (
+    myenergy.is_backend_user() 
+    OR (customer = myenergy.customer())
+);
+
+
+CREATE POLICY "Authenticated users can read tariffs" 
+ON myenergy.benchmark_tariffs FOR SELECT TO authenticated 
+USING (
+    myenergy.is_backend_user() 
+    OR true
+);
+
+
+CREATE POLICY "Authenticated users can read microgrid tariffs" 
+ON myenergy.microgrid_tariffs FOR SELECT TO authenticated 
+USING (
+    myenergy.is_backend_user() 
+    OR (esco IN (SELECT p.esco FROM myenergy.properties p WHERE p.id IN (SELECT a.property FROM myenergy.accounts a, myenergy.customer_accounts ca WHERE ca.customer = myenergy.customer() AND a.id = ca.account)))
+);
+
+
+CREATE POLICY "Authenticated users can read solar credit tariffs" 
+ON myenergy.solar_credit_tariffs FOR SELECT TO authenticated 
+USING (
+    myenergy.is_backend_user() 
+    OR (esco IN (SELECT p.esco FROM myenergy.properties p WHERE p.id IN (SELECT a.property FROM myenergy.accounts a, myenergy.customer_accounts ca WHERE ca.customer = myenergy.customer() AND a.id = ca.account)))
+);
+
+
+CREATE POLICY "Users can see terms for escos they have accounts in or all if c" 
+ON myenergy.contract_terms FOR SELECT TO authenticated 
+USING (
+    myenergy.is_backend_user() 
+    OR (id IN (SELECT contract_terms_esco.terms FROM myenergy.contract_terms_esco)) 
+    OR (EXISTS (SELECT 1 FROM myenergy.customers WHERE customers.email = auth.email() AND customers.cepro_user = true))
+);
+
+
+CREATE POLICY "Users can see term escos mappings for escos they have accounts " 
+ON myenergy.contract_terms_esco FOR SELECT TO authenticated 
+USING (
+    myenergy.is_backend_user() 
+    OR (esco IN (SELECT properties.esco FROM myenergy.properties WHERE properties.id IN (SELECT accounts.property FROM myenergy.accounts WHERE accounts.id IN (SELECT ca.account FROM myenergy.customer_accounts ca WHERE ca.customer = myenergy.customer()))))
+);
+
+GRANT EXECUTE ON FUNCTION myenergy.is_backend_user() TO authenticated;
+GRANT EXECUTE ON FUNCTION myenergy.is_backend_user() TO public_backend;
 
 
 
@@ -4422,23 +4511,6 @@ CREATE POLICY "Enable read access for all users" ON myenergy.escos FOR SELECT US
 
 
 CREATE POLICY "Enable read access for all users" ON myenergy.regions FOR SELECT USING (true);
-
-
-
-CREATE POLICY "Users can see term escos mappings for escos they have accounts " ON myenergy.contract_terms_esco FOR SELECT TO authenticated USING ((esco IN ( SELECT properties.esco
-   FROM myenergy.properties
-  WHERE (properties.id IN ( SELECT accounts.property
-           FROM myenergy.accounts
-          WHERE (accounts.id IN ( SELECT ca.account
-                   FROM myenergy.customer_accounts ca
-                  WHERE (ca.customer = myenergy.customer()))))))));
-
-
-
-CREATE POLICY "Users can see terms for escos they have accounts in or all if c" ON myenergy.contract_terms FOR SELECT TO authenticated USING (((id IN ( SELECT contract_terms_esco.terms
-   FROM myenergy.contract_terms_esco)) OR (EXISTS ( SELECT 1
-   FROM myenergy.customers
-  WHERE ((customers.email = auth.email()) AND (customers.cepro_user = true))))));
 
 
 
@@ -4569,6 +4641,17 @@ GRANT USAGE ON SCHEMA public TO service_role;
 GRANT USAGE ON SCHEMA public TO public_backend;
 GRANT USAGE ON SCHEMA public TO supabase_auth_admin;
 GRANT USAGE ON SCHEMA public TO grafanareader;
+
+GRANT USAGE ON SCHEMA myenergy TO postgres;
+GRANT USAGE ON SCHEMA myenergy TO supabase_admin;
+GRANT USAGE ON SCHEMA myenergy TO tableau;
+
+GRANT USAGE ON SCHEMA myenergy TO anon;
+GRANT USAGE ON SCHEMA myenergy TO authenticated;
+GRANT USAGE ON SCHEMA myenergy TO service_role;
+GRANT USAGE ON SCHEMA myenergy TO public_backend;
+GRANT USAGE ON SCHEMA myenergy TO supabase_auth_admin;
+GRANT USAGE ON SCHEMA myenergy TO grafanareader;
 
 
 
