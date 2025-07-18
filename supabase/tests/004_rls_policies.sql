@@ -1,10 +1,12 @@
 BEGIN;
 
+CREATE EXTENSION IF NOT EXISTS pgtap SCHEMA extensions;
+
 SET search_path TO myenergy,extensions,public;
 
-SELECT plan(18);
+SELECT extensions.plan(18);
 
-SELECT is((SELECT current_role), 'postgres', 'intial role');
+SELECT is((SELECT current_role), 'tsdbadmin', 'intial role');
 
 --
 -- Check RLS policies show authorized records to customers

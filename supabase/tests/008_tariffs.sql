@@ -1,11 +1,13 @@
 BEGIN;
 
+CREATE EXTENSION IF NOT EXISTS pgtap SCHEMA extensions;
+
 SET search_path TO flows,extensions,myenergy,public;
 
-SELECT plan(16);
+SELECT extensions.plan(16);
 
 
-SELECT is((SELECT current_role), 'postgres', 'intial role');
+SELECT is((SELECT current_role), 'tsdbadmin', 'intial role');
 
 SELECT is((SELECT count(*)::int FROM benchmark_tariffs), 12, 'benchmark_tariffs count');
 SELECT is((SELECT count(*)::int FROM microgrid_tariffs), 24, 'microgrid_tariffs count');

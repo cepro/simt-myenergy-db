@@ -24,13 +24,14 @@ else
 fi
 
 docker run -it --rm \
-        --network supabase-timescale_default \
+        --network host \
         -v $HOST_DIR:/db \
         -v $PG_PASS_FILE:/root/.pgpass:ro \
     postgres:17-alpine \
     psql \
         -v ON_ERROR_STOP=1 \
-        --host db \
-        --port 5432 \
-        --username=postgres \
+        --host 0.0.0.0 \
+        --port 15432 \
+        --username=tsdbadmin \
+        --dbname=tsdb \
         --file=/db/$SCRIPT_FILE

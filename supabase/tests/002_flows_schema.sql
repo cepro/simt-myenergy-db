@@ -1,11 +1,13 @@
 BEGIN;
 
+CREATE EXTENSION IF NOT EXISTS pgtap SCHEMA extensions;
+
 SET search_path TO myenergy, flows, public, extensions;
 
-SELECT plan(16);
+SELECT extensions.plan(16);
 
 
-SELECT is((SELECT current_role), 'postgres', 'intial role');
+SELECT is((SELECT current_role), 'tsdbadmin', 'intial role');
 
 --
 -- Check initial state of the data as the following tests depend on it
@@ -90,13 +92,13 @@ SELECT throws_ok(
 SELECT set_config('request.jwt.claim.email', null, true);
 
 -- flows role
-set role postgres;
-GRANT flows to postgres;
+set role tsdbadmin;
+GRANT flows to tsdbadmin;
 set role flows;
 
 select * from flows.meter_shadows;
 
-set role postgres;
+set role tsdbadmin;
 
 SELECT * FROM finish();
 ROLLBACK;

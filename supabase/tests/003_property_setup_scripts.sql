@@ -1,10 +1,12 @@
 BEGIN;
 
+CREATE EXTENSION IF NOT EXISTS pgtap SCHEMA extensions;
+
 SET search_path TO extensions, myenergy, public;
 
-SELECT plan(5);
+SELECT extensions.plan(5);
 
-SELECT is((SELECT current_role), 'postgres', 'intial role');
+SELECT is((SELECT current_role), 'tsdbadmin', 'intial role');
 
 --
 -- Check properties setup using check_property_setup() function

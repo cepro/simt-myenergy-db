@@ -1,9 +1,11 @@
 -- Fixed test in 006_customer_status.sql
 BEGIN;
 
+CREATE EXTENSION IF NOT EXISTS pgtap SCHEMA extensions;
+
 SET search_path TO myenergy,extensions,public;
 
-SELECT plan(35); -- Updated plan count to include new tests
+SELECT extensions.plan(35); -- Updated plan count to include new tests
 
 
 SELECT is((SELECT count(*)::int FROM customers where status = 'pending'), 42, 'pending customers returned');

@@ -1,8 +1,10 @@
 BEGIN;
 
+CREATE EXTENSION IF NOT EXISTS pgtap SCHEMA extensions;
+
 SET search_path TO extensions,myenergy,public;
 
-SELECT plan(12);
+SELECT extensions.plan(12);
 
 
 -- Test days_in_month_all function

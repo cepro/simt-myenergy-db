@@ -1,8 +1,10 @@
 BEGIN;
 
+CREATE EXTENSION IF NOT EXISTS pgtap SCHEMA extensions;
+
 SET search_path TO myenergy,extensions,flows,public;
 
-SELECT plan(13);
+SELECT extensions.plan(13);
 
 -- 
 -- tableau
@@ -11,7 +13,7 @@ SELECT plan(13);
 -- grant extensions for pgtap functions is, throws_ok, etc.
 GRANT USAGE ON SCHEMA extensions TO tableau;
 
-GRANT tableau TO postgres;
+GRANT tableau TO tsdbadmin;
 SET ROLE tableau;
 
 SELECT ok((SELECT TRUE FROM flows.meter_registry WHERE id is not null limit 1), 'select on meter_registry');
@@ -34,7 +36,7 @@ SELECT throws_ok(
 --  
 
 -- grant extensions for pgtap functions is, throws_ok, etc.
-SET ROLE postgres;
+SET ROLE tsdbadmin;
 GRANT USAGE ON SCHEMA extensions TO public_backend;
 
 SET ROLE authenticated;

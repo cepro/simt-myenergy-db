@@ -6,6 +6,7 @@ SET search_path TO myenergy, public, extensions;
 
 SELECT extensions.plan(9);
 
+set role supabase_admin;
 set role anon;
 
 -- anon can read

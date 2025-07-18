@@ -1,11 +1,13 @@
 BEGIN;
 
+CREATE EXTENSION IF NOT EXISTS pgtap SCHEMA extensions;
+
 SET search_path TO flows,extensions,myenergy,public;
 
-SELECT plan(4);
+SELECT extensions.plan(4);
 
 
-SELECT is((SELECT current_role), 'postgres', 'intial role');
+SELECT is((SELECT current_role), 'tsdbadmin', 'intial role');
 
 SELECT is((SELECT count(*)::int FROM contract_terms_esco), 7, 'contract_terms_esco count');
 

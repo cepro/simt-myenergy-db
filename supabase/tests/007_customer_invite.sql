@@ -1,8 +1,10 @@
 BEGIN;
 
+CREATE EXTENSION IF NOT EXISTS pgtap SCHEMA extensions;
+
 SET search_path TO myenergy,extensions,public;
 
-SELECT plan(2);
+SELECT extensions.plan(2);
 
 
 SELECT is((SELECT count(*)::int FROM customer_invites), 2, 'customer_invites total');

@@ -4642,7 +4642,7 @@ GRANT USAGE ON SCHEMA public TO public_backend;
 GRANT USAGE ON SCHEMA public TO supabase_auth_admin;
 GRANT USAGE ON SCHEMA public TO grafanareader;
 
-GRANT USAGE ON SCHEMA myenergy TO postgres;
+GRANT USAGE ON SCHEMA myenergy TO :"adminrole";
 GRANT USAGE ON SCHEMA myenergy TO supabase_admin;
 GRANT USAGE ON SCHEMA myenergy TO tableau;
 
