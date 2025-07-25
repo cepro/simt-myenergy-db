@@ -14,6 +14,8 @@ GRANT flows to authenticator;
 ALTER ROLE grafanareader SET search_path = public,flows,myenergy;
 
 CREATE ROLE public_backend; -- WITH bypassrls;
+GRANT public_backend TO authenticator;
+
 
 -- GRANT USAGE ON SCHEMA public TO public_backend;
 
@@ -4631,9 +4633,13 @@ ALTER TABLE myenergy.transactions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE myenergy.wallets ENABLE ROW LEVEL SECURITY;
 
 
-GRANT USAGE ON SCHEMA flows TO public_backend;
+GRANT USAGE ON SCHEMA flows, flux, myenergy TO public_backend;
+GRANT USAGE ON SCHEMA flows, flux, myenergy TO supabase_admin;
+GRANT USAGE ON SCHEMA flows, flux, myenergy TO :"adminrole";
 
-
+GRANT SELECT ON ALL TABLES IN SCHEMA flows, flux, myenergy TO public_backend;
+GRANT SELECT ON ALL TABLES IN SCHEMA flows, flux, myenergy TO supabase_admin;
+GRANT SELECT ON ALL TABLES IN SCHEMA flows, flux, myenergy TO :"adminrole";
 
 GRANT USAGE ON SCHEMA public TO anon;
 GRANT USAGE ON SCHEMA public TO authenticated;
@@ -4653,6 +4659,8 @@ GRANT USAGE ON SCHEMA myenergy TO public_backend;
 GRANT USAGE ON SCHEMA myenergy TO supabase_auth_admin;
 GRANT USAGE ON SCHEMA myenergy TO grafanareader;
 
+-- needed this to see auth.users rows in supabase studio:
+GRANT supabase_auth_admin TO supabase_admin;
 
 
 GRANT ALL ON FUNCTION myenergy.accounts() TO anon;

@@ -1,10 +1,9 @@
 #!/bin/sh
 
-ANON_KEY_LOCAL_DEV=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0
-# ANON_KEY_APPTEST=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJremdyeHNzdXRjd3JhdWFhemp6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2NzY1MDgwNTgsImV4cCI6MTk5MjA4NDA1OH0.8DG3Bt2sfxVuB8j4diCCTtyiUJUBcYlbNTc5a7BUrTw
+ANON_KEY_LOCAL_DEV=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJhbm9uIiwKICAgICJpc3MiOiAic3VwYWJhc2UtZGVtbyIsCiAgICAiaWF0IjogMTY0MTc2OTIwMCwKICAgICJleHAiOiAxNzk5NTM1NjAwCn0.dc_X5iR_VP_qT0zsiyj_I_OZ2T9FtRU2BBNWN8Bu4GE
 
-HOST=http://localhost:54321
-# HOST=https://rkzgrxssutcwrauaazjz.supabase.co
+# see supabase-host/docker/timescale/docker-compose.yml
+HOST=http://localhost:8000
 
 curl --silent \
     -X POST "$HOST/auth/v1/token?grant_type=password" \
