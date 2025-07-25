@@ -3,3 +3,4 @@
 %uri=https://github.com/cepro/myenergy-db/sqitch/
 
 0000_initial 2025-06-09T00:00:00Z Chris Hatch <chris@cepro.energy> 
+0001_upstream_updates 2025-07-25T00:00:00Z Chris Hatch <chris@cepro.energy> # Updates from simt-supabase repo recent
