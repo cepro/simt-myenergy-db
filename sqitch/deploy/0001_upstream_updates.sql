@@ -239,7 +239,7 @@ CREATE CONSTRAINT TRIGGER contracts_signed_date_update_trigger
     AFTER UPDATE OF signed_date ON myenergy.contracts
     DEFERRABLE INITIALLY DEFERRED
     FOR EACH ROW 
-    EXECUTE FUNCTION contracts_signed_update_customer_status();
+    EXECUTE FUNCTION myenergy.contracts_signed_update_customer_status();
 
 -- tweak related to change in client.py:
 --  - threshold_mask and threshold_values are no longer arrays so just removed the surrounding '[' and ']'
@@ -274,11 +274,11 @@ AS SELECT t.serial,
     (s.tariffs_active ->> 'unit_rate_element_a'::text)::numeric AS actual_unit_rate_a,
     (s.tariffs_active ->> 'unit_rate_element_b'::text)::numeric AS actual_unit_rate_b,
     (s.tariffs_active ->> 'standing_charge'::text)::numeric AS actual_standing_charge
-   FROM meter_tariffs t,
+   FROM myenergy.meter_tariffs t,
     flows.meter_shadows s,
     flows.meter_registry r
   WHERE t.serial = r.serial AND s.id = r.id AND t.period_start = (( SELECT max(td.period_start) AS max
-           FROM meter_tariffs td
+           FROM myenergy.meter_tariffs td
           WHERE td.period_start < now() AND td.serial = t.serial)) AND (((s.tariffs_active ->> 'unit_rate_element_a'::text)::numeric) <> t.unit_rate OR ((s.tariffs_active ->> 'unit_rate_element_b'::text)::numeric) <> t.unit_rate OR ((s.tariffs_active ->> 'standing_charge'::text)::numeric) <> t.standing_charge);
 
 COMMIT;
