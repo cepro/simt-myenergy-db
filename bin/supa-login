@@ -1,13 +1,14 @@
 #!/bin/sh
 
-ANON_KEY_LOCAL_DEV=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJhbm9uIiwKICAgICJpc3MiOiAic3VwYWJhc2UtZGVtbyIsCiAgICAiaWF0IjogMTY0MTc2OTIwMCwKICAgICJleHAiOiAxNzk5NTM1NjAwCn0.dc_X5iR_VP_qT0zsiyj_I_OZ2T9FtRU2BBNWN8Bu4GE
+# LOCAL_DEV
+ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJhbm9uIiwKICAgICJpc3MiOiAic3VwYWJhc2UtZGVtbyIsCiAgICAiaWF0IjogMTY0MTc2OTIwMCwKICAgICJleHAiOiAxNzk5NTM1NjAwCn0.dc_X5iR_VP_qT0zsiyj_I_OZ2T9FtRU2BBNWN8Bu4GE
 
 # see supabase-host/docker/timescale/docker-compose.yml
 HOST=http://localhost:8000
 
 curl --silent \
     -X POST "$HOST/auth/v1/token?grant_type=password" \
-    -H "apikey: $ANON_KEY_LOCAL_DEV" \
+    -H "apikey: $ANON_KEY" \
     -H "Content-Type: application/json" \
     -d '{
       "email": "own11_13@wl.ce",
