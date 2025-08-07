@@ -4633,13 +4633,13 @@ ALTER TABLE myenergy.transactions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE myenergy.wallets ENABLE ROW LEVEL SECURITY;
 
 
-GRANT USAGE ON SCHEMA flows, flux, myenergy TO public_backend;
-GRANT USAGE ON SCHEMA flows, flux, myenergy TO supabase_admin;
-GRANT USAGE ON SCHEMA flows, flux, myenergy TO :"adminrole";
+GRANT USAGE ON SCHEMA flows, myenergy TO public_backend;
+GRANT USAGE ON SCHEMA flows, myenergy TO supabase_admin;
+GRANT USAGE ON SCHEMA flows, myenergy TO :"adminrole";
 
-GRANT SELECT ON ALL TABLES IN SCHEMA flows, flux, myenergy TO public_backend;
-GRANT SELECT ON ALL TABLES IN SCHEMA flows, flux, myenergy TO supabase_admin;
-GRANT SELECT ON ALL TABLES IN SCHEMA flows, flux, myenergy TO :"adminrole";
+GRANT SELECT ON ALL TABLES IN SCHEMA flows, myenergy TO public_backend;
+GRANT SELECT ON ALL TABLES IN SCHEMA flows, myenergy TO supabase_admin;
+GRANT SELECT ON ALL TABLES IN SCHEMA flows, myenergy TO :"adminrole";
 
 GRANT USAGE ON SCHEMA public TO anon;
 GRANT USAGE ON SCHEMA public TO authenticated;
