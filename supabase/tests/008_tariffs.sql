@@ -1,9 +1,13 @@
 BEGIN;
-SELECT plan(16);
 
-SET search_path TO flows,extensions,public;
+CREATE EXTENSION IF NOT EXISTS pgtap SCHEMA extensions;
 
-SELECT is((SELECT current_role), 'postgres', 'intial role');
+SET search_path TO flows,extensions,myenergy,public;
+
+SELECT extensions.plan(16);
+
+
+SELECT is((SELECT current_role), 'tsdbadmin', 'intial role');
 
 SELECT is((SELECT count(*)::int FROM benchmark_tariffs), 12, 'benchmark_tariffs count');
 SELECT is((SELECT count(*)::int FROM microgrid_tariffs), 24, 'microgrid_tariffs count');
@@ -12,7 +16,7 @@ SELECT is((SELECT count(*)::int FROM monthly_costs), 9, 'monthly_costs count');
 
 PREPARE get_microgrid_tariff AS
     SELECT computed_standing_charge, computed_unit_rate, emergency_credit, ecredit_button_threshold, debt_recovery_rate
-    FROM   public.microgrid_tariffs
+    FROM   myenergy.microgrid_tariffs
     WHERE  esco = $1
     AND    period_start <= $2
     ORDER BY period_start DESC
@@ -51,7 +55,7 @@ SELECT results_eq(
 
 PREPARE get_customer_tariff AS
     SELECT computed_standing_charge, computed_unit_rate
-    FROM   public.customer_tariffs
+    FROM   myenergy.customer_tariffs
     WHERE  customer = $1
     AND    period_start = $2;
 
@@ -85,7 +89,7 @@ SELECT results_eq(
 
 PREPARE get_monthly_cost AS
     SELECT heat, power, total, microgrid_total, benchmark_total
-    FROM   public.monthly_costs
+    FROM   myenergy.monthly_costs
     WHERE  customer_id = $1
     AND    month = $2;
 

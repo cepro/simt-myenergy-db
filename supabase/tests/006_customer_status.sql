@@ -1,9 +1,11 @@
 -- Fixed test in 006_customer_status.sql
 BEGIN;
-SELECT plan(35); -- Updated plan count to include new tests
 
-SET search_path TO extensions,public;
+CREATE EXTENSION IF NOT EXISTS pgtap SCHEMA extensions;
 
+SET search_path TO myenergy,extensions,public;
+
+SELECT extensions.plan(35); -- Updated plan count to include new tests
 
 
 SELECT is((SELECT count(*)::int FROM customers where status = 'pending'), 42, 'pending customers returned');
@@ -116,7 +118,7 @@ WHERE email = 'occ11@wl.ce';
 EXECUTE meter_prepay_update(true, 'occ11@wl.ce');
 
 -- explicit recompute customer_status
-UPDATE customers SET status = public.customer_status(customers) WHERE email = 'occ11@wl.ce';
+UPDATE customers SET status = myenergy.customer_status(customers) WHERE email = 'occ11@wl.ce';
 
 SELECT results_eq('cust_status(''occ11@wl.ce'')', $$ VALUES('live') $$, 'customer is live after meter prepay on (ownocc11)');
 
@@ -149,12 +151,12 @@ SELECT results_eq('cust_status(''occ11@wl.ce'')', $$ VALUES('live') $$, 'custome
 EXECUTE meter_prepay_update(false, 'occ11@wl.ce');
 
 -- explicit recompute customer_status
-UPDATE customers SET status = public.customer_status(customers) WHERE email = 'occ11@wl.ce';
+UPDATE customers SET status = myenergy.customer_status(customers) WHERE email = 'occ11@wl.ce';
 
 SELECT results_eq('cust_status(''occ11@wl.ce'')', $$ VALUES('prelive') $$, 'customer is prelive when prepay_enabled is false');
 
 EXECUTE meter_prepay_update(true, 'occ11@wl.ce');
-UPDATE customers SET status = public.customer_status(customers) WHERE email = 'occ11@wl.ce';
+UPDATE customers SET status = myenergy.customer_status(customers) WHERE email = 'occ11@wl.ce';
 SELECT results_eq('cust_status(''occ11@wl.ce'')', $$ VALUES('live') $$, 'customer is live when prepay_enabled is true');
 
 
@@ -172,7 +174,7 @@ UPDATE customers SET
 WHERE email = 'ownocc12@wl.ce';
 
 EXECUTE meter_prepay_update(true, 'ownocc12@wl.ce');
-UPDATE customers SET status = public.customer_status(customers) WHERE email = 'ownocc12@wl.ce';
+UPDATE customers SET status = myenergy.customer_status(customers) WHERE email = 'ownocc12@wl.ce';
 SELECT results_eq('cust_status(''ownocc12@wl.ce'')', $$ VALUES('live') $$, 'customer is live after meter prepay on (ownocc12)');
 
 -- Now toggle different flags and check status updates as expected:
@@ -204,12 +206,12 @@ SELECT results_eq('cust_status(''ownocc12@wl.ce'')', $$ VALUES('live') $$, 'cust
 EXECUTE meter_prepay_update(false, 'ownocc12@wl.ce');
 
 -- explicit recompute customer_status
-UPDATE customers SET status = public.customer_status(customers) WHERE email = 'ownocc12@wl.ce';
+UPDATE customers SET status = myenergy.customer_status(customers) WHERE email = 'ownocc12@wl.ce';
 
 SELECT results_eq('cust_status(''ownocc12@wl.ce'')', $$ VALUES('prelive') $$, 'customer is prelive when prepay_enabled is false');
 
 EXECUTE meter_prepay_update(true, 'ownocc12@wl.ce');
-UPDATE customers SET status = public.customer_status(customers) WHERE email = 'ownocc12@wl.ce';
+UPDATE customers SET status = myenergy.customer_status(customers) WHERE email = 'ownocc12@wl.ce';
 SELECT results_eq('cust_status(''ownocc12@wl.ce'')', $$ VALUES('live') $$, 'customer is live when prepay_enabled is true');
 
 
