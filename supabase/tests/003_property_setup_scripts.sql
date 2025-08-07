@@ -1,9 +1,12 @@
 BEGIN;
-SELECT plan(5);
 
-SET search_path TO flows,extensions,public;
+CREATE EXTENSION IF NOT EXISTS pgtap SCHEMA extensions;
 
-SELECT is((SELECT current_role), 'postgres', 'intial role');
+SET search_path TO extensions, myenergy, public;
+
+SELECT extensions.plan(5);
+
+SELECT is((SELECT current_role), 'tsdbadmin', 'intial role');
 
 --
 -- Check properties setup using check_property_setup() function
@@ -27,11 +30,11 @@ RETURNS TEXT AS $$
     );
 $$ LANGUAGE sql;
 
-SELECT property_has_supply_meter((select id from properties where description = '15 Water Lilies')::uuid);
-SELECT property_has_solar_meter((select id from properties where description = '15 Water Lilies')::uuid);
+SELECT property_has_supply_meter((select id from myenergy.properties where description = '15 Water Lilies')::uuid);
+SELECT property_has_solar_meter((select id from myenergy.properties where description = '15 Water Lilies')::uuid);
 
-SELECT property_has_supply_meter((select id from properties where description = '17 Hazelmead')::uuid);
-SELECT property_has_solar_meter((select id from properties where description = '17 Hazelmead')::uuid);
+SELECT property_has_supply_meter((select id from myenergy.properties where description = '17 Hazelmead')::uuid);
+SELECT property_has_solar_meter((select id from myenergy.properties where description = '17 Hazelmead')::uuid);
 
 
 

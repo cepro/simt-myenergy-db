@@ -23,7 +23,7 @@ else
     PG_PASS_FILE=~/.pgpass
 fi
 
-docker run --rm \
+docker run -it --rm \
         --network host \
         -v $HOST_DIR:/db \
         -v $PG_PASS_FILE:/root/.pgpass:ro \
@@ -31,7 +31,7 @@ docker run --rm \
     psql \
         -v ON_ERROR_STOP=1 \
         --host 0.0.0.0 \
-        --port 5432 \
-        --dbname postgres \
-        --username=supabase_admin.your-tenant-id \
+        --port 15432 \
+        --username=tsdbadmin \
+        --dbname=tsdb \
         --file=/db/$SCRIPT_FILE
