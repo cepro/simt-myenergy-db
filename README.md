@@ -23,6 +23,11 @@ A set of migration scripts is maintained for supabase.
 [Sqitch](https://sqitch.org) is used to manage migrations include applying
 deployments and rollbacks.
 
+```sh
+> cp sqitch_secrets.conf.example sqitch_secrets.conf
+> SQITCH_USER_CONFIG=sqitch_secrets.conf sqitch deploy --target timescale-<org>
+```
+
 ## NOTIFY/LISTEN
 
 Example send an encrypted message:
