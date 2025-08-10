@@ -15,9 +15,13 @@ REVOKE ALL ON DATABASE tsdb FROM postgraphile;
 -- Now drop the user
 DROP USER postgraphile;
 
-DROP TYPE jwt_token;
-DROP TYPE jwt_claims;
-DROP TYPE app_metadata;
-DROP TYPE jwt_header;
+DROP TYPE myenergy.jwt_token;
+DROP TYPE myenergy.jwt_claims;
+DROP TYPE myenergy.app_metadata;
+DROP TYPE myenergy.jwt_header;
+
+COMMENT ON FUNCTION "myenergy"."customer"() IS null;
+COMMENT ON FUNCTION "myenergy"."delete_customer"(text) IS null;
+COMMENT ON FUNCTION "myenergy"."delete_property"(uuid) IS null;
 
 COMMIT;
