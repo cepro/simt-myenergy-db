@@ -798,18 +798,18 @@ $$;
 ALTER FUNCTION myenergy.add_property(plot_number text, esco_id uuid, solar_meter_serial text, supply_meter_serial text, description text, is_owner_occupied boolean, preonboard_only boolean) OWNER TO :"adminrole";
 
 
--- CREATE FUNCTION myenergy.auth_user_id_for_customer(email text) RETURNS jsonb
---     LANGUAGE sql STABLE SECURITY DEFINER
---     SET search_path TO ''
---     AS $$
---     SELECT jsonb_build_object(
---         'id', (SELECT to_jsonb(u.id) FROM auth.users u WHERE u.email = auth_user_id_for_customer."email"),
---         'phone', (SELECT to_jsonb(u.phone) FROM auth.users u WHERE u.email = auth_user_id_for_customer."email")
---     );
--- $$;
+CREATE FUNCTION myenergy.auth_user_id_for_customer(email text) RETURNS jsonb
+    LANGUAGE sql STABLE SECURITY DEFINER
+    SET search_path TO ''
+    AS $$
+    SELECT jsonb_build_object(
+        'id', (SELECT to_jsonb(u.id) FROM auth.users u WHERE u.email = auth_user_id_for_customer."email"),
+        'phone', (SELECT to_jsonb(u.phone) FROM auth.users u WHERE u.email = auth_user_id_for_customer."email")
+    );
+$$;
 
 
--- ALTER FUNCTION myenergy.auth_user_id_for_customer(email text) OWNER TO :"adminrole";
+ALTER FUNCTION myenergy.auth_user_id_for_customer(email text) OWNER TO :"adminrole";
 
 
 CREATE FUNCTION myenergy.benchmark_month_standing_charge(region_in text, month_in date) RETURNS numeric

@@ -23,6 +23,7 @@ CREATE TYPE myenergy.jwt_claims AS (
   iat integer,
   iss text,
   role text,
+  email text,
   sub uuid
 );
 
@@ -60,6 +61,69 @@ COMMENT ON TYPE myenergy.app_metadata IS 'Application-specific metadata for JWT 
 COMMENT ON FUNCTION "myenergy"."customer"() IS '@name customerFn';
 COMMENT ON FUNCTION "myenergy"."delete_customer"(text) IS '@name deleteCustomerFn';
 COMMENT ON FUNCTION "myenergy"."delete_property"(uuid) IS '@name deletePropertyFn';
+
+
+--
+-- Update functions to use auth.session_* functions which support both 
+-- Postgraphile GraphQL AND Supabase REST incoming requests. 
+--
+
+CREATE OR REPLACE FUNCTION myenergy.customer()
+ RETURNS uuid
+ LANGUAGE sql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+    select id
+    FROM myenergy.customers
+    where email = auth.session_email();
+$function$
+;
+
+CREATE OR REPLACE FUNCTION myenergy.is_backend_user()
+ RETURNS boolean
+ LANGUAGE sql
+ STABLE
+AS $function$
+    SELECT current_user = 'grafanareader' or (
+        SELECT current_user = 'public_backend'
+    ) or (
+	    SELECT current_user = 'authenticated' and (select auth.session_role() = 'public_backend')
+    );
+$function$
+;
+
+DROP POLICY "Customers can read their own and property owners records" ON myenergy.customers;
+
+CREATE POLICY "Customers can read their own and property owners records" 
+ON myenergy.customers FOR SELECT TO authenticated, public_backend, grafanareader 
+USING (
+    myenergy.is_backend_user() 
+    OR (email = auth.session_email()) 
+    OR (id IN (SELECT myenergy.get_property_owners_for_auth_user(auth.session_email())))
+);
+
+DROP POLICY "Customers can view their own properties or all if cepro user" ON myenergy.properties;
+
+CREATE POLICY "Customers can view their own properties or all if cepro user" 
+ON myenergy.properties FOR SELECT TO authenticated, public_backend, grafanareader 
+USING (
+    myenergy.is_backend_user() 
+    OR (id = ANY (myenergy.properties_by_account())) 
+    OR (id = ANY (myenergy.properties_owned())) 
+    OR (EXISTS (SELECT 1 FROM myenergy.customers WHERE customers.email = auth.session_email() AND customers.cepro_user = true))
+);
+
+DROP POLICY "Users can see terms for escos they have accounts in or all if c" ON myenergy.contract_terms;
+
+CREATE POLICY "Users can see terms for escos they have accounts in or all if c" 
+ON myenergy.contract_terms FOR SELECT TO authenticated, public_backend, grafanareader 
+USING (
+    myenergy.is_backend_user() 
+    OR (id IN (SELECT contract_terms_esco.terms FROM myenergy.contract_terms_esco)) 
+    OR (EXISTS (SELECT 1 FROM myenergy.customers WHERE customers.email = auth.session_email() AND customers.cepro_user = true))
+);
+
 
 
 COMMIT;
