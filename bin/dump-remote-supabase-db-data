@@ -10,13 +10,14 @@ docker run \
         --network host \
         -v $HOST_DIR:/db postgres:17-alpine \
     pg_dump \
-        --host db.$SUPA_PROJECT_ID.supabase.co \
-        --port 5432 \
+        --verbose \
+        --host aws-0-eu-west-2.pooler.supabase.com \
+        --port 6543 \
         --dbname=postgres \
-        --username=postgres \
+        --username=postgres.pqlwxerasppsyleweruk \
         --file=$DUMP_FILE \
         --schema=public \
-        --data-only \
-        --inserts --column-inserts
+        --schema=auth \
+        --data-only
 
 echo "Dumped to $HOST_DIR/`basename $DUMP_FILE`"

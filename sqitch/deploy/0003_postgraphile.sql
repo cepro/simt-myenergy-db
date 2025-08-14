@@ -38,6 +38,7 @@ CREATE USER postgraphile WITH PASSWORD :'postgraphile_password';
 
 -- Grant the public_backend role to postgraphile user
 GRANT public_backend TO postgraphile;
+GRANT authenticated TO postgraphile;
 
 -- Grant necessary permissions for postgraphile to function
 GRANT USAGE ON SCHEMA myenergy TO postgraphile;
