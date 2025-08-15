@@ -6,3 +6,4 @@
 0001_upstream_updates 2025-07-25T00:00:00Z Chris Hatch <chris@cepro.energy> # Updates from simt-supabase repo recent
 0002_upstream_updates_2 2025-08-10T07:25:41Z Chris Hatch <chris@cepro.energy> # sync with simt-supabase
 0003_postgraphile 2025-08-10T07:32:12Z Chris Hatch <chris@cepro.energy> # integrate postgraphile with myenergy
+0004_postgraphile2 2025-08-15T00:35:32Z Chris Hatch <chris@cepro.energy> # more updates for postgraphile integration

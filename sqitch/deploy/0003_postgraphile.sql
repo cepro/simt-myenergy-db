@@ -94,6 +94,11 @@ AS $function$
 $function$
 ;
 
+--
+-- Update policies that use is_backend_user - add roles public_backend and grafanareader
+-- Update policies that use auth.* functions - change to auth.session_*
+--
+
 DROP POLICY "Customers can read their own and property owners records" ON myenergy.customers;
 
 CREATE POLICY "Customers can read their own and property owners records" 
@@ -118,7 +123,7 @@ USING (
 DROP POLICY "Users can see terms for escos they have accounts in or all if c" ON myenergy.contract_terms;
 
 CREATE POLICY "Users can see terms for escos they have accounts in or all if c" 
-ON myenergy.contract_terms FOR SELECT TO authenticated, public_backend, grafanareader 
+ON myenergy.contract_terms FOR SELECT TO authenticated, public_backend, grafanareader
 USING (
     myenergy.is_backend_user() 
     OR (id IN (SELECT contract_terms_esco.terms FROM myenergy.contract_terms_esco)) 
