@@ -68,7 +68,14 @@ USING (
 
 DROP POLICY "customer_invites policy" ON myenergy.customer_invites;
 
-CREATE POLICY "customer_invites policy"
+CREATE POLICY "Customers and backend can update customer_invites"
+ON myenergy.customer_invites FOR UPDATE TO authenticated, public_backend 
+USING (
+    myenergy.is_backend_user() 
+    OR (customer = myenergy.customer())
+);
+
+CREATE POLICY "Customers and backend can read customer_invites"
 ON myenergy.customer_invites FOR SELECT TO authenticated, public_backend, grafanareader 
 USING (
     myenergy.is_backend_user() 
@@ -289,8 +296,53 @@ USING (
 );
 
 
+-- 
+-- Privs updates for public_backend to make updates
+--
 
 GRANT USAGE ON SCHEMA auth TO public_backend;
 
+GRANT SELECT, UPDATE ON TABLE myenergy.wallets TO public_backend;
+
+
+
+--
+-- Only change is escos -> myenergy.esco as it couldn't be found.
+--
+
+CREATE OR REPLACE FUNCTION myenergy.customer_invites_generate_invite_url()
+ RETURNS trigger
+ LANGUAGE plpgsql
+AS $function$
+    DECLARE
+        app_url text;
+    BEGIN
+        SELECT e.app_url
+        FROM myenergy.escos e
+        WHERE e.id IN (
+            SELECT esco FROM myenergy.properties WHERE owner = NEW.customer
+        ) INTO app_url;
+
+        IF app_url is null THEN
+            SELECT e.app_url
+            FROM myenergy.escos e
+            WHERE e.id IN (
+                SELECT esco FROM myenergy.properties WHERE id IN (
+                    SELECT property FROM myenergy.accounts WHERE id IN (
+                        SELECT account FROM myenergy.customer_accounts WHERE customer = NEW.customer
+                    )
+                )
+            ) INTO app_url;
+        END IF;
+      
+        IF app_url is not null THEN
+            NEW.invite_url = app_url || '/invite/' || NEW.invite_token;
+            RETURN NEW;
+        ELSE
+            RAISE EXCEPTION 'No esco is associated with this customer yet so an invite cannot be created';
+        END IF;
+    END;
+    $function$
+;
 
 COMMIT;
