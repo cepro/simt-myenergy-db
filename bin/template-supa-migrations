@@ -1,4 +1,0 @@
-#!/bin/sh
-ENV_FILE=$1
-BIN_DIR=`dirname $0`
-$BIN_DIR/template-migrations . $ENV_FILE

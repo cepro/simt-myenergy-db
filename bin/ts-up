@@ -1,0 +1,41 @@
+#!/bin/sh
+
+. `dirname $0`/library.sh
+
+CONTAINER_NAME=myenergy-timescaledb
+VOLUME_NAME=${CONTAINER_NAME}-volume
+
+timescaleStart() {
+    docker start $CONTAINER_NAME > /dev/null 2>&1 
+    DOCKER_EXIT=$?
+    if [ "$DOCKER_EXIT" = "0" ]; then
+        echo "Timescale container started"
+    fi
+    return $DOCKER_EXIT
+}
+
+timescaleRunNew() {
+    docker network create $NETWORK_NAME > /dev/null 2>&1
+    docker volume create $VOLUME_NAME
+
+    PLATFORM=$(uname -m)
+    if [ $PLATFORM = 'arm64' ]; then
+        PLATFORM_OPT="--platform linux/amd64"
+    fi
+
+    docker run -d --name $CONTAINER_NAME \
+        --network $NETWORK_NAME \
+        --mount source=$VOLUME_NAME,destination=/home/postgres/pgdata \
+        -p 25432:5432 \
+        -e POSTGRES_PASSWORD=postgres \
+        $PLATFORM_OPT \
+        timescale/timescaledb-ha:pg17
+    
+    DOCKER_EXIT=$?
+    if [ "$DOCKER_EXIT" = "0" ]; then
+        echo "Timescale container created and started"
+    fi
+    return $DOCKER_EXIT
+}
+
+timescaleStart || timescaleRunNew

@@ -1,4 +1,0 @@
-#!/bin/sh
-#
-# start local supabase stack excluding unused services
-supabase start --exclude imgproxy,mailpit,storage-api,vector,edge-runtime,logflare
