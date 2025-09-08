@@ -5,16 +5,16 @@
 CONTAINER_NAME=myenergy-timescaledb
 VOLUME_NAME=${CONTAINER_NAME}-volume
 
-timescaleStart() {
+dbUp() {
     docker start $CONTAINER_NAME > /dev/null 2>&1 
     DOCKER_EXIT=$?
     if [ "$DOCKER_EXIT" = "0" ]; then
-        echo "Timescale container started"
+        echo "MyEnergy DB container started"
     fi
     return $DOCKER_EXIT
 }
 
-timescaleRunNew() {
+dbRunNew() {
     docker network create $NETWORK_NAME > /dev/null 2>&1
     docker volume create $VOLUME_NAME
 
@@ -33,9 +33,9 @@ timescaleRunNew() {
     
     DOCKER_EXIT=$?
     if [ "$DOCKER_EXIT" = "0" ]; then
-        echo "Timescale container created and started"
+        echo "MyEnergy DB container created and started"
     fi
     return $DOCKER_EXIT
 }
 
-timescaleStart || timescaleRunNew
+dbUp || dbRunNew

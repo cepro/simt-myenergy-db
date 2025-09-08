@@ -1,0 +1,2 @@
+#!/bin/sh
+docker rm -f myenergy-timescaledb > /dev/null && echo "MyEnergy DB stopped"
