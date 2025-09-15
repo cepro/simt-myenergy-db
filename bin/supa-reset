@@ -1,7 +1,0 @@
-#!/bin/sh
-set -e
-cd sqitch
-sqitch revert -y
-../../bin/supa-remove-seed-data
-sqitch deploy
-cd -

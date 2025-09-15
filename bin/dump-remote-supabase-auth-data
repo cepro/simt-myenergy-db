@@ -1,6 +1,6 @@
 #!/bin/sh
 
-DUMP_FILE=/db/supabase-remote-data-`date +%s`.sql
+DUMP_FILE=/db/supabase-remote-data-auth-`date +%s`.sql
 HOST_DIR=`pwd`/dumps
 
 docker run \
@@ -14,7 +14,12 @@ docker run \
         --dbname=postgres \
         --username=postgres.pqlwxerasppsyleweruk \
         --file=$DUMP_FILE \
-        --schema=public \
+        --schema=auth \
+        --table=auth.audit_log_entries \
+        --table=auth.identities \
+        --table=auth.refresh_tokens   \
+        --table=auth.sessions \
+        --table=auth.users \
         --data-only
 
 echo "Dumped to $HOST_DIR/`basename $DUMP_FILE`"
