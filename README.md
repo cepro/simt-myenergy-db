@@ -32,5 +32,5 @@ deployments and rollbacks.
 
 Example send an encrypted message:
 ```sql
-select public.notify_encrypted('topup_create', '{"amountPence":"100", "reference": "topup from gift", "source": "gift", "notes": "introduction period", "accountId": "d7dbaf27-e813-42e0-a9c1-f008577276b9"}', 'secretsecret');
+select myenergy.notify_encrypted('topup_create', '{"amountPence":"100", "reference": "topup from gift", "source": "gift", "notes": "introduction period", "accountId": "d7dbaf27-e813-42e0-a9c1-f008577276b9"}', 'secretsecret');
 ```
