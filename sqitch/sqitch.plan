@@ -9,3 +9,4 @@
 0004_postgraphile2 2025-08-15T00:35:32Z Chris Hatch <chris@cepro.energy> # more updates for postgraphile integration
 0005_gifts_table_additions 2025-08-28T10:03:28Z Chris Hatch <chris@cepro.energy> # add columns to gifts table
 0006_public_backend_mutations_policy 2025-09-15T03:35:32Z Chris Hatch <chris@cepro.energy> # add policy allowing mutations by public_backend
+0007_fix_scheduled_at_check 2025-09-16T00:04:29Z Chris Hatch <chris@cepro.energy> # fix payments scheduled_at check
