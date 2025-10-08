@@ -2399,6 +2399,8 @@ $$;
 
 ALTER FUNCTION myenergy.log_postgres_notification(channel text, notify_or_listen text, payload text) OWNER TO :"adminrole";
 
+GRANT EXECUTE ON FUNCTION myenergy.log_postgres_notification(text, text, text) TO anon, authenticated, service_role;
+
 
 CREATE FUNCTION myenergy.meter_prepay_status_change() RETURNS trigger
     LANGUAGE plpgsql SECURITY DEFINER
