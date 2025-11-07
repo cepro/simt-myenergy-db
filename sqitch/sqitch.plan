@@ -14,3 +14,4 @@
 0009_fixes_gifts_and_sql 2025-09-29T00:29:09Z Chris Hatch <chris@cepro.energy> # Fix to gifts permissions and misc sql
 0010_alert_permissions 2025-10-09T00:10:47Z Chris Hatch <chris@cepro.energy> # permissions for alerts and grafanareader
 0011_topup_preferences 2025-10-28T01:32:25Z Chris Hatch <chris@cepro.energy> # modify topup preferences
+0012_payment_amount_bounds 2025-11-07T01:36:02Z Chris Hatch <chris@cepro.energy> # enforce payments.amountPence bounds
