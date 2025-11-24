@@ -3,12 +3,16 @@
 BEGIN;
 
 CREATE TABLE myenergy.postgres_notifications_outbox (
+    id uuid DEFAULT extensions.uuid_generate_v4() NOT NULL,
     channel text NOT NULL,
     payload jsonb NOT NULL,
     created_at timestamp with time zone DEFAULT statement_timestamp() NOT NULL
 );
 
-COMMENT ON TABLE myenergy.postgres_notifications_outbox IS 
+ALTER TABLE ONLY myenergy.postgres_notifications_outbox
+    ADD CONSTRAINT postgres_notifications_outbox_pkey PRIMARY KEY (id);
+
+COMMENT ON TABLE myenergy.postgres_notifications_outbox IS
     'Messages to be sent encrypted as Postgres NOTIFY/LISTEN messages. An external job with the encryption key will send these and remove them once sent. Then they will go into myenergy.postgres_notifications.';
 
 CREATE OR REPLACE FUNCTION myenergy.notify(
