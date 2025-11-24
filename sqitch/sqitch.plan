@@ -16,3 +16,4 @@
 0011_topup_preferences 2025-10-28T01:32:25Z Chris Hatch <chris@cepro.energy> # modify topup preferences
 0012_payment_amount_bounds 2025-11-07T01:36:02Z Chris Hatch <chris@cepro.energy> # enforce payments.amountPence bounds
 0013_secure_notify 2025-11-23T21:12:56Z Chris Hatch <chris@cepro.energy> # Encrypted NOTIFY from database
+0014_auto_topup 2025-11-25T00:00:00Z Chris Hatch <chris@cepro.energy> # add auto_topup column to customers
