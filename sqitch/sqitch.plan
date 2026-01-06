@@ -19,3 +19,4 @@
 0014_auto_topup 2025-11-25T00:00:00Z Chris Hatch <chris@cepro.energy> # add auto_topup column to customers
 0015_prepay_enabled_now_false_always 2025-12-13T20:08:03Z Chris Hatch <chris@cepro.energy> # Handle the fact that prepay_enabled is now false for all
 0016_missing_readings 2025-12-23T04:28:00Z Chris Hatch <chris@cepro.energy> # Add materialized view for reporting on missing reads
+0017_event_log_types 2026-01-06T02:15:37Z Chris Hatch <chris@cepro.energy> # populate event log types
