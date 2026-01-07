@@ -1,5 +1,8 @@
 #!/bin/sh
 
+DB_HOST=hwduz83g2a.ewrjuzaefq.tsdb.cloud.timescale.com
+DB_PORT=33025
+
 DUMP_FILE=/db/supabase-remote-schema-`date +%s`.sql
 HOST_DIR=`pwd`/dumps
 
@@ -11,13 +14,12 @@ docker run \
         -v $HOST_DIR:/db public.ecr.aws/supabase/postgres:17.4.1.041 \
     pg_dump \
         --verbose \
-        --host aws-0-eu-west-2.pooler.supabase.com \
-        --port 6543 \
-        --dbname=postgres \
-        --username=postgres.pqlwxerasppsyleweruk \
+        --host $DB_HOST \
+        --port $DB_PORT \
+        --dbname=tsdb \
+        --username=tsdbadmin \
         --file=$DUMP_FILE \
-        --schema=public \
-        --schema=flows \
+        --schema=myenergy \
         --clean --if-exists --schema-only
 
 echo "Dumped to $HOST_DIR/`basename $DUMP_FILE`"
