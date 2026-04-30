@@ -40,6 +40,15 @@ jobs:
             psql "postgresql://tsdbadmin:tsdbadmin@localhost:25432/tsdb" \
             -f /sqitch/ci-bootstrap.sql
 
+      - name: Checkout flows-db
+        uses: actions/checkout@v4
+        with:
+          repository: cepro/simt-flows-db
+          path: flows-db
+
+      - name: Flows migrations
+        run: cd flows-db/sqitch && sqitch deploy "db:pg://tsdbadmin:tsdbadmin@localhost:25432/tsdb" --verbose && cd -
+
       - name: Migrations
         run: cd sqitch && sqitch deploy --target timescale-ci --verbose && cd -
 
