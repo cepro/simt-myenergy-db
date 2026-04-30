@@ -1,4 +1,4 @@
 #!/bin/sh
 PORT=${CI:+25432}
 PORT=${PORT:-15432}
-bin/pg_prove -h localhost -p $PORT -d tsdb -U tsdbadmin -v supabase/tests/*.sql
+bin/pg_prove -h localhost -p $PORT -d tsdb -U tsdbadmin -v tests/*.sql
