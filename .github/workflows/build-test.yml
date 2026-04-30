@@ -55,6 +55,13 @@ jobs:
             --set env=ci \
             --verbose && cd -
 
+      - name: Flows seed
+        run: |
+          docker run --rm --network host \
+            -v "$(pwd)/flows-db/sqitch/seed:/seed" postgres:17-alpine \
+            psql "postgresql://tsdbadmin:tsdbadmin@localhost:25432/tsdb" \
+            -f /seed/seed.sql
+
       - name: Migrations
         run: |
           cd sqitch && sqitch deploy --target timescale-ci \
