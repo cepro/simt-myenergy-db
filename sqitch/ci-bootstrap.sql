@@ -10,6 +10,7 @@ CREATE ROLE service_role   WITH NOLOGIN NOINHERIT BYPASSRLS;
 CREATE ROLE supabase_auth_admin WITH NOINHERIT CREATEROLE;
 CREATE ROLE grafanareader  WITH NOLOGIN;
 CREATE ROLE tableau        WITH NOLOGIN;
+CREATE ROLE flows          WITH NOLOGIN;
 
 -- PostgREST role hierarchy
 GRANT anon              TO authenticator;
