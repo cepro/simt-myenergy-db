@@ -17,7 +17,7 @@ jobs:
         run: docker pull sqitch/sqitch && curl -L https://git.io/JJKCn -o /usr/local/bin/sqitch && chmod +x /usr/local/bin/sqitch && sqitch --help
 
       - name: Start Timescale
-        run: bin/ts-up
+        run: bin/db-up
 
       # Looking at the logs it takes about 15 seconds so give a little buffer.
       # IF we don't do this the migrations below fail.
@@ -25,7 +25,7 @@ jobs:
         run: sleep 25
 
       - name: Migrations
-        run: cd sqitch && sqitch deploy --verbose && cd -
+        run: cd sqitch && sqitch deploy --target timescale-ci --verbose && cd -
 
       # uncomment the following to be able to ssh in and investigate an issue:
       #
@@ -34,12 +34,14 @@ jobs:
       #   uses: mxschmitt/action-tmate@v3
 
       - name: create .pgpass for seed script
-        run: mkdir -p /tmp/psql-script/ && echo "*:*:postgres:postgres:postgres" > /tmp/psql-script/.pgpass && chmod 0600 /tmp/psql-script/.pgpass
+        run: mkdir -p /tmp/psql-script/ && echo "*:*:*:tsdbadmin:tsdbadmin" > /tmp/psql-script/.pgpass && chmod 0600 /tmp/psql-script/.pgpass
 
       - name: Seed
         run: bin/seed
 
       - name: Test
+        env:
+          PGPASSWORD: tsdbadmin
         run: bin/test
 
       # TODO: Was using supabase lint - replace with something else
