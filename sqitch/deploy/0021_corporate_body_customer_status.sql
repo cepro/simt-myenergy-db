@@ -104,7 +104,7 @@ BEGIN
             WHERE ca.customer = new_customer_row.id
             AND ca.role = 'occupier'
             AND a.type = 'supply'
-            AND (m.prepay_enabled IS NULL)
+            AND (m.prepay_enabled IS NOT TRUE)
         ) INTO has_unprepared_supply_meter;
     END IF;
 
