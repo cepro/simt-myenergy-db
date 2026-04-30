@@ -57,10 +57,19 @@ jobs:
 
       - name: Flows seed
         run: |
-          docker run --rm --network host \
-            -v "$(pwd)/flows-db/sqitch/seed:/seed" postgres:17-alpine \
-            psql "postgresql://tsdbadmin:tsdbadmin@localhost:25432/tsdb" \
-            -f /seed/seed.sql
+          docker run --rm --network host postgres:17-alpine \
+            psql "postgresql://tsdbadmin:tsdbadmin@localhost:25432/tsdb" -c "
+              INSERT INTO flows.escos (id, created_at, name, code, app_url) VALUES
+                ('612a3f01-dfde-4458-bd0b-bfb9aa7d3668', now(), 'Abolish Empty Office Buildings', 'aeob', NULL),
+                ('2995cc75-1fa6-46ef-aae1-7807f5721765', now(), 'Bristol Energy Coop', 'bec', NULL),
+                ('3396e0c8-62e5-4902-a9e2-2d6505b2cb8c', now(), 'Bristol Power Cooperative', 'bpc', NULL),
+                ('68456b3f-35c6-44f1-9f14-563ab64e8ceb', now(), 'Lab', 'lab', NULL),
+                ('363ff821-3a56-4b43-8227-8e53c45fbcdb', now(), 'Hazelmead', 'hmce', 'http://0.0.0.0:4242'),
+                ('6688351f-c47a-441b-ad3f-b3dabadf2bca', now(), 'London Fields', 'lfce', NULL),
+                ('01da4a58-9a2e-440a-b8ac-2f36038484d2', now(), 'Owen Square', 'osce', NULL),
+                ('f6bcd195-6528-426b-a6f0-ce2af6a37494', now(), 'Trent Basin', 'tbce', NULL),
+                ('527eed5d-2f81-4abe-a7f4-6fff8ac72703', now(), 'Water Lilies', 'wlce', 'http://0.0.0.0:4242')
+              ON CONFLICT DO NOTHING;"
 
       - name: Migrations
         run: |
