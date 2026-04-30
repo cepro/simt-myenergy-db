@@ -110,4 +110,16 @@ END;
 $function$
 ;
 
+CREATE OR REPLACE FUNCTION myenergy.customer_status_update_on_trigger() RETURNS trigger
+    LANGUAGE plpgsql SECURITY DEFINER
+    AS $$
+DECLARE
+     new_status myenergy.customer_status_enum;
+BEGIN
+    SELECT myenergy.customer_status(NEW, OLD.status, NULL) INTO new_status;
+    NEW.status = new_status;
+    RETURN NEW;
+END;
+$$;
+
 COMMIT;

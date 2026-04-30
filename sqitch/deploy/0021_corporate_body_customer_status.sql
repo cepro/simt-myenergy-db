@@ -119,4 +119,19 @@ END;
 $function$
 ;
 
+-- The customers trigger was passing OLD.status which caused the 'once live, stay live'
+-- guard to fire on deliberate flag toggles (e.g. revoking has_payment_method). Pass NULL
+-- so the trigger always does a full status recompute.
+CREATE OR REPLACE FUNCTION myenergy.customer_status_update_on_trigger() RETURNS trigger
+    LANGUAGE plpgsql SECURITY DEFINER
+    AS $$
+DECLARE
+     new_status myenergy.customer_status_enum;
+BEGIN
+    SELECT myenergy.customer_status(NEW, NULL, NULL) INTO new_status;
+    NEW.status = new_status;
+    RETURN NEW;
+END;
+$$;
+
 COMMIT;
