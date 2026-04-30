@@ -17,7 +17,7 @@ SELECT is((SELECT count(*)::int FROM customers where status = 'onboarding'), 1, 
 SELECT is((SELECT count(*)::int FROM customers where status = 'prelive'), 2, 'prelive customers returned');
 -- a@wl.ce          - cepro admin user - always live
 -- own11_13@wl.ce   - owner / not occupier - signed both solar contracts - status not effected by supply flag 
-SELECT is((SELECT count(*)::int FROM customers where status = 'live'), 2, 'live customers returned');
+SELECT is((SELECT count(*)::int FROM customers where status = 'live'), 4, 'live customers returned');
 
 
 --

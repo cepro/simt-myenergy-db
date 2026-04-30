@@ -23,3 +23,4 @@
 0018_solar_credits_prepay_filter 2026-02-01T00:30:00Z Damon Rand <damon@cepro.energy> # Remove prepay_enabled filter and add month-1 backfill for solar credits
 0019_shared_ownership 2026-04-30T00:00:00Z Chris Hatch <chris@cepro.energy> # Add corporate_bodies, customer_corporate_bodies, and registered_proprietors tables for shared ownership
 0020_auth_users_triggers 2026-04-30T00:00:00Z Chris Hatch <chris@cepro.energy> # Move auth.users triggers from supabase-host sqitch into myenergy
+0021_corporate_body_customer_status 2026-05-01T00:00:00Z Chris Hatch <chris@cepro.energy> # Corporate body members are live once registered

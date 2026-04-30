@@ -418,6 +418,11 @@ INSERT INTO myenergy.customer_corporate_bodies (customer, corporate_body) VALUES
     ('aabbcc01-0001-4a1a-aabb-cc01cc01cc01', 'c0ffee01-c0fe-4c0f-ee01-c0ffee01c0fe'),
     ('aabbcc02-0002-4a2a-aabb-cc02cc02cc02', 'c0ffee01-c0fe-4c0f-ee01-c0ffee01c0fe');
 
+-- Corporate body members are live once registered — recompute after join row inserted
+UPDATE myenergy.customers c
+SET status = myenergy.customer_status(c)
+WHERE c.id IN ('aabbcc01-0001-4a1a-aabb-cc01cc01cc01', 'aabbcc02-0002-4a2a-aabb-cc02cc02cc02');
+
 INSERT INTO myenergy.registered_proprietors (property, customer, tenure_type) VALUES
     ((SELECT id FROM myenergy.properties WHERE plot = 'Plot-11' AND esco = '527eed5d-2f81-4abe-a7f4-6fff8ac72703'), 'aabbcc01-0001-4a1a-aabb-cc01cc01cc01', 'tenant_in_common'),
     ((SELECT id FROM myenergy.properties WHERE plot = 'Plot-11' AND esco = '527eed5d-2f81-4abe-a7f4-6fff8ac72703'), 'aabbcc02-0002-4a2a-aabb-cc02cc02cc02', 'tenant_in_common'),
