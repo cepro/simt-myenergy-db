@@ -34,10 +34,11 @@ jobs:
         run: |
           docker run --rm --network host postgres:17-alpine psql \
             "postgresql://postgres:postgres@localhost:25432/postgres" \
-            -c "CREATE DATABASE tsdb;" || true
-          docker run --rm --network host postgres:17-alpine psql \
-            "postgresql://postgres:postgres@localhost:25432/postgres" \
             -c "DO \$\$ BEGIN IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname='tsdbadmin') THEN CREATE ROLE tsdbadmin LOGIN SUPERUSER PASSWORD 'tsdbadmin'; ELSE ALTER USER tsdbadmin WITH PASSWORD 'tsdbadmin'; END IF; END \$\$;"
+          docker run --rm --network host \
+            -v "$(pwd)/sqitch:/sqitch" postgres:17-alpine \
+            psql "postgresql://tsdbadmin:tsdbadmin@localhost:25432/tsdb" \
+            -f /sqitch/ci-bootstrap.sql
 
       - name: Migrations
         run: cd sqitch && sqitch deploy --target timescale-ci --verbose && cd -
