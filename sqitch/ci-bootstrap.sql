@@ -49,26 +49,41 @@ CREATE OR REPLACE FUNCTION auth.role() RETURNS text LANGUAGE sql STABLE AS $$
   )
 $$;
 
--- auth.users: columns referenced by migrations (INSERT, SELECT, triggers)
+-- auth.users: full Supabase schema (columns referenced by migrations and seed)
 CREATE TABLE IF NOT EXISTS auth.users (
-    instance_id          uuid,
-    id                   uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    aud                  text,
-    role                 text,
-    email                text UNIQUE,
-    phone                text,
-    encrypted_password   text,
-    email_confirmed_at   timestamptz,
-    recovery_sent_at     timestamptz,
-    last_sign_in_at      timestamptz,
-    raw_app_meta_data    jsonb,
-    raw_user_meta_data   jsonb,
-    created_at           timestamptz DEFAULT now(),
-    updated_at           timestamptz DEFAULT now(),
-    confirmation_token   text DEFAULT '',
-    email_change         text DEFAULT '',
-    email_change_token_new text DEFAULT '',
-    recovery_token       text DEFAULT ''
+    instance_id                uuid,
+    id                         uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    aud                        text,
+    role                       text,
+    email                      text UNIQUE,
+    encrypted_password         text,
+    email_confirmed_at         timestamptz,
+    invited_at                 timestamptz,
+    confirmation_token         text DEFAULT '',
+    confirmation_sent_at       timestamptz,
+    recovery_token             text DEFAULT '',
+    recovery_sent_at           timestamptz,
+    email_change_token_new     text DEFAULT '',
+    email_change               text DEFAULT '',
+    email_change_sent_at       timestamptz,
+    last_sign_in_at            timestamptz,
+    raw_app_meta_data          jsonb,
+    raw_user_meta_data         jsonb,
+    is_super_admin             boolean,
+    created_at                 timestamptz DEFAULT now(),
+    updated_at                 timestamptz DEFAULT now(),
+    phone                      text UNIQUE DEFAULT NULL,
+    phone_confirmed_at         timestamptz,
+    phone_change               text DEFAULT '',
+    phone_change_token         text DEFAULT '',
+    phone_change_sent_at       timestamptz,
+    email_change_token_current text DEFAULT '',
+    email_change_confirm_status smallint DEFAULT 0,
+    banned_until               timestamptz,
+    reauthentication_token     text DEFAULT '',
+    reauthentication_sent_at   timestamptz,
+    is_sso_user                boolean NOT NULL DEFAULT false,
+    deleted_at                 timestamptz
 );
 
 -- auth.identities: referenced by create_user function
