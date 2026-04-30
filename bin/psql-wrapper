@@ -25,7 +25,7 @@ else
     PG_PASS_FILE=~/.pgpass
 fi
 
-docker run -it --rm \
+docker run -i --rm \
         --network host \
         -v $HOST_DIR:/db \
         -v $PG_PASS_FILE:/root/.pgpass:ro \
