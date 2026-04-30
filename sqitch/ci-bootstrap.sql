@@ -85,3 +85,41 @@ CREATE TABLE IF NOT EXISTS auth.identities (
 GRANT USAGE ON SCHEMA auth TO supabase_auth_admin, authenticated, anon, service_role;
 GRANT ALL   ON ALL TABLES IN SCHEMA auth TO supabase_auth_admin;
 GRANT SELECT ON auth.users TO authenticated, anon, service_role;
+
+-- Postgraphile session helpers (from supabase-host 0011_auth_postgraphile_support)
+CREATE OR REPLACE FUNCTION auth.jwt() RETURNS jsonb LANGUAGE sql STABLE AS $$
+  SELECT coalesce(
+    nullif(current_setting('request.jwt.claim', true), ''),
+    nullif(current_setting('request.jwt.claims', true), '')
+  )::jsonb
+$$;
+ALTER FUNCTION auth.jwt() OWNER TO supabase_auth_admin;
+
+CREATE OR REPLACE FUNCTION auth.session_email() RETURNS text LANGUAGE sql STABLE AS $$
+  SELECT coalesce(
+    auth.email(),
+    nullif(current_setting('jwt.claims.email', true), '')::text,
+    (nullif(current_setting('jwt.claims', true), '')::jsonb ->> 'email')::text
+  )
+$$;
+ALTER FUNCTION auth.session_email() OWNER TO supabase_auth_admin;
+GRANT ALL ON FUNCTION auth.session_email() TO supabase_auth_admin;
+
+CREATE OR REPLACE FUNCTION auth.session_role() RETURNS text LANGUAGE sql STABLE AS $$
+  SELECT coalesce(
+    auth.role(),
+    nullif(current_setting('jwt.claims.role', true), '')::text,
+    (nullif(current_setting('jwt.claims', true), '')::jsonb ->> 'role')::text
+  )
+$$;
+ALTER FUNCTION auth.session_role() OWNER TO supabase_auth_admin;
+GRANT ALL ON FUNCTION auth.session_role() TO supabase_auth_admin;
+
+CREATE OR REPLACE FUNCTION auth.session_jwt() RETURNS jsonb LANGUAGE sql STABLE AS $$
+  SELECT coalesce(
+    auth.jwt(),
+    nullif(current_setting('jwt.claims', true), '')::jsonb
+  )::jsonb
+$$;
+ALTER FUNCTION auth.session_jwt() OWNER TO supabase_auth_admin;
+GRANT ALL ON FUNCTION auth.session_jwt() TO supabase_auth_admin;
