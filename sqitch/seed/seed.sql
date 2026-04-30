@@ -402,4 +402,25 @@ VALUES
     ((select id from myenergy.properties where plot = 'Plot-24-25'), (select id from myenergy.properties where plot = 'Plot-25b'), 0.16666),
     ((select id from myenergy.properties where plot = 'Plot-24-25'), (select id from myenergy.properties where plot = 'Plot-25c'), 0.16666);
 
+-- Shared ownership setup for ABC Housing
+INSERT INTO myenergy.corporate_bodies (id, name) VALUES
+    ('c0ffee01-c0fe-4c0f-ee01-c0ffee01c0fe', 'ABC Housing');
+
+INSERT INTO myenergy.customers (fullname, email, created_at, id, status, cepro_user, has_payment_method, allow_onboard_transition, confirmed_details_at) VALUES
+    ('ABC Person One', 'abc1@housing.ce', '2025-01-10 00:23:45', 'aabbcc01-0001-4a1a-aabb-cc01cc01cc01', 'pending', false, true, true, '2025-01-10 00:23:45'),
+    ('ABC Person Two', 'abc2@housing.ce', '2025-01-10 00:23:45', 'aabbcc02-0002-4a2a-aabb-cc02cc02cc02', 'pending', false, true, true, '2025-01-10 00:23:45');
+
+INSERT INTO auth.users (instance_id,id,aud,"role",email,encrypted_password,email_confirmed_at,invited_at,confirmation_token,confirmation_sent_at,recovery_token,recovery_sent_at,email_change_token_new,email_change,email_change_sent_at,last_sign_in_at,raw_app_meta_data,raw_user_meta_data,is_super_admin,created_at,updated_at,phone,phone_confirmed_at,phone_change,phone_change_token,phone_change_sent_at,email_change_token_current,email_change_confirm_status,banned_until,reauthentication_token,reauthentication_sent_at,is_sso_user,deleted_at) VALUES
+     ('00000000-0000-0000-0000-000000000000','aabbcc01-0001-4a1a-aabb-cc01cc01cc01','authenticated','authenticated','abc1@housing.ce','$2a$10$RpraqBFICv/T3vENeJE1UeEYzTZ8GO9opgaJ6janMS1ro6a6X8qN.','2025-01-10 07:46:08.002138+10',NULL,'',NULL,'',NULL,'','',NULL,'2025-01-10 07:46:08.002138+10','{"provider": "email", "providers": ["email"]}','{}',NULL,'2025-01-10 07:46:07.988687+10','2025-01-10 07:46:07.988687+10',NULL,NULL,'','',NULL,'',0,NULL,'',NULL,false,NULL),
+     ('00000000-0000-0000-0000-000000000000','aabbcc02-0002-4a2a-aabb-cc02cc02cc02','authenticated','authenticated','abc2@housing.ce','$2a$10$RpraqBFICv/T3vENeJE1UeEYzTZ8GO9opgaJ6janMS1ro6a6X8qN.','2025-01-10 07:46:08.002138+10',NULL,'',NULL,'',NULL,'','',NULL,'2025-01-10 07:46:08.002138+10','{"provider": "email", "providers": ["email"]}','{}',NULL,'2025-01-10 07:46:07.988687+10','2025-01-10 07:46:07.988687+10',NULL,NULL,'','',NULL,'',0,NULL,'',NULL,false,NULL);
+
+INSERT INTO myenergy.customer_corporate_bodies (customer, corporate_body) VALUES
+    ('aabbcc01-0001-4a1a-aabb-cc01cc01cc01', 'c0ffee01-c0fe-4c0f-ee01-c0ffee01c0fe'),
+    ('aabbcc02-0002-4a2a-aabb-cc02cc02cc02', 'c0ffee01-c0fe-4c0f-ee01-c0ffee01c0fe');
+
+INSERT INTO myenergy.registered_proprietors (property, customer, tenure_type) VALUES
+    ((SELECT id FROM myenergy.properties WHERE plot = 'Plot-11' AND esco = '527eed5d-2f81-4abe-a7f4-6fff8ac72703'), 'aabbcc01-0001-4a1a-aabb-cc01cc01cc01', 'tenant_in_common'),
+    ((SELECT id FROM myenergy.properties WHERE plot = 'Plot-11' AND esco = '527eed5d-2f81-4abe-a7f4-6fff8ac72703'), 'aabbcc02-0002-4a2a-aabb-cc02cc02cc02', 'tenant_in_common'),
+    ((SELECT id FROM myenergy.properties WHERE plot = 'Plot-11' AND esco = '527eed5d-2f81-4abe-a7f4-6fff8ac72703'), (SELECT owner FROM myenergy.properties WHERE plot = 'Plot-11' AND esco = '527eed5d-2f81-4abe-a7f4-6fff8ac72703'), 'tenant_in_common');
+
 COMMIT;

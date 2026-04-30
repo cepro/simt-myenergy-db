@@ -19,6 +19,6 @@ DROP POLICY "Customers and backend can update records" ON myenergy.customers;
 DROP POLICY "Customers and backend users can read records" ON myenergy.customers;
 
 DROP POLICY "Customers and backend can update customer_invites" ON myenergy.customer_invites;
-DROP POLICY "Customers and backend can read customer_invites" ON myenergy.customer_invites 
+DROP POLICY "Customers and backend can read customer_invites" ON myenergy.customer_invites;
 
 COMMIT;

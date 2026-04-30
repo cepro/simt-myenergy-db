@@ -2,6 +2,8 @@
 
 BEGIN;
 
+DROP POLICY IF EXISTS "Customers and backend can update gifts" ON myenergy.gifts;
+
 CREATE POLICY "Customers and backend can update gifts"
 ON myenergy.gifts
 FOR UPDATE
