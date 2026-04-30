@@ -56,7 +56,10 @@ jobs:
             --verbose && cd -
 
       - name: Migrations
-        run: cd sqitch && sqitch deploy --target timescale-ci --verbose && cd -
+        run: |
+          cd sqitch && sqitch deploy --target timescale-ci \
+            --set postgraphile_password=postgraphile \
+            --verbose && cd -
 
       # uncomment the following to be able to ssh in and investigate an issue:
       #
