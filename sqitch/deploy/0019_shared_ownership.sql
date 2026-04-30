@@ -37,4 +37,25 @@ COMMENT ON TABLE myenergy.registered_proprietors IS 'Stores registered proprieto
 -- ALTER TABLE myenergy.properties DROP COLUMN IF EXISTS owner;
 COMMENT ON COLUMN myenergy.properties.owner IS 'deprecated: to be removed in future';
 
+CREATE OR REPLACE FUNCTION myenergy.migrate_property_owners_to_registered_proprietors()
+RETURNS integer
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    row_count integer;
+BEGIN
+    INSERT INTO myenergy.registered_proprietors (property, customer, tenure_type)
+    SELECT id, owner, 'joint_tenant'::text
+    FROM myenergy.properties
+    WHERE owner IS NOT NULL
+      AND NOT EXISTS (
+          SELECT 1 FROM myenergy.registered_proprietors rp
+          WHERE rp.property = properties.id
+      );
+
+    GET DIAGNOSTICS row_count = ROW_COUNT;
+    RETURN row_count;
+END;
+$$;
+
 COMMIT;
