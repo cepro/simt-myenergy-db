@@ -47,7 +47,13 @@ jobs:
           path: flows-db
 
       - name: Flows migrations
-        run: cd flows-db/sqitch && sqitch deploy "db:pg://tsdbadmin:tsdbadmin@localhost:25432/tsdb" --verbose && cd -
+        run: |
+          cd flows-db/sqitch && sqitch deploy "db:pg://tsdbadmin:tsdbadmin@localhost:25432/tsdb" \
+            --set flows_password=flows \
+            --set grafanareader_password=grafanareader \
+            --set tableau_password=tableau \
+            --set env=ci \
+            --verbose && cd -
 
       - name: Migrations
         run: cd sqitch && sqitch deploy --target timescale-ci --verbose && cd -
