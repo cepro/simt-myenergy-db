@@ -23,6 +23,7 @@ GRANT supabase_auth_admin TO tsdbadmin;
 CREATE SCHEMA IF NOT EXISTS extensions;
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA extensions;
 CREATE EXTENSION IF NOT EXISTS pgcrypto    WITH SCHEMA extensions;
+CREATE EXTENSION IF NOT EXISTS pgtap       WITH SCHEMA extensions;
 
 -- Auth schema
 CREATE SCHEMA IF NOT EXISTS auth;
