@@ -10,19 +10,26 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    services:
+      timescaledb:
+        image: timescale/timescaledb:latest-pg17
+        env:
+          POSTGRES_USER: tsdbadmin
+          POSTGRES_PASSWORD: tsdbadmin
+          POSTGRES_DB: tsdb
+        ports:
+          - 25432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - uses: actions/checkout@v4
 
       - name: Sqitch install
         run: docker pull sqitch/sqitch && curl -L https://git.io/JJKCn -o /usr/local/bin/sqitch && chmod +x /usr/local/bin/sqitch && sqitch --help
-
-      - name: Start Timescale
-        run: bin/db-up
-
-      # Looking at the logs it takes about 15 seconds so give a little buffer.
-      # IF we don't do this the migrations below fail.
-      - name: Wait Timescale
-        run: sleep 25
 
       - name: Migrations
         run: cd sqitch && sqitch deploy --target timescale-ci --verbose && cd -

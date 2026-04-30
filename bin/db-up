@@ -27,7 +27,7 @@ dbRunNew() {
         --network $NETWORK_NAME \
         --mount source=$VOLUME_NAME,destination=/home/postgres/pgdata \
         -p 25432:5432 \
-        -e POSTGRES_PASSWORD=tsdbadmin \
+        -e POSTGRES_PASSWORD=postgres \
         $PLATFORM_OPT \
         timescale/timescaledb-ha:pg17
     
