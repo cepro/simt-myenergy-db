@@ -3,7 +3,11 @@
 BIN_DIR=`dirname $0`
 PROJECT_ROOT=`dirname $BIN_DIR`
 
-SUPA_PROJECT_ID=`grep project_id $PROJECT_ROOT/supabase/config.toml  | sed -e 's/.*= "\(.*\)"/\1/'`
+if [ -f "$PROJECT_ROOT/supabase/config.toml" ]; then
+    SUPA_PROJECT_ID=`grep project_id $PROJECT_ROOT/supabase/config.toml | sed -e 's/.*= "\(.*\)"/\1/'`
+else
+    SUPA_PROJECT_ID=ci
+fi
 
 # better would be to define our own network and have supabase use that too.
 # there is a WIP PR for that so we can do if that gets merged:

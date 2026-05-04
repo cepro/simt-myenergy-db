@@ -18,12 +18,14 @@ mkdir -p $HOST_DIR
 cp $SQL_FILE $HOST_DIR
 
 if [ "$CI" = true ]; then
+    PORT=25432
     PG_PASS_FILE=$HOST_DIR/.pgpass
 else
+    PORT=15432
     PG_PASS_FILE=~/.pgpass
 fi
 
-docker run -it --rm \
+docker run -i --rm \
         --network host \
         -v $HOST_DIR:/db \
         -v $PG_PASS_FILE:/root/.pgpass:ro \
@@ -31,7 +33,7 @@ docker run -it --rm \
     psql \
         -v ON_ERROR_STOP=1 \
         --host 0.0.0.0 \
-        --port 15432 \
+        --port $PORT \
         --username=tsdbadmin \
         --dbname=tsdb \
         --file=/db/$SCRIPT_FILE

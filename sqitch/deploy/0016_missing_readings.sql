@@ -1,6 +1,9 @@
 -- Deploy migration: 0016_register_export_missing
 -- Add materialized view for reporting on missing intervals for reads
 
+DROP MATERIALIZED VIEW IF EXISTS flows.register_export_missing;
+DROP MATERIALIZED VIEW IF EXISTS flows.register_import_missing;
+
 CREATE MATERIALIZED VIEW flows.register_export_missing AS
  WITH date_range AS (
          SELECT generate_series((date_trunc('day'::text, (CURRENT_DATE - '1 year'::interval)))::timestamp with time zone, date_trunc('day'::text, (CURRENT_DATE)::timestamp with time zone), '1 day'::interval) AS day
@@ -57,7 +60,7 @@ CREATE MATERIALIZED VIEW flows.register_import_missing AS
 REFRESH MATERIALIZED view flows.register_export_missing; 
 REFRESH MATERIALIZED view flows.register_import_missing; 
 
-CREATE FUNCTION flows.refresh_register_export_missing(
+CREATE OR REPLACE FUNCTION flows.refresh_register_export_missing(
     job_id integer DEFAULT NULL::integer,
     config jsonb DEFAULT NULL::jsonb
 ) RETURNS void
@@ -65,7 +68,7 @@ CREATE FUNCTION flows.refresh_register_export_missing(
     AS $$
     REFRESH MATERIALIZED VIEW flows.register_export_missing;
 $$;
-CREATE FUNCTION flows.refresh_register_import_missing(
+CREATE OR REPLACE FUNCTION flows.refresh_register_import_missing(
     job_id integer DEFAULT NULL::integer,
     config jsonb DEFAULT NULL::jsonb
 ) RETURNS void

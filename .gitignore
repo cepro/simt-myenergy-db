@@ -1,3 +1,5 @@
 dumps/
 .*.swp
 *.secret.txt
+.tmp
+tmpdocs/
