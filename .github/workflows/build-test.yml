@@ -25,7 +25,7 @@ jobs:
           --health-retries 10
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Sqitch install
         run: docker pull sqitch/sqitch && curl -L https://git.io/JJKCn -o /usr/local/bin/sqitch && chmod +x /usr/local/bin/sqitch && sqitch --help
@@ -41,7 +41,7 @@ jobs:
             -f /sqitch/ci-bootstrap.sql
 
       - name: Checkout flows-db
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: cepro/simt-flows-db
           path: flows-db
