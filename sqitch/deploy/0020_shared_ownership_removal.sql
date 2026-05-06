@@ -152,4 +152,6 @@ BEGIN
 END;
 $$;
 
+GRANT EXECUTE ON FUNCTION myenergy.auth_user_id_for_customer TO anon;
+
 COMMIT;
