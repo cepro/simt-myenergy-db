@@ -3,3 +3,4 @@ dumps/
 *.secret.txt
 .tmp
 tmpdocs/
+opencode.json

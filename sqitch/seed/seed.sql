@@ -173,21 +173,13 @@ INSERT INTO "myenergy"."solar_installation" ("property", "mcs", "declared_net_ca
 -- Assign test users to properties and accounts
 --
 
-update myenergy.properties 
-    set owner = (select id from myenergy.customers where email = 'own11_13@wl.ce')
-    where plot in ('Plot-11', 'Plot-13') 
-    and esco = '527eed5d-2f81-4abe-a7f4-6fff8ac72703';
-update myenergy.properties 
-    set owner = (select id from myenergy.customers where email = 'ownocc12@wl.ce') 
-    where plot = 'Plot-12' and esco = '527eed5d-2f81-4abe-a7f4-6fff8ac72703';
-
-update myenergy.properties 
-    set owner = (select id from myenergy.customers where email = 'ownocc1@hm.ce') 
-    where plot = 'Plot-01' and esco = '363ff821-3a56-4b43-8227-8e53c45fbcdb';
-update myenergy.properties 
-    set owner = (select id from myenergy.customers where email = 'ownoccsea@hm.ce') 
-    where plot = 'Plot-SEA-Landlord' and esco = '363ff821-3a56-4b43-8227-8e53c45fbcdb';
-
+-- Assign test users to registered_proprietors (replaces deprecated properties.owner)
+INSERT INTO myenergy.registered_proprietors (property, customer, tenure_type) VALUES
+    ((SELECT id FROM myenergy.properties WHERE plot = 'Plot-11' AND esco = '527eed5d-2f81-4abe-a7f4-6fff8ac72703'), (SELECT id FROM myenergy.customers WHERE email = 'own11_13@wl.ce'), 'joint_tenant'),
+    ((SELECT id FROM myenergy.properties WHERE plot = 'Plot-13' AND esco = '527eed5d-2f81-4abe-a7f4-6fff8ac72703'), (SELECT id FROM myenergy.customers WHERE email = 'own11_13@wl.ce'), 'joint_tenant'),
+    ((SELECT id FROM myenergy.properties WHERE plot = 'Plot-12' AND esco = '527eed5d-2f81-4abe-a7f4-6fff8ac72703'), (SELECT id FROM myenergy.customers WHERE email = 'ownocc12@wl.ce'), 'joint_tenant'),
+    ((SELECT id FROM myenergy.properties WHERE plot = 'Plot-01' AND esco = '363ff821-3a56-4b43-8227-8e53c45fbcdb'), (SELECT id FROM myenergy.customers WHERE email = 'ownocc1@hm.ce'), 'joint_tenant'),
+    ((SELECT id FROM myenergy.properties WHERE plot = 'Plot-SEA-Landlord' AND esco = '363ff821-3a56-4b43-8227-8e53c45fbcdb'), (SELECT id FROM myenergy.customers WHERE email = 'ownoccsea@hm.ce'), 'joint_tenant');
 
 update myenergy.customer_accounts 
 	set customer = (select id from myenergy.customers where email = 'own11_13@wl.ce')
@@ -425,7 +417,6 @@ WHERE c.id IN ('aabbcc01-0001-4a1a-aabb-cc01cc01cc01', 'aabbcc02-0002-4a2a-aabb-
 
 INSERT INTO myenergy.registered_proprietors (property, customer, tenure_type) VALUES
     ((SELECT id FROM myenergy.properties WHERE plot = 'Plot-11' AND esco = '527eed5d-2f81-4abe-a7f4-6fff8ac72703'), 'aabbcc01-0001-4a1a-aabb-cc01cc01cc01', 'tenant_in_common'),
-    ((SELECT id FROM myenergy.properties WHERE plot = 'Plot-11' AND esco = '527eed5d-2f81-4abe-a7f4-6fff8ac72703'), 'aabbcc02-0002-4a2a-aabb-cc02cc02cc02', 'tenant_in_common'),
-    ((SELECT id FROM myenergy.properties WHERE plot = 'Plot-11' AND esco = '527eed5d-2f81-4abe-a7f4-6fff8ac72703'), (SELECT owner FROM myenergy.properties WHERE plot = 'Plot-11' AND esco = '527eed5d-2f81-4abe-a7f4-6fff8ac72703'), 'tenant_in_common');
+    ((SELECT id FROM myenergy.properties WHERE plot = 'Plot-11' AND esco = '527eed5d-2f81-4abe-a7f4-6fff8ac72703'), 'aabbcc02-0002-4a2a-aabb-cc02cc02cc02', 'tenant_in_common');
 
 COMMIT;
