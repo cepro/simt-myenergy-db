@@ -101,4 +101,55 @@ $$;
 -- Drop change_property_owner() as it referenced properties.owner which no longer exists
 DROP FUNCTION IF EXISTS myenergy.change_property_owner(uuid, uuid);
 
+-- Fix customer_invites_generate_invite_url() which referenced properties.owner
+CREATE OR REPLACE FUNCTION myenergy.customer_invites_generate_invite_url()
+ RETURNS trigger
+ LANGUAGE plpgsql
+AS $function$
+    DECLARE
+        app_url text;
+    BEGIN
+        SELECT e.app_url
+        FROM myenergy.escos e
+        WHERE e.id IN (
+            SELECT p.esco
+            FROM myenergy.properties p
+            JOIN myenergy.accounts a ON a.property = p.id
+            JOIN myenergy.customer_accounts ca ON ca.account = a.id
+            WHERE ca.customer = NEW.customer
+              AND ca.role = 'owner'
+        ) INTO app_url;
+
+        IF app_url is null THEN
+            SELECT e.app_url
+            FROM myenergy.escos e
+            WHERE e.id IN (
+                SELECT p.esco FROM myenergy.properties p
+                JOIN myenergy.accounts a ON a.property = p.id
+                JOIN myenergy.customer_accounts ca ON ca.account = a.id
+                WHERE ca.customer = NEW.customer
+            ) INTO app_url;
+        END IF;
+
+        IF app_url is not null THEN
+            NEW.invite_url = app_url || '/invite/' || NEW.invite_token;
+            RETURN NEW;
+        ELSE
+            RAISE EXCEPTION 'No esco is associated with this customer yet so an invite cannot be created';
+        END IF;
+    END;
+    $function$
+;
+
+CREATE OR REPLACE FUNCTION myenergy.sync_flows_to_public_escos() RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    INSERT INTO myenergy.escos (id, created_at, name, code, app_url, region)
+    SELECT id, created_at, name, code, app_url, region
+    FROM flows.escos
+    WHERE code NOT IN (SELECT code FROM myenergy.escos);
+END;
+$$;
+
 COMMIT;
