@@ -7,6 +7,8 @@ BEGIN;
 ALTER TABLE myenergy.registered_proprietors ENABLE ROW LEVEL SECURITY;
 
 -- Read policy - mirrors properties table pattern
+DROP POLICY IF EXISTS "Customers can view their registered proprietors or all if cepro user"
+  ON myenergy.registered_proprietors;
 CREATE POLICY "Customers can view their registered proprietors or all if cepro user"
   ON myenergy.registered_proprietors
   FOR SELECT
@@ -23,6 +25,8 @@ CREATE POLICY "Customers can view their registered proprietors or all if cepro u
 -- Enable RLS on corporate_bodies
 ALTER TABLE myenergy.corporate_bodies ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Customers can view their corporate bodies or all if cepro user"
+  ON myenergy.corporate_bodies;
 CREATE POLICY "Customers can view their corporate bodies or all if cepro user"
   ON myenergy.corporate_bodies
   FOR SELECT
@@ -45,6 +49,8 @@ CREATE POLICY "Customers can view their corporate bodies or all if cepro user"
 -- Enable RLS on customer_corporate_bodies
 ALTER TABLE myenergy.customer_corporate_bodies ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Customers can view their corporate body memberships or all if cepro user"
+  ON myenergy.customer_corporate_bodies;
 CREATE POLICY "Customers can view their corporate body memberships or all if cepro user"
   ON myenergy.customer_corporate_bodies
   FOR SELECT
