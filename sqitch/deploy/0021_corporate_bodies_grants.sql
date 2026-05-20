@@ -195,7 +195,15 @@ DECLARE
     solar_meter_row myenergy.meters%ROWTYPE;
     supply_account_id uuid;
     solar_account_id uuid;
+    supply_account_name text;
+    solar_account_name text;
+    supply_contract_id uuid;
+    solar_contract_id uuid;
     rp_row myenergy.registered_proprietors%ROWTYPE;
+    escos_row myenergy.escos%ROWTYPE;
+    supply_contract_row myenergy.contracts%ROWTYPE;
+    solar_contract_row myenergy.contracts%ROWTYPE;
+    ca_rec RECORD;
 BEGIN
     SELECT * INTO prop_row FROM myenergy.properties WHERE id = p_property_id;
     IF NOT FOUND THEN
@@ -203,8 +211,9 @@ BEGIN
         RETURN NULL;
     END IF;
 
+    SELECT * INTO escos_row FROM myenergy.escos WHERE id = prop_row.esco;
     RAISE NOTICE E'\n=== Property Summary ===';
-    RAISE NOTICE 'Plot: % | Description: % | ESCO: %', prop_row.plot, prop_row.description, prop_row.esco;
+    RAISE NOTICE 'Plot: % | Description: % | ESCO: % (%)', prop_row.plot, prop_row.description, prop_row.esco, escos_row.code;
 
     SELECT * INTO rp_row FROM myenergy.registered_proprietors WHERE property = p_property_id LIMIT 1;
     IF FOUND THEN
@@ -224,15 +233,39 @@ BEGIN
         END IF;
     END IF;
 
-    SELECT id INTO supply_account_id FROM myenergy.accounts WHERE property = p_property_id AND type = 'supply' LIMIT 1;
+    SELECT id, name INTO supply_account_id, supply_account_name FROM myenergy.accounts WHERE property = p_property_id AND type = 'supply' LIMIT 1;
     IF supply_account_id IS NOT NULL THEN
-        RAISE NOTICE 'Supply Account: %', supply_account_id;
+        RAISE NOTICE 'Supply Account: % (%)', supply_account_id, supply_account_name;
+        SELECT current_contract INTO supply_contract_id FROM myenergy.accounts WHERE id = supply_account_id;
+        IF supply_contract_id IS NOT NULL THEN
+            SELECT * INTO supply_contract_row FROM myenergy.contracts WHERE id = supply_contract_id;
+            IF FOUND THEN
+                RAISE NOTICE '  Supply Contract: % | Type: % | Effective: % | Signed: %', supply_contract_row.id, supply_contract_row.type, supply_contract_row.effective_date, supply_contract_row.signed_date;
+            END IF;
+        END IF;
     END IF;
 
-    SELECT id INTO solar_account_id FROM myenergy.accounts WHERE property = p_property_id AND type = 'solar' LIMIT 1;
+    SELECT id, name INTO solar_account_id, solar_account_name FROM myenergy.accounts WHERE property = p_property_id AND type = 'solar' LIMIT 1;
     IF solar_account_id IS NOT NULL THEN
-        RAISE NOTICE 'Solar Account: %', solar_account_id;
+        RAISE NOTICE 'Solar Account: % (%)', solar_account_id, solar_account_name;
+        SELECT current_contract INTO solar_contract_id FROM myenergy.accounts WHERE id = solar_account_id;
+        IF solar_contract_id IS NOT NULL THEN
+            SELECT * INTO solar_contract_row FROM myenergy.contracts WHERE id = solar_contract_id;
+            IF FOUND THEN
+                RAISE NOTICE '  Solar Contract: % | Type: % | Effective: % | Signed: %', solar_contract_row.id, solar_contract_row.type, solar_contract_row.effective_date, solar_contract_row.signed_date;
+            END IF;
+        END IF;
     END IF;
+
+    RAISE NOTICE '--- Customer Accounts ---';
+    FOR ca_rec IN
+        SELECT ca.role, ca.account, ca.customer, c.email
+        FROM myenergy.customer_accounts ca
+        JOIN myenergy.customers c ON c.id = ca.customer
+        WHERE ca.account = ANY(ARRAY[supply_account_id, solar_account_id])
+    LOOP
+        RAISE NOTICE '  Role: % | Customer: % (%) | Account: %', ca_rec.role, ca_rec.customer, ca_rec.email, ca_rec.account;
+    END LOOP;
 
     RAISE NOTICE '=======================';
     RETURN p_property_id::text;

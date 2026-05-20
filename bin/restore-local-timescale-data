@@ -1,0 +1,27 @@
+#!/bin/sh
+
+if [ -z "$1" ]
+then
+  echo "No backup file specified"
+  return 1
+fi
+
+DUMP_FILE=$1
+
+HOST_DIR=/tmp/timescale-restore
+mkdir -p $HOST_DIR
+cp $DUMP_FILE $HOST_DIR
+
+docker run \
+        --rm \
+        --network host \
+        -v $HOST_DIR:/db \
+        -v ~/.pgpass:/root/.pgpass:ro \
+        postgres:17-alpine \
+    psql \
+        --log-file=/db/restore.log \
+        --host localhost \
+        --port 15432 \
+        --username=tsdbadmin \
+        --dbname=tsdb \
+        --file=/db/$DUMP_FILE
