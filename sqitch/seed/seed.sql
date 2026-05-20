@@ -243,6 +243,21 @@ WHERE id in (select current_contract from myenergy.accounts where id in (
     )
 )) and "type" in ('supply', 'solar'); -- both contracts
 
+-- Insert contract_signatures rows for the contracts just marked as signed
+-- (0022 migration migrates existing signed_date data; seed data must do the same)
+INSERT INTO myenergy.contract_signatures (contract, customer, signed_date)
+SELECT c.id, ca.customer, '2024-01-01'::date
+FROM myenergy.contracts c
+JOIN myenergy.accounts a ON a.current_contract = c.id
+JOIN myenergy.customer_accounts ca ON ca.account = a.id
+WHERE c.id in (
+    select current_contract from myenergy.accounts where id in (
+        select account from myenergy.customer_accounts where customer in (
+            select id from myenergy.customers where email in ('occ11@wl.ce', 'occ13@wl.ce', 'own11_13@wl.ce')
+        )
+    )
+) and c.type in ('supply', 'solar');
+
 
 -- Create customer_invites for one WLCE and one HMCE user to check conditional invite URL generation
 INSERT INTO myenergy.customer_invites (customer) VALUES ('ef9007fa-4084-4775-b4f1-1c0710fc0511');

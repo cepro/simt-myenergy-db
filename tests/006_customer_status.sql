@@ -39,13 +39,15 @@ PREPARE meter_prepay_update(boolean, text) AS
         WHERE c.email = $2
     );
 
-PREPARE sign_contracts(text) AS 
-    UPDATE contracts set signed_date = '2024-01-01 00:00 +00'
-    WHERE id in (select current_contract from accounts where id in (
-        select account from customer_accounts where customer in (
-            select id from customers where email = $1
-        )
-    )) and "type" in ('supply', 'solar'); -- both contracts
+PREPARE sign_contracts(text) AS
+    INSERT INTO contract_signatures (contract, customer, signed_date)
+    SELECT c.id, ca.customer, '2024-01-01'::date
+    FROM contracts c
+    JOIN accounts a ON a.current_contract = c.id
+    JOIN customer_accounts ca ON ca.account = a.id
+    WHERE ca.customer = (SELECT id FROM customers WHERE email = $1)
+    AND c.type IN ('supply', 'solar')
+    ON CONFLICT (contract, customer) DO UPDATE SET signed_date = '2024-01-01';
 
 
 

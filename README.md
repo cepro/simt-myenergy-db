@@ -28,6 +28,27 @@ deployments and rollbacks.
 > SQITCH_USER_CONFIG=sqitch_secrets.conf sqitch deploy --target timescale-<org>
 ```
 
+## Testing
+
+Tests use [pg_prove](https://pgtap.org/) and are run against a local Supabase instance.
+
+```sh
+# Run all tests
+./bin/test
+
+# Check exit code (0 = pass, non-zero = fail)
+./bin/test; echo "Exit: $?"
+
+# Run specific test file(s)
+./bin/test tests/011_contract_signatures.sql
+./bin/test tests/011_contract_signatures.sql tests/012_sync_registered_proprietors_to_customer_accounts.sql
+
+# Show only pass/fail summary
+./bin/test 2>&1 | grep -E "(Result:|Files=|^tests/)"
+```
+
+Note: pg_prove may report `Wstat: 768 (exited 3)` even when all pgtap assertions pass - this can happen if there are non-fatal SQL errors in cleanup statements. The test file may still pass overall.
+
 ## NOTIFY/LISTEN
 
 Example send an encrypted message:
