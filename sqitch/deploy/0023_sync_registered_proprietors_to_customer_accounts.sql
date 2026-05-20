@@ -1,8 +1,68 @@
--- Revert supabase:0019_shared_ownership from pg
+-- Deploy supabase:0023_sync_registered_proprietors_to_customer_accounts to pg
+-- Add trigger to sync registered_proprietors inserts to customer_accounts (role='owner') for solar accounts
 
 BEGIN;
 
--- Restore customer_status() without corporate body check and with IS NULL prepay condition
+-- Function to sync registered_proprietors to customer_accounts
+-- Creates customer_accounts entries with role='owner' for solar accounts when a registered_proprietor is added
+CREATE OR REPLACE FUNCTION myenergy.sync_rp_to_ca()
+RETURNS trigger
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    solar_account_id uuid;
+BEGIN
+    -- Find solar account(s) for this property and insert owner entries
+    -- Using ON CONFLICT DO NOTHING to handle duplicate inserts gracefully
+    FOR solar_account_id IN
+        SELECT a.id
+        FROM myenergy.accounts a
+        WHERE a.property = NEW.property
+          AND a.type = 'solar'
+    LOOP
+        INSERT INTO myenergy.customer_accounts (customer, account, role)
+        VALUES (NEW.customer, solar_account_id, 'owner')
+        ON CONFLICT (customer, account, role) DO NOTHING;
+    END LOOP;
+
+    RETURN NEW;
+END;
+$$;
+
+-- Trigger on registered_proprietors INSERT
+DROP TRIGGER IF EXISTS sync_rp_to_ca_on_registered_proprietors ON myenergy.registered_proprietors;
+CREATE TRIGGER sync_rp_to_ca_on_registered_proprietors
+    AFTER INSERT ON myenergy.registered_proprietors
+    FOR EACH ROW EXECUTE FUNCTION myenergy.sync_rp_to_ca();
+
+-- Function to migrate existing registered_proprietors to customer_accounts
+-- Can be called manually or used for backfilling existing data
+CREATE OR REPLACE FUNCTION myenergy.migrate_existing_rp_to_ca()
+RETURNS integer
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    row_count integer;
+BEGIN
+    -- For each registered_proprietor, find solar accounts and create customer_accounts entries
+    INSERT INTO myenergy.customer_accounts (customer, account, role)
+    SELECT DISTINCT rp.customer, a.id, 'owner'::myenergy.account_role_type_enum
+    FROM myenergy.registered_proprietors rp
+    JOIN myenergy.accounts a ON a.property = rp.property AND a.type = 'solar'
+    WHERE NOT EXISTS (
+        SELECT 1 FROM myenergy.customer_accounts ca
+        WHERE ca.customer = rp.customer
+          AND ca.account = a.id
+          AND ca.role = 'owner'
+    );
+
+    GET DIAGNOSTICS row_count = ROW_COUNT;
+    RETURN row_count;
+END;
+$$;
+
+-- Fix customer_status() to use contracts.signed boolean instead of deprecated signed_date column
+-- (signed_date was dropped in 0022_contract_signatures.sql)
 CREATE OR REPLACE FUNCTION myenergy.customer_status(new_customer_row myenergy.customers, old_status myenergy.customer_status_enum DEFAULT NULL::myenergy.customer_status_enum, prepay_enabled boolean DEFAULT NULL::boolean)
  RETURNS myenergy.customer_status_enum
  LANGUAGE plpgsql
@@ -34,6 +94,13 @@ BEGIN
         RETURN 'pending'::myenergy.customer_status_enum;
     END IF;
 
+    IF EXISTS (
+        SELECT 1 FROM myenergy.customer_corporate_bodies
+        WHERE customer = new_customer_row.id
+    ) THEN
+        RETURN 'live'::myenergy.customer_status_enum;
+    END IF;
+
     IF new_customer_row.allow_onboard_transition IS NOT TRUE THEN
         RETURN 'preonboarding'::myenergy.customer_status_enum;
     END IF;
@@ -59,7 +126,7 @@ BEGIN
     LEFT JOIN myenergy.contracts c ON c.id = a.current_contract
     WHERE ca.customer = new_customer_row.id
     AND a.current_contract IN (
-        SELECT id from myenergy.contracts where signed_date is NOT null
+        SELECT id from myenergy.contracts where signed = true
     )
     AND NOT (
         (ca.role = 'owner' AND (c.type = 'supply' OR a.type = 'supply'))
@@ -87,7 +154,7 @@ BEGIN
             WHERE ca.customer = new_customer_row.id
             AND ca.role = 'occupier'
             AND a.type = 'supply'
-            AND (m.prepay_enabled IS NULL)
+            AND (m.prepay_enabled IS NOT TRUE)
         ) INTO has_unprepared_supply_meter;
     END IF;
 
@@ -99,31 +166,5 @@ BEGIN
 END;
 $function$
 ;
-
--- Restore trigger to pass OLD.status
-CREATE OR REPLACE FUNCTION myenergy.customer_status_update_on_trigger() RETURNS trigger
-    LANGUAGE plpgsql SECURITY DEFINER
-    AS $$
-DECLARE
-     new_status myenergy.customer_status_enum;
-BEGIN
-    SELECT myenergy.customer_status(NEW, OLD.status, NULL) INTO new_status;
-    NEW.status = new_status;
-    RETURN NEW;
-END;
-$$;
-
--- Drop auth.users triggers
-DROP TRIGGER IF EXISTS update_customers_on_email_update_trigger ON auth.users;
-DROP TRIGGER IF EXISTS customer_registration_trigger ON auth.users;
-DROP TRIGGER IF EXISTS customer_status_auth_users_update ON auth.users;
-
--- Drop tables
-DROP TABLE IF EXISTS myenergy.registered_proprietors;
-DROP TABLE IF EXISTS myenergy.customer_corporate_bodies;
-DROP TABLE IF EXISTS myenergy.corporate_bodies;
-
--- Restore properties.owner column (IF NOT EXISTS to handle revert ordering)
-ALTER TABLE myenergy.properties ADD COLUMN IF NOT EXISTS owner uuid;
 
 COMMIT;

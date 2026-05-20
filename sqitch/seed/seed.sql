@@ -181,6 +181,12 @@ INSERT INTO myenergy.registered_proprietors (property, customer, tenure_type) VA
     ((SELECT id FROM myenergy.properties WHERE plot = 'Plot-01' AND esco = '363ff821-3a56-4b43-8227-8e53c45fbcdb'), (SELECT id FROM myenergy.customers WHERE email = 'ownocc1@hm.ce'), 'joint_tenant'),
     ((SELECT id FROM myenergy.properties WHERE plot = 'Plot-SEA-Landlord' AND esco = '363ff821-3a56-4b43-8227-8e53c45fbcdb'), (SELECT id FROM myenergy.customers WHERE email = 'ownoccsea@hm.ce'), 'joint_tenant');
 
+-- registered_proprietors inserts trigger sync_rp_to_ca which creates customer_accounts entries
+-- for own11_13 and ownocc12. These must be deleted before the UPDATEs below, which reassign
+-- the plot owner accounts to these real customers.
+DELETE FROM myenergy.customer_accounts WHERE customer = (SELECT id FROM myenergy.customers WHERE email = 'own11_13@wl.ce');
+DELETE FROM myenergy.customer_accounts WHERE customer = (SELECT id FROM myenergy.customers WHERE email = 'ownocc12@wl.ce');
+
 update myenergy.customer_accounts 
 	set customer = (select id from myenergy.customers where email = 'own11_13@wl.ce')
 	where customer = (select id from myenergy.customers where email = 'plot11owner-wlce@change.me');
@@ -230,7 +236,7 @@ DELETE FROM myenergy.customers where email in (
 
 -- setup 2 prelive status customers by signing their supply contracts (occ11@wl.ce, occ13@wl.ce)
 -- setup 1 live customer by signing both solar contracts (own11_13@wl.ce)
-UPDATE myenergy.contracts set signed_date = '2024-01-01 00:00 +00'
+UPDATE myenergy.contracts SET signed = true
 WHERE id in (select current_contract from myenergy.accounts where id in (
     select account from myenergy.customer_accounts where customer in (
         select id from myenergy.customers where email in ('occ11@wl.ce', 'occ13@wl.ce', 'own11_13@wl.ce')
@@ -429,5 +435,8 @@ WHERE c.id IN ('aabbcc01-0001-4a1a-aabb-cc01cc01cc01', 'aabbcc02-0002-4a2a-aabb-
 INSERT INTO myenergy.registered_proprietors (property, customer, tenure_type) VALUES
     ((SELECT id FROM myenergy.properties WHERE plot = 'Plot-11' AND esco = '527eed5d-2f81-4abe-a7f4-6fff8ac72703'), 'aabbcc01-0001-4a1a-aabb-cc01cc01cc01', 'tenant_in_common'),
     ((SELECT id FROM myenergy.properties WHERE plot = 'Plot-11' AND esco = '527eed5d-2f81-4abe-a7f4-6fff8ac72703'), 'aabbcc02-0002-4a2a-aabb-cc02cc02cc02', 'tenant_in_common');
+
+-- Sync new registered_proprietors to customer_accounts (role='owner' for solar accounts)
+SELECT myenergy.migrate_existing_rp_to_ca();
 
 COMMIT;

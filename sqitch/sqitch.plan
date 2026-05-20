@@ -24,3 +24,5 @@
 0019_shared_ownership 2026-04-30T00:00:00Z Chris Hatch <chris@cepro.energy> # Shared ownership: corporate_bodies tables, auth.users triggers, corporate body customer status
 0020_shared_ownership_removal 2026-05-05T00:00:00Z Chris Hatch <chris@cepro.energy> # Remove properties.owner column and update functions to use customer_accounts.role='owner'
 0021_corporate_bodies_grants 2026-05-06T00:00:00Z Chris Hatch <chris@cepro.energy> # Enable RLS on registered_proprietors and grant access similar to properties table
+0022_contract_signatures 2026-05-20T00:00:00Z Chris Hatch <chris@cepro.energy> # Add contract_signatures table, drop signed_date, add signed bool with signatures_required
+0023_sync_registered_proprietors_to_customer_accounts 2026-05-20T00:00:00Z Chris Hatch <chris@cepro.energy> # Add trigger to sync registered_proprietors inserts to customer_accounts (role='owner') for solar accounts

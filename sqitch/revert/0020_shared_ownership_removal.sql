@@ -2,8 +2,8 @@
 
 BEGIN;
 
--- Re-add the owner column
-ALTER TABLE myenergy.properties ADD COLUMN owner uuid;
+-- Re-add the owner column (IF NOT EXISTS to handle revert ordering)
+ALTER TABLE myenergy.properties ADD COLUMN IF NOT EXISTS owner uuid;
 
 -- Re-add the FK constraint
 ALTER TABLE myenergy.properties ADD CONSTRAINT properties_owner_fkey
