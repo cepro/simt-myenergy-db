@@ -732,12 +732,11 @@ BEGIN
         occupier_id := owner_id;
     END IF;
 
-    -- Create property
-    INSERT INTO myenergy.properties (plot, description, owner, esco, id)
+    -- Create property (owner column removed in 0020_shared_ownership_removal - use registered_proprietors instead)
+    INSERT INTO myenergy.properties (plot, description, esco, id)
         VALUES (
             'Plot-' || plot_number,
             description,
-            owner_id,
             esco_id,
             property_id
         );

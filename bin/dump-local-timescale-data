@@ -1,0 +1,22 @@
+#!/bin/sh
+
+DUMP_FILE=/db/timescale-local-data-`date +%s`.sql
+HOST_DIR=`pwd`/dumps
+
+docker run \
+        --rm \
+        --network host \
+        -v $HOST_DIR:/db \
+        -v ~/.pgpass:/root/.pgpass:ro \
+        postgres:17-alpine \
+    pg_dump \
+        --host localhost \
+        --port 15432 \
+        --dbname=tsdb \
+        --username=tsdbadmin \
+        --file=$DUMP_FILE \
+        --schema=myenergy \
+        --data-only \
+        --inserts --column-inserts
+
+echo "Dumped to $HOST_DIR/`basename $DUMP_FILE`"

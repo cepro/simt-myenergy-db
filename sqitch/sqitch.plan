@@ -22,3 +22,5 @@
 0017_event_log_types 2026-01-06T02:15:37Z Chris Hatch <chris@cepro.energy> # populate event log types
 0018_solar_credits_prepay_filter 2026-02-01T00:30:00Z Damon Rand <damon@cepro.energy> # Remove prepay_enabled filter and add month-1 backfill for solar credits
 0019_shared_ownership 2026-04-30T00:00:00Z Chris Hatch <chris@cepro.energy> # Shared ownership: corporate_bodies tables, auth.users triggers, corporate body customer status
+0020_shared_ownership_removal 2026-05-05T00:00:00Z Chris Hatch <chris@cepro.energy> # Remove properties.owner column and update functions to use customer_accounts.role='owner'
+0021_corporate_bodies_grants 2026-05-06T00:00:00Z Chris Hatch <chris@cepro.energy> # Enable RLS on registered_proprietors and grant access similar to properties table
