@@ -207,6 +207,17 @@ update myenergy.customer_accounts
     where customer = (select id from myenergy.customers where email = 'plotSEA-Landlordowner-hmce@change.me');
 
 -- clean up replaced myenergy.customers
+DELETE FROM myenergy.registered_proprietors WHERE customer IN (
+    SELECT id FROM myenergy.customers WHERE email IN (
+        'plot11owner-wlce@change.me',
+        'plot13owner-wlce@change.me',
+        'plot11occupier-wlce@change.me',
+        'plot13occupier-wlce@change.me',
+        'plot12owner-wlce@change.me',
+        'plot01owner-hmce@change.me',
+        'plotSEA-Landlordowner-hmce@change.me'
+    )
+);
 DELETE FROM myenergy.customers where email in (
     'plot11owner-wlce@change.me',
     'plot13owner-wlce@change.me',
