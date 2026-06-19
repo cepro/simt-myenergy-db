@@ -68,7 +68,7 @@ INSERT INTO test_contract_ids (contract_id)
 SELECT extensions.uuid_generate_v4();
 
 INSERT INTO myenergy.contracts (id, terms, type, signatures_required, signed)
-SELECT contract_id, 'c95dd1d5-b1fd-4db2-9570-7dca975a9349'::uuid, 'supply', 2, false
+SELECT contract_id, '24b451b7-9931-4ae3-b65b-713cb8807157'::uuid, 'supply', 2, false
 FROM test_contract_ids;
 
 PREPARE get_test_contract_id AS SELECT contract_id FROM test_contract_ids;
@@ -157,7 +157,7 @@ DROP TABLE test_contract_ids;
 
 -- Create a signed contract with signature for testing
 INSERT INTO myenergy.contracts (id, terms, type, signatures_required, signed)
-SELECT extensions.uuid_generate_v4(), 'c95dd1d5-b1fd-4db2-9570-7dca975a9349'::uuid, 'supply', 1, true;
+SELECT extensions.uuid_generate_v4(), '24b451b7-9931-4ae3-b65b-713cb8807157'::uuid, 'supply', 1, true;
 
 INSERT INTO myenergy.contract_signatures (contract, customer, signed_date)
 SELECT c.id, (SELECT id FROM myenergy.customers WHERE email = 'occ11@wl.ce'), current_date

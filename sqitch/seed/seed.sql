@@ -4,45 +4,37 @@ BEGIN;
 -- myenergy schema - insert rows 
 --  
 
+-- 4 terms: 1 supply + 1 solar for each of HMCE and WLCE, all v1, all 2025-07.
+-- summary_text / short_description copied from production (mgf) to keep seed aligned.
+-- docuseal_template_id / docuseal_template_slug are local placeholders; wire to real
+-- DocuSeal templates via env config in actual deploys.
 INSERT INTO "myenergy"."contract_terms" ("id", "summary_text", "short_description", "version", "created_at", "type", "subtype", "docuseal_template_id", "docuseal_template_slug") VALUES
-    ('8674594d-2684-4ba2-9d05-3867d948dee3', 'Solar short term v1 (WLCE)', 'Solar short term desc (WLCE)', 1, '2023-09-27 12:32:30.511', 'solar', 'short_term', 34019, 'z6D1KaThV4zphE'),
-    ('be3d69cc-ecb3-403b-8c52-edcbc40debf7', 'Solar short term v1 (HMCE) ', 'Solar short term desc (HMCE)', 1, '2023-09-27 12:32:30.511', 'solar', 'short_term', 31019, 'abc1KaThV4zxyz'),
-	
-    ('c95dd1d5-b1fd-4db2-9570-7dca975a9349', 'Supply v1 summary (WLCE)', 'Supply v1 desc (WLCE)', 1, '2023-08-01 23:22:48.65366', 'supply', null, 33983, 'P5EfvMYA3K6W5p'),
-    ('3c1da6e1-f43e-42b6-a3d0-39278ec3fb4d','Supply v2 summary (WLCE)', 'Supply v2 desc (WLCE)', 2,'2023-10-17 11:11:32.472981','supply',NULL,33986,'cZb4PeXPCQmNk7'),
-    
-    ('062194b8-bf44-4aa7-9c48-c2aaec4e4bb8','Supply summary (HMCE)', 'Supply desc (HMCE)', 1,'2023-10-17 11:11:32.472981','supply',NULL,33990,'ksdf93jfd983f3'),
-	
-    ('d82d8f92-6546-40d0-9c60-3c81c6e627df', 'Solar 30 year v1 summary (WLCE)', 'Solar 30 v1 desc (WLCE)', 1, '2023-08-01 23:22:48.65366', 'solar', 'thirty_year', 33984, 'oM6pq9T16VNZ6b'),
-    ('9944e68d-8d63-43c7-936e-9870fac66826','Solar 30 year v2 summary (WLCE)', 'Solar 30 v2 desc (WLCE)', 2,'2023-10-17 11:12:01.163766','solar','thirty_year',33985, 'gF7fur9jFDytuL');
+    -- HMCE Supply single rate 2025-07 v1
+    ('24b451b7-9931-4ae3-b65b-713cb8807157', 'Our single rate tariff tracks the quarterly changes to the Energy Price Cap and is guaranteed to be at least 15% lower cost', 'Supply single rate (HMCE 2025-07)', 1, '2025-07-01 00:00:00', 'supply', NULL, 100001, 'hmce-supply-2025-07'),
+    -- WLCE Supply single rate 2025-07 v1
+    ('a83d8b5e-f21b-4ef0-b44d-f49b2dfd9faf', 'Our single rate tariff tracks the quarterly changes to the Energy Price Cap and is guaranteed to be at least 15% lower cost', 'Supply single rate (WLCE 2025-07)', 1, '2025-07-01 00:00:00', 'supply', NULL, 100002, 'wlce-supply-2025-07'),
+    -- HMCE Solar Installation Usage Agreement 2025-07 v1
+    ('dcdb73f0-5ac1-438f-a91e-4c1d80e31f97', 'Your Solar Installation Usage Agreement adds credit to a named meter each month [signed by property owner]', 'Solar Installation Usage Agreement (HMCE 2025-07)', 1, '2025-07-01 00:00:00', 'solar', 'short_term', 100003, 'hmce-solar-2025-07'),
+    -- WLCE Solar Installation Usage Agreement 2025-07 v1
+    ('c8ce0c4f-66f9-4d9c-ac04-405f20ba9e5f', 'Your Solar Installation Usage Agreement adds credit to a named meter each month [signed by property owner]', 'Solar Installation Usage Agreement (WLCE 2025-07)', 1, '2025-07-01 00:00:00', 'solar', 'short_term', 100004, 'wlce-solar-2025-07');
 
 -- Hazelmead is id 363f..
 -- Waterlilies is id 527e..
 INSERT INTO "myenergy"."contract_terms_esco" ("terms", "esco") VALUES
-	-- WLCE Supply v1
-    ('c95dd1d5-b1fd-4db2-9570-7dca975a9349','527eed5d-2f81-4abe-a7f4-6fff8ac72703'),
-	-- WLCE Supply v2
-    ('3c1da6e1-f43e-42b6-a3d0-39278ec3fb4d','527eed5d-2f81-4abe-a7f4-6fff8ac72703'),
+    -- HMCE: 1 supply + 1 solar
+    ('24b451b7-9931-4ae3-b65b-713cb8807157', '363ff821-3a56-4b43-8227-8e53c45fbcdb'),
+    ('dcdb73f0-5ac1-438f-a91e-4c1d80e31f97', '363ff821-3a56-4b43-8227-8e53c45fbcdb'),
+    -- WLCE: 1 supply + 1 solar
+    ('a83d8b5e-f21b-4ef0-b44d-f49b2dfd9faf', '527eed5d-2f81-4abe-a7f4-6fff8ac72703'),
+    ('c8ce0c4f-66f9-4d9c-ac04-405f20ba9e5f', '527eed5d-2f81-4abe-a7f4-6fff8ac72703');
 
-    -- WLCE Solar short term v1
-    ('8674594d-2684-4ba2-9d05-3867d948dee3', '527eed5d-2f81-4abe-a7f4-6fff8ac72703'),
-	
-	-- WLCE Solar 30 year v1
-    ('d82d8f92-6546-40d0-9c60-3c81c6e627df','527eed5d-2f81-4abe-a7f4-6fff8ac72703'),
-	-- WLCE Solar 30 year v2
-    ('9944e68d-8d63-43c7-936e-9870fac66826','527eed5d-2f81-4abe-a7f4-6fff8ac72703'),
-
-    -- HMCE Supply v1
-    ('062194b8-bf44-4aa7-9c48-c2aaec4e4bb8','363ff821-3a56-4b43-8227-8e53c45fbcdb'),
-    -- HMCE Solar short term v1
-    ('be3d69cc-ecb3-403b-8c52-edcbc40debf7', '363ff821-3a56-4b43-8227-8e53c45fbcdb');
-	
 
 INSERT INTO "myenergy"."contracts" ("id", "terms") VALUES
-	-- for unit tests
-	('aad0100a-b424-4886-89f4-90df94eeae36', '8674594d-2684-4ba2-9d05-3867d948dee3'),  -- solar short term
-	('a4ea9b41-bde6-4729-ab63-91f9c67cb3b2', '9944e68d-8d63-43c7-936e-9870fac66826'),  -- solar 30 year
-	('598f3885-000b-40c4-bfa0-8cecb082ff8f', '3c1da6e1-f43e-42b6-a3d0-39278ec3fb4d');  -- supply
+	-- for unit tests - one contract per term (4 total)
+	('43b17cf9-9a0d-44b2-9fe7-a6168429a673', '24b451b7-9931-4ae3-b65b-713cb8807157'),  -- HMCE supply
+	('a349ef7f-2400-4984-95ba-88a79520c52a', 'a83d8b5e-f21b-4ef0-b44d-f49b2dfd9faf'),  -- WLCE supply
+	('00d21c76-2566-4021-8192-28d509c252d9', 'dcdb73f0-5ac1-438f-a91e-4c1d80e31f97'),  -- HMCE solar
+	('48655ef1-1122-4e62-9572-5dbf48abb550', 'c8ce0c4f-66f9-4d9c-ac04-405f20ba9e5f');  -- WLCE solar
 
 
 -- customers and corresponding auth.users entries:

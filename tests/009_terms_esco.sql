@@ -9,17 +9,17 @@ SELECT extensions.plan(4);
 
 SELECT is((SELECT current_role), 'tsdbadmin', 'intial role');
 
-SELECT is((SELECT count(*)::int FROM contract_terms_esco), 7, 'contract_terms_esco count');
+SELECT is((SELECT count(*)::int FROM contract_terms_esco), 4, 'contract_terms_esco count');
 
 -- verify trigger catches attempt to add terms from a different esco
 
 -- create a new contract with HMCE supply terms
 INSERT INTO "myenergy"."contracts" ("id", "terms", "type") VALUES
-	('eb36e4fa-7ec0-44ef-9a66-b88f191bd0ce', '062194b8-bf44-4aa7-9c48-c2aaec4e4bb8', 'supply');
+	('eb36e4fa-7ec0-44ef-9a66-b88f191bd0ce', '24b451b7-9931-4ae3-b65b-713cb8807157', 'supply');
 
 -- check it can't be attached to a WLCE account
 SELECT throws_ok(
-    $$ UPDATE myenergy.accounts 
+    $$ UPDATE myenergy.accounts
         -- contract with HMCE terms
         SET current_contract = 'eb36e4fa-7ec0-44ef-9a66-b88f191bd0ce'
         WHERE id in (
@@ -33,11 +33,11 @@ SELECT throws_ok(
 
 -- check can't change terms on existing WLCE contract to HMCE terms
 SELECT throws_ok(
-    $$ UPDATE myenergy.contracts 
+    $$ UPDATE myenergy.contracts
         -- HMCE terms
-        SET terms = '062194b8-bf44-4aa7-9c48-c2aaec4e4bb8'
+        SET terms = '24b451b7-9931-4ae3-b65b-713cb8807157'
         -- see seed.sql for this contract:
-        WHERE id = '598f3885-000b-40c4-bfa0-8cecb082ff8f'
+        WHERE id = 'a349ef7f-2400-4984-95ba-88a79520c52a'
         $$,
     'Contract terms are not valid for the ESCO associated with this contract and account'
 );

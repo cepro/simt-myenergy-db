@@ -22,7 +22,7 @@ SELECT is((SELECT count(*)::int FROM myenergy.customers), 1, 'customer - self');
 SELECT is((SELECT count(*)::int FROM myenergy.accounts), 4, 'account - supply and solar for 2 properties');
 SELECT is((SELECT count(*)::int FROM myenergy.customer_accounts), 4, 'customer_accounts');
 SELECT is((SELECT count(*)::int FROM myenergy.customer_invites), 1, 'customer_invites');
-SELECT is((SELECT count(*)::int FROM myenergy.contract_terms), 5, 'contract_terms for wlce');
+SELECT is((SELECT count(*)::int FROM myenergy.contract_terms), 2, 'contract_terms for wlce');
 SELECT is((SELECT count(*)::int FROM myenergy.contracts), 4, 'contracts');
 SELECT is((SELECT count(*)::int FROM myenergy.wallets), 2, 'wallet');
 
@@ -41,7 +41,7 @@ SELECT is((SELECT count(*)::int FROM myenergy.wallets), 1, 'wallet');
 SET role authenticated;
 SELECT set_config('request.jwt.claim.email', 'a@wl.ce', true);
 SELECT is((SELECT count(*)::int FROM myenergy.properties), 41, 'all properties');
-SELECT is((SELECT count(*)::int FROM myenergy.contract_terms), 7, 'all contract terms');
+SELECT is((SELECT count(*)::int FROM myenergy.contract_terms), 4, 'all contract terms');
 
 SELECT * FROM finish();
 ROLLBACK;
