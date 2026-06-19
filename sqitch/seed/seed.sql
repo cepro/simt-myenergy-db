@@ -10,13 +10,13 @@ BEGIN;
 -- DocuSeal templates via env config in actual deploys.
 INSERT INTO "myenergy"."contract_terms" ("id", "summary_text", "short_description", "version", "created_at", "type", "subtype", "docuseal_template_id", "docuseal_template_slug") VALUES
     -- HMCE Supply single rate 2025-07 v1
-    ('24b451b7-9931-4ae3-b65b-713cb8807157', 'Our single rate tariff tracks the quarterly changes to the Energy Price Cap and is guaranteed to be at least 15% lower cost', 'Supply single rate (HMCE 2025-07)', 1, '2025-07-01 00:00:00', 'supply', NULL, 100001, 'hmce-supply-2025-07'),
+    ('24b451b7-9931-4ae3-b65b-713cb8807157', 'Our single rate tariff tracks the quarterly changes to the Energy Price Cap and is guaranteed to be at least 15% lower cost', 'Supply single rate (HMCE 2025-07)', 1, '2025-07-01 00:00:00', 'supply', NULL, 1636605, '5YSpK9cTtP3Tam'),
     -- WLCE Supply single rate 2025-07 v1
-    ('a83d8b5e-f21b-4ef0-b44d-f49b2dfd9faf', 'Our single rate tariff tracks the quarterly changes to the Energy Price Cap and is guaranteed to be at least 15% lower cost', 'Supply single rate (WLCE 2025-07)', 1, '2025-07-01 00:00:00', 'supply', NULL, 100002, 'wlce-supply-2025-07'),
+    ('a83d8b5e-f21b-4ef0-b44d-f49b2dfd9faf', 'Our single rate tariff tracks the quarterly changes to the Energy Price Cap and is guaranteed to be at least 15% lower cost', 'Supply single rate (WLCE 2025-07)', 1, '2025-07-01 00:00:00', 'supply', NULL, 1636604, 'v8xrC2DADq7BJs'),
     -- HMCE Solar Installation Usage Agreement 2025-07 v1
-    ('dcdb73f0-5ac1-438f-a91e-4c1d80e31f97', 'Your Solar Installation Usage Agreement adds credit to a named meter each month [signed by property owner]', 'Solar Installation Usage Agreement (HMCE 2025-07)', 1, '2025-07-01 00:00:00', 'solar', 'short_term', 100003, 'hmce-solar-2025-07'),
+    ('dcdb73f0-5ac1-438f-a91e-4c1d80e31f97', 'Your Solar Installation Usage Agreement adds credit to a named meter each month [signed by property owner]', 'Solar Installation Usage Agreement (HMCE 2025-07)', 1, '2025-07-01 00:00:00', 'solar', 'short_term', 1636617, 'CwRfWov6XiZsmT'),
     -- WLCE Solar Installation Usage Agreement 2025-07 v1
-    ('c8ce0c4f-66f9-4d9c-ac04-405f20ba9e5f', 'Your Solar Installation Usage Agreement adds credit to a named meter each month [signed by property owner]', 'Solar Installation Usage Agreement (WLCE 2025-07)', 1, '2025-07-01 00:00:00', 'solar', 'short_term', 100004, 'wlce-solar-2025-07');
+    ('c8ce0c4f-66f9-4d9c-ac04-405f20ba9e5f', 'Your Solar Installation Usage Agreement adds credit to a named meter each month [signed by property owner]', 'Solar Installation Usage Agreement (WLCE 2025-07)', 1, '2025-07-01 00:00:00', 'solar', 'short_term', 1636619, 'eBaqmpTiLnFKnZ');
 
 -- Hazelmead is id 363f..
 -- Waterlilies is id 527e..
@@ -225,6 +225,14 @@ DELETE FROM myenergy.customers where email in (
     'plot01owner-hmce@change.me',
     'plotSEA-Landlordowner-hmce@change.me'
 );
+
+-- Backfill: add_property() creates solar contracts with terms=NULL (legacy behaviour).
+-- New contract pattern requires terms to be set. Bind every orphan solar contract to
+-- the WLCE solar terms row. (The seed only contains WLCE solar accounts; if an HMCE
+-- solar term is ever added this UPDATE will need to match by account ESCO instead.)
+UPDATE myenergy.contracts
+   SET terms = 'c8ce0c4f-66f9-4d9c-ac04-405f20ba9e5f'::uuid
+ WHERE type = 'solar' AND terms IS NULL;
 
 -- setup 2 prelive status customers by signing their supply contracts (occ11@wl.ce, occ13@wl.ce)
 -- setup 1 live customer by signing both solar contracts (own11_13@wl.ce)
