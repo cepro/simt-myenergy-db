@@ -8,10 +8,11 @@ SET search_path TO myenergy,extensions,public;
 SELECT extensions.plan(35); -- Updated plan count to include new tests
 
 
-SELECT is((SELECT count(*)::int FROM customers where status = 'pending'), 42, 'pending customers returned');
+SELECT is((SELECT count(*)::int FROM customers where status = 'pending'), 41, 'pending customers returned');
 SELECT is((SELECT count(*)::int FROM customers where status = 'preonboarding'), 0, 'preonboarding customers returned');
 -- ownocc12@wl.ce   - all flags set and prepay meter on but supply contract not yet signed so still onboarding
-SELECT is((SELECT count(*)::int FROM customers where status = 'onboarding'), 1, 'onboarding customers returned');
+-- ownocc1@hm.ce    - HMCE solar contract bound to new solar account in seed; not yet signed
+SELECT is((SELECT count(*)::int FROM customers where status = 'onboarding'), 2, 'onboarding customers returned');
 -- occ11@wl.ce      - supply contract signed but meter not in prepay mode - thus prelive
 -- occ13@wl.ce      - same as occ11@wl.ce
 SELECT is((SELECT count(*)::int FROM customers where status = 'prelive'), 2, 'prelive customers returned');

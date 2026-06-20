@@ -29,12 +29,12 @@ INSERT INTO "myenergy"."contract_terms_esco" ("terms", "esco") VALUES
     ('c8ce0c4f-66f9-4d9c-ac04-405f20ba9e5f', '527eed5d-2f81-4abe-a7f4-6fff8ac72703');
 
 
-INSERT INTO "myenergy"."contracts" ("id", "terms") VALUES
+INSERT INTO "myenergy"."contracts" ("id", "terms", "type") VALUES
 	-- for unit tests - one contract per term (4 total)
-	('43b17cf9-9a0d-44b2-9fe7-a6168429a673', '24b451b7-9931-4ae3-b65b-713cb8807157'),  -- HMCE supply
-	('a349ef7f-2400-4984-95ba-88a79520c52a', 'a83d8b5e-f21b-4ef0-b44d-f49b2dfd9faf'),  -- WLCE supply
-	('00d21c76-2566-4021-8192-28d509c252d9', 'dcdb73f0-5ac1-438f-a91e-4c1d80e31f97'),  -- HMCE solar
-	('48655ef1-1122-4e62-9572-5dbf48abb550', 'c8ce0c4f-66f9-4d9c-ac04-405f20ba9e5f');  -- WLCE solar
+	('43b17cf9-9a0d-44b2-9fe7-a6168429a673', '24b451b7-9931-4ae3-b65b-713cb8807157', 'supply'),  -- HMCE supply
+	('a349ef7f-2400-4984-95ba-88a79520c52a', 'a83d8b5e-f21b-4ef0-b44d-f49b2dfd9faf', 'supply'),  -- WLCE supply
+	('00d21c76-2566-4021-8192-28d509c252d9', 'dcdb73f0-5ac1-438f-a91e-4c1d80e31f97', 'solar'),   -- HMCE solar
+	('48655ef1-1122-4e62-9572-5dbf48abb550', 'c8ce0c4f-66f9-4d9c-ac04-405f20ba9e5f', 'solar');   -- WLCE solar
 
 
 -- customers and corresponding auth.users entries:
