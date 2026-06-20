@@ -234,6 +234,35 @@ UPDATE myenergy.contracts
    SET terms = 'c8ce0c4f-66f9-4d9c-ac04-405f20ba9e5f'::uuid
  WHERE type = 'solar' AND terms IS NULL;
 
+-- Assign the 2 HMCE unit-test contracts to ownocc1@hm.ce (owner-occupier):
+--   - HMCE supply -> existing supply account (occupier role on Plot-01)
+--   - HMCE solar  -> new solar account on Plot-01 (owner role)
+-- A solar account has to be created since add_property() was called with a null
+-- solar_meter_serial for Plot-01. The unit-test contract 00d21c76 is then bound
+-- to that account as its current_contract.
+UPDATE myenergy.accounts
+   SET current_contract = '43b17cf9-9a0d-44b2-9fe7-a6168429a673'::uuid
+ WHERE id = (SELECT ca.account
+               FROM myenergy.customer_accounts ca
+               JOIN myenergy.customers cust ON cust.id = ca.customer
+              WHERE cust.email = 'ownocc1@hm.ce'
+                AND ca.role = 'occupier'
+                AND ca.account IN (SELECT id FROM myenergy.accounts WHERE type = 'supply'));
+
+SELECT myenergy.add_account(
+    'solar'::myenergy.account_type_enum,
+    (SELECT id FROM myenergy.properties WHERE plot = 'Plot-01' AND esco = (SELECT id FROM myenergy.escos WHERE code = 'hmce')),
+    (SELECT id FROM myenergy.customers WHERE email = 'ownocc1@hm.ce'),
+    'owner'::myenergy.account_role_type_enum,
+    NULL,
+    true
+);
+
+UPDATE myenergy.accounts
+   SET current_contract = '00d21c76-2566-4021-8192-28d509c252d9'::uuid
+ WHERE property = (SELECT id FROM myenergy.properties WHERE plot = 'Plot-01' AND esco = (SELECT id FROM myenergy.escos WHERE code = 'hmce'))
+   AND type = 'solar';
+
 -- setup 2 prelive status customers by signing their supply contracts (occ11@wl.ce, occ13@wl.ce)
 -- setup 1 live customer by signing both solar contracts (own11_13@wl.ce)
 UPDATE myenergy.contracts SET signed = true
