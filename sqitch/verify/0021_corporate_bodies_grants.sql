@@ -37,38 +37,38 @@ WHERE schemaname = 'myenergy'
   AND policyname = 'Customers can view their corporate body memberships or all if cepro user';
 
 -- Check corporate_bodies timestamps and trigger
-SELECT 1 FROM pg_columns
-WHERE schemaname = 'myenergy'
-  AND tablename = 'corporate_bodies'
-  AND attname = 'created_at';
-SELECT 1 FROM pg_columns
-WHERE schemaname = 'myenergy'
-  AND tablename = 'corporate_bodies'
-  AND attname = 'updated_at';
+SELECT 1 FROM information_schema.columns
+WHERE table_schema = 'myenergy'
+  AND table_name = 'corporate_bodies'
+  AND column_name = 'created_at';
+SELECT 1 FROM information_schema.columns
+WHERE table_schema = 'myenergy'
+  AND table_name = 'corporate_bodies'
+  AND column_name = 'updated_at';
 SELECT 1 FROM pg_trigger
 WHERE tgname = 'corporate_bodies_updated_at';
 
 -- Check customer_corporate_bodies timestamps and trigger
-SELECT 1 FROM pg_columns
-WHERE schemaname = 'myenergy'
-  AND tablename = 'customer_corporate_bodies'
-  AND attname = 'created_at';
-SELECT 1 FROM pg_columns
-WHERE schemaname = 'myenergy'
-  AND tablename = 'customer_corporate_bodies'
-  AND attname = 'updated_at';
+SELECT 1 FROM information_schema.columns
+WHERE table_schema = 'myenergy'
+  AND table_name = 'customer_corporate_bodies'
+  AND column_name = 'created_at';
+SELECT 1 FROM information_schema.columns
+WHERE table_schema = 'myenergy'
+  AND table_name = 'customer_corporate_bodies'
+  AND column_name = 'updated_at';
 SELECT 1 FROM pg_trigger
 WHERE tgname = 'customer_corporate_bodies_updated_at';
 
 -- Check registered_proprietors timestamps and trigger
-SELECT 1 FROM pg_columns
-WHERE schemaname = 'myenergy'
-  AND tablename = 'registered_proprietors'
-  AND attname = 'created_at';
-SELECT 1 FROM pg_columns
-WHERE schemaname = 'myenergy'
-  AND tablename = 'registered_proprietors'
-  AND attname = 'updated_at';
+SELECT 1 FROM information_schema.columns
+WHERE table_schema = 'myenergy'
+  AND table_name = 'registered_proprietors'
+  AND column_name = 'created_at';
+SELECT 1 FROM information_schema.columns
+WHERE table_schema = 'myenergy'
+  AND table_name = 'registered_proprietors'
+  AND column_name = 'updated_at';
 SELECT 1 FROM pg_trigger
 WHERE tgname = 'registered_proprietors_updated_at';
 
