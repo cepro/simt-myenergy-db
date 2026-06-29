@@ -1,6 +1,6 @@
 # myenergy-db
 
-[![Supabase CI](https://github.com/cepro/myenergy-db/actions/workflows/supabase-ci.yml/badge.svg)](https://github.com/cepro/myenergy-db/actions/workflows/supabase-ci.yml)
+[![Build Test CI](https://github.com/cepro/myenergy-db/actions/workflows/build-test.yml/badge.svg)](https://github.com/cepro/myenergy-db/actions/workflows/build-test.yml)
 
 Config, SQL, functions for the supabase database.
 
