@@ -81,10 +81,12 @@ BEGIN
             CASE
                 WHEN EXISTS (
                     SELECT 1
-                    FROM myenergy.customer_accounts ca_occ
+                    FROM myenergy.accounts a
+                    JOIN myenergy.customer_accounts ca_occ
+                      ON ca_occ.account = a.id
                     JOIN myenergy.customer_accounts ca_own
-                      ON ca_own.account = ca_occ.account
-                    WHERE ca_occ.account = ANY(affected_properties)
+                      ON ca_own.account = a.id
+                    WHERE a.property = ANY(affected_properties)
                       AND ca_occ.role = 'occupier'
                       AND ca_own.role = 'owner'
                       AND ca_occ.customer != ca_own.customer

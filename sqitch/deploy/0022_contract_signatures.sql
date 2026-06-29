@@ -201,12 +201,21 @@ DROP FUNCTION IF EXISTS myenergy.contracts_signed_update_customer_status();
 
 -- Migrate existing signed_date data to contract_signatures
 INSERT INTO myenergy.contract_signatures (contract, customer, signed_date)
-SELECT c.id, ca.customer, c.signed_date
+SELECT DISTINCT c.id, ca.customer, c.signed_date
 FROM myenergy.contracts c
 JOIN myenergy.customer_accounts ca ON ca.account = ANY(
     SELECT id FROM myenergy.accounts WHERE current_contract = c.id
 )
 WHERE c.signed_date IS NOT NULL;
+
+-- Preserve the existing signed state for rows migrated from signed_date.
+UPDATE myenergy.contracts c
+SET signed = true
+WHERE (
+    SELECT COUNT(*)
+    FROM myenergy.contract_signatures cs
+    WHERE cs.contract = c.id
+) >= c.signatures_required;
 
 -- Drop the old signed_date column
 ALTER TABLE myenergy.contracts DROP COLUMN signed_date;

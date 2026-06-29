@@ -61,6 +61,11 @@ BEGIN
 END;
 $$;
 
+-- Backfill existing registered_proprietors rows. Without this, databases that
+-- already had registered proprietors before this migration would only sync new
+-- rows inserted after the trigger was created.
+SELECT myenergy.migrate_existing_rp_to_ca();
+
 -- Fix customer_status() to use contracts.signed boolean instead of deprecated signed_date column
 -- (signed_date was dropped in 0022_contract_signatures.sql)
 CREATE OR REPLACE FUNCTION myenergy.customer_status(new_customer_row myenergy.customers, old_status myenergy.customer_status_enum DEFAULT NULL::myenergy.customer_status_enum, prepay_enabled boolean DEFAULT NULL::boolean)
