@@ -27,7 +27,7 @@
 --
 -- Payload is intentionally minimal: just the row's UUID. The Java
 -- handler (CustomerUpdatedNotifierHandler / ContractSignedNotifierHandler
--- in simt-j-accountservice) does a single-row lookup of the full record
+-- in myenergyservice) does a single-row lookup of the full record
 -- via the existing GraphQL backend-user path and forwards the
 -- CustomerEventDto / ContractEventDto to the SSE publisher. This keeps
 -- the trigger simple, keeps the WAL payload trivially small, and means
