@@ -209,6 +209,22 @@ INSERT INTO myenergy.registered_proprietors (property, customer, tenure_type) VA
 DELETE FROM myenergy.customer_accounts WHERE customer = (SELECT id FROM myenergy.customers WHERE email = 'own11_13@wl.ce');
 DELETE FROM myenergy.customer_accounts WHERE customer = (SELECT id FROM myenergy.customers WHERE email = 'ownocc12@wl.ce');
 
+-- Plot-17 is the multi-party DocuSeal fixture. add_property() creates a
+-- placeholder owner/proprietor and one solar account; replace that placeholder
+-- proprietor with the two real co-proprietors above, both signing on the single
+-- existing Plot-17 solar account.
+DELETE FROM myenergy.registered_proprietors
+ WHERE property = (SELECT id FROM myenergy.properties WHERE plot = 'Plot-17' AND esco = (SELECT id FROM myenergy.escos WHERE code = 'hmce'))
+   AND customer = (SELECT id FROM myenergy.customers WHERE email = 'plot17owner-hmce@change.me');
+
+DELETE FROM myenergy.customer_accounts ca
+ USING myenergy.accounts a
+ WHERE ca.account = a.id
+   AND a.property = (SELECT id FROM myenergy.properties WHERE plot = 'Plot-17' AND esco = (SELECT id FROM myenergy.escos WHERE code = 'hmce'))
+   AND a.type = 'solar'
+   AND ca.role = 'owner'
+   AND ca.customer = (SELECT id FROM myenergy.customers WHERE email = 'plot17owner-hmce@change.me');
+
 update myenergy.customer_accounts 
 	set customer = (select id from myenergy.customers where email = 'own11_13@wl.ce')
 	where customer = (select id from myenergy.customers where email = 'plot11owner-wlce@change.me');
@@ -302,21 +318,9 @@ UPDATE myenergy.accounts
  WHERE property = (SELECT id FROM myenergy.properties WHERE plot = 'Plot-01' AND esco = (SELECT id FROM myenergy.escos WHERE code = 'hmce'))
    AND type = 'solar';
 
--- Multi-party HMCE solar setup on Plot-17. Creates a new solar account for the
--- lex-smaller-UUID co-proprietor (multi17a@hm.ce, 'First Party'); the
--- registered_proprietors rows for multi17b trigger sync_rp_to_ca to also add
--- an 'owner' customer_accounts row for the second co-proprietor. The unit-test
--- multi-party contract 00d21c76-...252e0 is bound to this new solar account
--- so AccountsService#contracts() surfaces it for the multi-party embed path.
-SELECT myenergy.add_account(
-    'solar'::myenergy.account_type_enum,
-    (SELECT id FROM myenergy.properties WHERE plot = 'Plot-17' AND esco = (SELECT id FROM myenergy.escos WHERE code = 'hmce')),
-    (SELECT id FROM myenergy.customers WHERE email = 'multi17a@hm.ce'),
-    'owner'::myenergy.account_role_type_enum,
-    NULL,
-    true
-);
-
+-- Bind the unit-test multi-party contract 00d21c76-...252e0 to the single
+-- existing Plot-17 solar account so AccountsService#contracts() surfaces it for
+-- the multi-party embed path.
 UPDATE myenergy.accounts
    SET current_contract = '00d21c76-2566-4021-8192-28d509c252e0'::uuid
  WHERE property = (SELECT id FROM myenergy.properties WHERE plot = 'Plot-17' AND esco = (SELECT id FROM myenergy.escos WHERE code = 'hmce'))
