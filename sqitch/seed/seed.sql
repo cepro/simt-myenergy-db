@@ -4,37 +4,45 @@ BEGIN;
 -- myenergy schema - insert rows 
 --  
 
--- 4 terms: 1 supply + 1 solar for each of HMCE and WLCE, all v1, all 2025-07.
+-- 5 terms: 1 supply + 2 solar (single-signer + multi-party DOCX) for HMCE,
+-- plus 1 supply + 1 solar for WLCE. Multi-party flag added for the new
+-- DOCX-based HMCE solar template (id 4634106, slug aAurSUaceKV8BJ). The
+-- existing single-signer HMCE solar terms row stays as-is — only NEW HMCE
+-- solar contracts use the multi-party terms.
 -- summary_text / short_description copied from production (mgf) to keep seed aligned.
 -- docuseal_template_id / docuseal_template_slug are local placeholders; wire to real
 -- DocuSeal templates via env config in actual deploys.
-INSERT INTO "myenergy"."contract_terms" ("id", "summary_text", "short_description", "version", "created_at", "type", "subtype", "docuseal_template_id", "docuseal_template_slug") VALUES
+INSERT INTO "myenergy"."contract_terms" ("id", "summary_text", "short_description", "version", "created_at", "type", "subtype", "docuseal_template_id", "docuseal_template_slug", "is_multi_party") VALUES
     -- HMCE Supply single rate 2025-07 v1
-    ('24b451b7-9931-4ae3-b65b-713cb8807157', 'Our single rate tariff tracks the quarterly changes to the Energy Price Cap and is guaranteed to be at least 15% lower cost', 'Supply single rate (HMCE 2025-07)', 1, '2025-07-01 00:00:00', 'supply', NULL, 1636605, '5YSpK9cTtP3Tam'),
+    ('24b451b7-9931-4ae3-b65b-713cb8807157', 'Our single rate tariff tracks the quarterly changes to the Energy Price Cap and is guaranteed to be at least 15% lower cost', 'Supply single rate (HMCE 2025-07)', 1, '2025-07-01 00:00:00', 'supply', NULL, 1636605, '5YSpK9cTtP3Tam', false),
     -- WLCE Supply single rate 2025-07 v1
-    ('a83d8b5e-f21b-4ef0-b44d-f49b2dfd9faf', 'Our single rate tariff tracks the quarterly changes to the Energy Price Cap and is guaranteed to be at least 15% lower cost', 'Supply single rate (WLCE 2025-07)', 1, '2025-07-01 00:00:00', 'supply', NULL, 1636604, 'v8xrC2DADq7BJs'),
-    -- HMCE Solar Installation Usage Agreement 2025-07 v1
-    ('dcdb73f0-5ac1-438f-a91e-4c1d80e31f97', 'Your Solar Installation Usage Agreement adds credit to a named meter each month [signed by property owner]', 'Solar Installation Usage Agreement (HMCE 2025-07)', 1, '2025-07-01 00:00:00', 'solar', 'short_term', 1636617, 'CwRfWov6XiZsmT'),
+    ('a83d8b5e-f21b-4ef0-b44d-f49b2dfd9faf', 'Our single rate tariff tracks the quarterly changes to the Energy Price Cap and is guaranteed to be at least 15% lower cost', 'Supply single rate (WLCE 2025-07)', 1, '2025-07-01 00:00:00', 'supply', NULL, 1636604, 'v8xrC2DADq7BJs', false),
+    -- HMCE Solar Installation Usage Agreement 2025-07 v1 (single-signer, legacy PDF template)
+    ('dcdb73f0-5ac1-438f-a91e-4c1d80e31f97', 'Your Solar Installation Usage Agreement adds credit to a named meter each month [signed by property owner]', 'Solar Installation Usage Agreement (HMCE 2025-07)', 1, '2025-07-01 00:00:00', 'solar', 'short_term', 1636617, 'CwRfWov6XiZsmT', false),
+    -- HMCE Solar Installation Usage Agreement 2025-07 v2 (multi-party, DOCX template 4634106)
+    ('dcdb73f0-5ac1-438f-a91e-4c1d80e31f98', 'Your Solar Installation Usage Agreement adds credit to a named meter each month [signed by both registered proprietors]', 'Solar Installation Usage Agreement Multi-Party (HMCE 2025-07)', 1, '2025-07-01 00:00:00', 'solar', 'short_term', 4634106, 'aAurSUaceKV8BJ', true),
     -- WLCE Solar Installation Usage Agreement 2025-07 v1
-    ('c8ce0c4f-66f9-4d9c-ac04-405f20ba9e5f', 'Your Solar Installation Usage Agreement adds credit to a named meter each month [signed by property owner]', 'Solar Installation Usage Agreement (WLCE 2025-07)', 1, '2025-07-01 00:00:00', 'solar', 'short_term', 1636619, 'eBaqmpTiLnFKnZ');
+    ('c8ce0c4f-66f9-4d9c-ac04-405f20ba9e5f', 'Your Solar Installation Usage Agreement adds credit to a named meter each month [signed by property owner]', 'Solar Installation Usage Agreement (WLCE 2025-07)', 1, '2025-07-01 00:00:00', 'solar', 'short_term', 1636619, 'eBaqmpTiLnFKnZ', false);
 
 -- Hazelmead is id 363f..
 -- Waterlilies is id 527e..
 INSERT INTO "myenergy"."contract_terms_esco" ("terms", "esco") VALUES
-    -- HMCE: 1 supply + 1 solar
+    -- HMCE: 1 supply + 2 solar (single-signer + multi-party)
     ('24b451b7-9931-4ae3-b65b-713cb8807157', '363ff821-3a56-4b43-8227-8e53c45fbcdb'),
     ('dcdb73f0-5ac1-438f-a91e-4c1d80e31f97', '363ff821-3a56-4b43-8227-8e53c45fbcdb'),
+    ('dcdb73f0-5ac1-438f-a91e-4c1d80e31f98', '363ff821-3a56-4b43-8227-8e53c45fbcdb'),
     -- WLCE: 1 supply + 1 solar
     ('a83d8b5e-f21b-4ef0-b44d-f49b2dfd9faf', '527eed5d-2f81-4abe-a7f4-6fff8ac72703'),
     ('c8ce0c4f-66f9-4d9c-ac04-405f20ba9e5f', '527eed5d-2f81-4abe-a7f4-6fff8ac72703');
 
 
-INSERT INTO "myenergy"."contracts" ("id", "terms", "type") VALUES
-	-- for unit tests - one contract per term (4 total)
-	('43b17cf9-9a0d-44b2-9fe7-a6168429a673', '24b451b7-9931-4ae3-b65b-713cb8807157', 'supply'),  -- HMCE supply
-	('a349ef7f-2400-4984-95ba-88a79520c52a', 'a83d8b5e-f21b-4ef0-b44d-f49b2dfd9faf', 'supply'),  -- WLCE supply
-	('00d21c76-2566-4021-8192-28d509c252d9', 'dcdb73f0-5ac1-438f-a91e-4c1d80e31f97', 'solar'),   -- HMCE solar
-	('48655ef1-1122-4e62-9572-5dbf48abb550', 'c8ce0c4f-66f9-4d9c-ac04-405f20ba9e5f', 'solar');   -- WLCE solar
+INSERT INTO "myenergy"."contracts" ("id", "terms", "type", "signatures_required") VALUES
+	-- for unit tests - one contract per term (5 total)
+	('43b17cf9-9a0d-44b2-9fe7-a6168429a673', '24b451b7-9931-4ae3-b65b-713cb8807157', 'supply', 1),  -- HMCE supply
+	('a349ef7f-2400-4984-95ba-88a79520c52a', 'a83d8b5e-f21b-4ef0-b44d-f49b2dfd9faf', 'supply', 1),  -- WLCE supply
+	('00d21c76-2566-4021-8192-28d509c252d9', 'dcdb73f0-5ac1-438f-a91e-4c1d80e31f97', 'solar', 1),   -- HMCE solar (single-signer)
+	('00d21c76-2566-4021-8192-28d509c252e0', 'dcdb73f0-5ac1-438f-a91e-4c1d80e31f98', 'solar', 2),   -- HMCE solar (multi-party, unit-test)
+	('48655ef1-1122-4e62-9572-5dbf48abb550', 'c8ce0c4f-66f9-4d9c-ac04-405f20ba9e5f', 'solar', 1);   -- WLCE solar
 
 
 -- customers and corresponding auth.users entries:
@@ -46,7 +54,13 @@ INSERT INTO "myenergy"."customers" ("fullname", "email", "created_at", "id", "st
 	('WLCE 13 Occupier', 'occ13@wl.ce', '2023-05-10 00:23:45', 'e760e788-98a9-4a6a-934c-ad9921c7a90a', 'pending', false, true, true, '2025-01-10 00:23:45'),
 	('WLCE 12 OwnerOccupier', 'ownocc12@wl.ce', '2023-05-11 06:23:45', 'a445daf9-66c3-4f46-b74d-2d82526c4a1c', 'pending', false, true, true, '2025-01-10 00:23:45'),
 	('HMCE 01 Customer', 'ownocc1@hm.ce', '2023-05-12 12:24:34', 'b4cf2b22-cc04-4c86-a910-c601cfdfc244', 'pending', false, true, true, '2025-01-10 00:23:45'),
-	('HMCE SEA Customer', 'ownoccsea@hm.ce', '2023-05-13 18:24:34', 'c317324f-13e4-4b87-bc40-eae52928a415', 'pending', false, true, true, '2025-01-10 00:23:45');
+	('HMCE SEA Customer', 'ownoccsea@hm.ce', '2023-05-13 18:24:34', 'c317324f-13e4-4b87-bc40-eae52928a415', 'pending', false, true, true, '2025-01-10 00:23:45'),
+	-- HMCE Plot-17 co-proprietors for the multi-party DocuSeal signing flow.
+	-- Their customer UUIDs are chosen so that 'multi17a@hm.ce' sorts lex-smaller
+	-- than 'multi17b@hm.ce' — AccountsServiceImpl#createOrGetMultiSubmitterSubmission
+	-- relies on this ordering to assign 'First Party' / 'Second Party'.
+	('HMCE 17 Multi A', 'multi17a@hm.ce', '2026-06-29 00:00:00', 'd0d0d0d0-0000-4000-a000-000000000017', 'pending', false, true, true, '2026-06-29 00:00:00'),
+	('HMCE 17 Multi B', 'multi17b@hm.ce', '2026-06-29 00:00:00', 'd0d0d0d0-0000-4000-a000-000000000018', 'pending', false, true, true, '2026-06-29 00:00:00');
 
 INSERT INTO auth.users (instance_id,id,aud,"role",email,encrypted_password,email_confirmed_at,invited_at,confirmation_token,confirmation_sent_at,recovery_token,recovery_sent_at,email_change_token_new,email_change,email_change_sent_at,last_sign_in_at,raw_app_meta_data,raw_user_meta_data,is_super_admin,created_at,updated_at,phone,phone_confirmed_at,phone_change,phone_change_token,phone_change_sent_at,email_change_token_current,email_change_confirm_status,banned_until,reauthentication_token,reauthentication_sent_at,is_sso_user,deleted_at) VALUES
 	 ('00000000-0000-0000-0000-000000000000','dcd4265e-6a05-4ec6-8f66-45ff0accb448','authenticated','authenticated','a@wl.ce','$2a$10$RpraqBFICv/T3vENeJE1UeEYzTZ8GO9opgaJ6janMS1ro6a6X8qN.','2023-07-05 07:46:08.002138+10',NULL,'',NULL,'',NULL,'','',NULL,'2024-04-03 13:09:20.920642+10','{"provider": "email", "providers": ["email"]}','{}',NULL,'2023-07-05 07:46:07.988687+10','2024-04-03 13:09:20.921788+10',NULL,NULL,'','',NULL,'',0,NULL,'',NULL,false,NULL),
@@ -55,7 +69,11 @@ INSERT INTO auth.users (instance_id,id,aud,"role",email,encrypted_password,email
 	 ('00000000-0000-0000-0000-000000000000','e760e788-98a9-4a6a-934c-ad9921c7a90a','authenticated','authenticated','occ13@wl.ce','$2a$10$RpraqBFICv/T3vENeJE1UeEYzTZ8GO9opgaJ6janMS1ro6a6X8qN.','2023-07-05 07:46:08.002138+10',NULL,'',NULL,'',NULL,'','',NULL,'2024-04-03 13:09:20.920642+10','{"provider": "email", "providers": ["email"]}','{}',NULL,'2023-07-05 07:46:07.988687+10','2024-04-03 13:09:20.921788+10',NULL,NULL,'','',NULL,'',0,NULL,'',NULL,false,NULL),
 	 ('00000000-0000-0000-0000-000000000000','a445daf9-66c3-4f46-b74d-2d82526c4a1c','authenticated','authenticated','ownocc12@wl.ce','$2a$10$rzMqedKquLhDHD8c2AQTM.ffO2ijVy9rsZvIJX70r68PiXrldCdTe','2023-09-05 13:58:05.20277+10','2023-09-05 13:53:54.482013+10','','2023-09-05 13:53:54.482013+10','',NULL,'','',NULL,'2024-04-03 12:56:28.145681+10','{"provider": "email", "providers": ["email"]}','{}',NULL,'2023-09-05 13:52:38.5226+10','2024-04-03 12:56:28.146653+10',NULL,NULL,'','',NULL,'',0,NULL,'',NULL,false,NULL),
 	 ('00000000-0000-0000-0000-000000000000','a1c6eed4-c8e0-4fc7-89a5-a82d205c8b67','authenticated','authenticated','ownocc1@hm.ce','$2a$10$cZLO5G/mDKm4kUbLBbV4t.aqpKy4Lf3N42LMFvAYslfMBiwgVueP6','2024-04-03 13:11:04.654429+10',NULL,'',NULL,'',NULL,'','',NULL,NULL,'{"provider": "email", "providers": ["email"]}','{}',NULL,'2024-04-03 13:11:04.650956+10','2024-04-03 13:11:04.654734+10',NULL,NULL,'','',NULL,'',0,NULL,'',NULL,false,NULL),
-	 ('00000000-0000-0000-0000-000000000000','5898adc6-8e43-4ccf-a6ba-6ed325888093','authenticated','authenticated','ownoccsea@hm.ce','$2a$10$jrUSw9L8qZgdkbstjeWmL.zkp/l5abY1eSutVDUJM52cNZgVrMb5e','2024-04-03 13:11:30.308916+10',NULL,'',NULL,'',NULL,'','',NULL,NULL,'{"provider": "email", "providers": ["email"]}','{}',NULL,'2024-04-03 13:11:30.306769+10','2024-04-03 13:11:30.309095+10',NULL,NULL,'','',NULL,'',0,NULL,'',NULL,false,NULL);
+	 ('00000000-0000-0000-0000-000000000000','5898adc6-8e43-4ccf-a6ba-6ed325888093','authenticated','authenticated','ownoccsea@hm.ce','$2a$10$jrUSw9L8qZgdkbstjeWmL.zkp/l5abY1eSutVDUJM52cNZgVrMb5e','2024-04-03 13:11:30.308916+10',NULL,'',NULL,'',NULL,'','',NULL,NULL,'{"provider": "email", "providers": ["email"]}','{}',NULL,'2024-04-03 13:11:30.306769+10','2024-04-03 13:11:30.309095+10',NULL,NULL,'','',NULL,'',0,NULL,'',NULL,false,NULL),
+	 -- HMCE Plot-17 multi-party co-proprietors. Same password hash as the WLCE
+	 -- test users ($2a$10$RpraqBFICv/…) so existing test password conventions apply.
+	 ('00000000-0000-0000-0000-000000000000','d0d0d0d0-0000-4000-a000-000000000017','authenticated','authenticated','multi17a@hm.ce','$2a$10$RpraqBFICv/T3vENeJE1UeEYzTZ8GO9opgaJ6janMS1ro6a6X8qN.','2026-06-29 00:00:00+00',NULL,'',NULL,'',NULL,'','',NULL,NULL,'{"provider": "email", "providers": ["email"]}','{}',NULL,'2026-06-29 00:00:00+00','2026-06-29 00:00:00+00',NULL,NULL,'','',NULL,'',0,NULL,'',NULL,false,NULL),
+	 ('00000000-0000-0000-0000-000000000000','d0d0d0d0-0000-4000-a000-000000000018','authenticated','authenticated','multi17b@hm.ce','$2a$10$RpraqBFICv/T3vENeJE1UeEYzTZ8GO9opgaJ6janMS1ro6a6X8qN.','2026-06-29 00:00:00+00',NULL,'',NULL,'',NULL,'','',NULL,NULL,'{"provider": "email", "providers": ["email"]}','{}',NULL,'2026-06-29 00:00:00+00','2026-06-29 00:00:00+00',NULL,NULL,'','',NULL,'',0,NULL,'',NULL,false,NULL);
 
 INSERT INTO "myenergy"."regions" ("code", "name") VALUES
     ('south_west', 'South West'),
@@ -157,8 +175,14 @@ INSERT INTO "myenergy"."solar_installation" ("property", "mcs", "declared_net_ca
         'MCS333', 5.95, '2024-12-31'),
     ((SELECT id FROM myenergy.properties where plot = 'Plot-01' and esco = '363ff821-3a56-4b43-8227-8e53c45fbcdb'), 
         'MCS010', 5.10, '2024-12-31'),
-    ((SELECT id FROM myenergy.properties where plot = 'Plot-SEA-Landlord' and esco = '363ff821-3a56-4b43-8227-8e53c45fbcdb'), 
-        'MCS000', 6.25, '2024-12-31');
+    ((SELECT id FROM myenergy.properties where plot = 'Plot-SEA-Landlord' and esco = '363ff821-3a56-4b43-8227-8e53c45fbcdb'),
+        'MCS000', 6.25, '2024-12-31'),
+    -- HMCE Plot-17 solar installation for the multi-party DocuSeal signing
+    -- flow. Without this, the embed controller's `solarInstallationById`
+    -- lookup returns null and the lazy-create path can't resolve the
+    -- property's solar-specific variables.
+    ((SELECT id FROM myenergy.properties where plot = 'Plot-17' and esco = '363ff821-3a56-4b43-8227-8e53c45fbcdb'),
+        'MCS017', 5.40, '2024-12-31');
 
 
 --
@@ -171,7 +195,13 @@ INSERT INTO myenergy.registered_proprietors (property, customer, tenure_type) VA
     ((SELECT id FROM myenergy.properties WHERE plot = 'Plot-13' AND esco = '527eed5d-2f81-4abe-a7f4-6fff8ac72703'), (SELECT id FROM myenergy.customers WHERE email = 'own11_13@wl.ce'), 'joint_tenant'),
     ((SELECT id FROM myenergy.properties WHERE plot = 'Plot-12' AND esco = '527eed5d-2f81-4abe-a7f4-6fff8ac72703'), (SELECT id FROM myenergy.customers WHERE email = 'ownocc12@wl.ce'), 'joint_tenant'),
     ((SELECT id FROM myenergy.properties WHERE plot = 'Plot-01' AND esco = '363ff821-3a56-4b43-8227-8e53c45fbcdb'), (SELECT id FROM myenergy.customers WHERE email = 'ownocc1@hm.ce'), 'joint_tenant'),
-    ((SELECT id FROM myenergy.properties WHERE plot = 'Plot-SEA-Landlord' AND esco = '363ff821-3a56-4b43-8227-8e53c45fbcdb'), (SELECT id FROM myenergy.customers WHERE email = 'ownoccsea@hm.ce'), 'joint_tenant');
+    ((SELECT id FROM myenergy.properties WHERE plot = 'Plot-SEA-Landlord' AND esco = '363ff821-3a56-4b43-8227-8e53c45fbcdb'), (SELECT id FROM myenergy.customers WHERE email = 'ownoccsea@hm.ce'), 'joint_tenant'),
+    -- HMCE Plot-17 co-proprietors for the multi-party DocuSeal signing flow.
+    -- joint_tenant mirrors the existing Plot-11 / Plot-12 entries. The lex
+    -- UUID order of multi17a / multi17b drives the 'First Party' /
+    -- 'Second Party' assignment in the lazy-create flow.
+    ((SELECT id FROM myenergy.properties WHERE plot = 'Plot-17' AND esco = '363ff821-3a56-4b43-8227-8e53c45fbcdb'), (SELECT id FROM myenergy.customers WHERE email = 'multi17a@hm.ce'), 'joint_tenant'),
+    ((SELECT id FROM myenergy.properties WHERE plot = 'Plot-17' AND esco = '363ff821-3a56-4b43-8227-8e53c45fbcdb'), (SELECT id FROM myenergy.customers WHERE email = 'multi17b@hm.ce'), 'joint_tenant');
 
 -- registered_proprietors inserts trigger sync_rp_to_ca which creates customer_accounts entries
 -- for own11_13 and ownocc12. These must be deleted before the UPDATEs below, which reassign
@@ -227,12 +257,21 @@ DELETE FROM myenergy.customers where email in (
 );
 
 -- Backfill: add_property() creates solar contracts with terms=NULL (legacy behaviour).
--- New contract pattern requires terms to be set. Bind every orphan solar contract to
--- the WLCE solar terms row. (The seed only contains WLCE solar accounts; if an HMCE
--- solar term is ever added this UPDATE will need to match by account ESCO instead.)
-UPDATE myenergy.contracts
+-- New contract pattern requires terms to be set. Bind every orphan solar contract on a
+-- WLCE property to the WLCE solar terms row. (HMCE solar contracts are bound explicitly
+-- further down — Plot-01 to the single-signer HMCE solar terms row, Plot-17 to the
+-- multi-party HMCE solar terms row — so this backfill must exclude HMCE properties.)
+UPDATE myenergy.contracts c
    SET terms = 'c8ce0c4f-66f9-4d9c-ac04-405f20ba9e5f'::uuid
- WHERE type = 'solar' AND terms IS NULL;
+ FROM myenergy.accounts a,
+      myenergy.properties p,
+      myenergy.escos e
+ WHERE c.type = 'solar'
+   AND c.terms IS NULL
+   AND a.current_contract = c.id
+   AND a.property = p.id
+   AND p.esco = e.id
+   AND e.code = 'wlce';
 
 -- Assign the 2 HMCE unit-test contracts to ownocc1@hm.ce (owner-occupier):
 --   - HMCE supply -> existing supply account (occupier role on Plot-01)
@@ -261,6 +300,26 @@ SELECT myenergy.add_account(
 UPDATE myenergy.accounts
    SET current_contract = '00d21c76-2566-4021-8192-28d509c252d9'::uuid
  WHERE property = (SELECT id FROM myenergy.properties WHERE plot = 'Plot-01' AND esco = (SELECT id FROM myenergy.escos WHERE code = 'hmce'))
+   AND type = 'solar';
+
+-- Multi-party HMCE solar setup on Plot-17. Creates a new solar account for the
+-- lex-smaller-UUID co-proprietor (multi17a@hm.ce, 'First Party'); the
+-- registered_proprietors rows for multi17b trigger sync_rp_to_ca to also add
+-- an 'owner' customer_accounts row for the second co-proprietor. The unit-test
+-- multi-party contract 00d21c76-...252e0 is bound to this new solar account
+-- so AccountsService#contracts() surfaces it for the multi-party embed path.
+SELECT myenergy.add_account(
+    'solar'::myenergy.account_type_enum,
+    (SELECT id FROM myenergy.properties WHERE plot = 'Plot-17' AND esco = (SELECT id FROM myenergy.escos WHERE code = 'hmce')),
+    (SELECT id FROM myenergy.customers WHERE email = 'multi17a@hm.ce'),
+    'owner'::myenergy.account_role_type_enum,
+    NULL,
+    true
+);
+
+UPDATE myenergy.accounts
+   SET current_contract = '00d21c76-2566-4021-8192-28d509c252e0'::uuid
+ WHERE property = (SELECT id FROM myenergy.properties WHERE plot = 'Plot-17' AND esco = (SELECT id FROM myenergy.escos WHERE code = 'hmce'))
    AND type = 'solar';
 
 -- setup 2 prelive status customers by signing their supply contracts (occ11@wl.ce, occ13@wl.ce)

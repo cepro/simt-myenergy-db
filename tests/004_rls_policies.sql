@@ -41,7 +41,7 @@ SELECT is((SELECT count(*)::int FROM myenergy.wallets), 1, 'wallet');
 SET role authenticated;
 SELECT set_config('request.jwt.claim.email', 'a@wl.ce', true);
 SELECT is((SELECT count(*)::int FROM myenergy.properties), 41, 'all properties');
-SELECT is((SELECT count(*)::int FROM myenergy.contract_terms), 4, 'all contract terms');
+SELECT is((SELECT count(*)::int FROM myenergy.contract_terms), 5, 'all contract terms');
 
 SELECT * FROM finish();
 ROLLBACK;
