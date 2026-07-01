@@ -72,8 +72,24 @@ INSERT INTO auth.users (instance_id,id,aud,"role",email,encrypted_password,email
 	 ('00000000-0000-0000-0000-000000000000','5898adc6-8e43-4ccf-a6ba-6ed325888093','authenticated','authenticated','ownoccsea@hm.ce','$2a$10$jrUSw9L8qZgdkbstjeWmL.zkp/l5abY1eSutVDUJM52cNZgVrMb5e','2024-04-03 13:11:30.308916+10',NULL,'',NULL,'',NULL,'','',NULL,NULL,'{"provider": "email", "providers": ["email"]}','{}',NULL,'2024-04-03 13:11:30.306769+10','2024-04-03 13:11:30.309095+10',NULL,NULL,'','',NULL,'',0,NULL,'',NULL,false,NULL),
 	 -- HMCE Plot-17 multi-party co-proprietors. Same password hash as the WLCE
 	 -- test users ($2a$10$RpraqBFICv/…) so existing test password conventions apply.
-	 ('00000000-0000-0000-0000-000000000000','d0d0d0d0-0000-4000-a000-000000000017','authenticated','authenticated','multi17a@hm.ce','$2a$10$RpraqBFICv/T3vENeJE1UeEYzTZ8GO9opgaJ6janMS1ro6a6X8qN.','2026-06-29 00:00:00+00',NULL,'',NULL,'',NULL,'','',NULL,NULL,'{"provider": "email", "providers": ["email"]}','{}',NULL,'2026-06-29 00:00:00+00','2026-06-29 00:00:00+00',NULL,NULL,'','',NULL,'',0,NULL,'',NULL,false,NULL),
-	 ('00000000-0000-0000-0000-000000000000','d0d0d0d0-0000-4000-a000-000000000018','authenticated','authenticated','multi17b@hm.ce','$2a$10$RpraqBFICv/T3vENeJE1UeEYzTZ8GO9opgaJ6janMS1ro6a6X8qN.','2026-06-29 00:00:00+00',NULL,'',NULL,'',NULL,'','',NULL,NULL,'{"provider": "email", "providers": ["email"]}','{}',NULL,'2026-06-29 00:00:00+00','2026-06-29 00:00:00+00',NULL,NULL,'','',NULL,'',0,NULL,'',NULL,false,NULL);
+	 -- Phone numbers use UK +44 mobile format with the last 6 digits randomised so the
+	 -- rendered customer info sheet exercises the `[[phone]]` variable substitution
+	 -- (otherwise the multi-party buildSubmissionVariables falls back to "").
+	 ('00000000-0000-0000-0000-000000000000','d0d0d0d0-0000-4000-a000-000000000017','authenticated','authenticated','multi17a@hm.ce','$2a$10$RpraqBFICv/T3vENeJE1UeEYzTZ8GO9opgaJ6janMS1ro6a6X8qN.','2026-06-29 00:00:00+00',NULL,'',NULL,'',NULL,'','',NULL,NULL,'{"provider": "email", "providers": ["email"]}','{}',NULL,'2026-06-29 00:00:00+00','2026-06-29 00:00:00+00','+447700034921','2026-06-29 00:00:00+00','','',NULL,'',0,NULL,'',NULL,false,NULL),
+	 ('00000000-0000-0000-0000-000000000000','d0d0d0d0-0000-4000-a000-000000000018','authenticated','authenticated','multi17b@hm.ce','$2a$10$RpraqBFICv/T3vENeJE1UeEYzTZ8GO9opgaJ6janMS1ro6a6X8qN.','2026-06-29 00:00:00+00',NULL,'',NULL,'',NULL,'','',NULL,NULL,'{"provider": "email", "providers": ["email"]}','{}',NULL,'2026-06-29 00:00:00+00','2026-06-29 00:00:00+00','+447700114375','2026-06-29 00:00:00+00','','',NULL,'',0,NULL,'',NULL,false,NULL);
+
+-- Phone numbers for the other seeded auth.users. All UK +44 mobile format with the
+-- last 6 digits randomised (deterministic values chosen once and pinned here so the
+-- seed is reproducible). phone_confirmed_at reuses each user's email_confirmed_at so
+-- the numbers render as verified on the customer info sheet's [[phone]] variable.
+-- multi17a/multi17b carry their phones inline above; these UPDATEs cover the rest.
+UPDATE auth.users SET phone = '+447700996210', phone_confirmed_at = email_confirmed_at WHERE email = 'a@wl.ce';
+UPDATE auth.users SET phone = '+447700273191', phone_confirmed_at = email_confirmed_at WHERE email = 'own11_13@wl.ce';
+UPDATE auth.users SET phone = '+447700642577', phone_confirmed_at = email_confirmed_at WHERE email = 'occ11@wl.ce';
+UPDATE auth.users SET phone = '+447700988835', phone_confirmed_at = email_confirmed_at WHERE email = 'occ13@wl.ce';
+UPDATE auth.users SET phone = '+447700912697', phone_confirmed_at = email_confirmed_at WHERE email = 'ownocc12@wl.ce';
+UPDATE auth.users SET phone = '+447700157030', phone_confirmed_at = email_confirmed_at WHERE email = 'ownocc1@hm.ce';
+UPDATE auth.users SET phone = '+447700124902', phone_confirmed_at = email_confirmed_at WHERE email = 'ownoccsea@hm.ce';
 
 INSERT INTO "myenergy"."regions" ("code", "name") VALUES
     ('south_west', 'South West'),
@@ -529,6 +545,10 @@ INSERT INTO myenergy.customers (fullname, email, created_at, id, status, cepro_u
 INSERT INTO auth.users (instance_id,id,aud,"role",email,encrypted_password,email_confirmed_at,invited_at,confirmation_token,confirmation_sent_at,recovery_token,recovery_sent_at,email_change_token_new,email_change,email_change_sent_at,last_sign_in_at,raw_app_meta_data,raw_user_meta_data,is_super_admin,created_at,updated_at,phone,phone_confirmed_at,phone_change,phone_change_token,phone_change_sent_at,email_change_token_current,email_change_confirm_status,banned_until,reauthentication_token,reauthentication_sent_at,is_sso_user,deleted_at) VALUES
      ('00000000-0000-0000-0000-000000000000','aabbcc01-0001-4a1a-aabb-cc01cc01cc01','authenticated','authenticated','abc1@housing.ce','$2a$10$RpraqBFICv/T3vENeJE1UeEYzTZ8GO9opgaJ6janMS1ro6a6X8qN.','2025-01-10 07:46:08.002138+10',NULL,'',NULL,'',NULL,'','',NULL,'2025-01-10 07:46:08.002138+10','{"provider": "email", "providers": ["email"]}','{}',NULL,'2025-01-10 07:46:07.988687+10','2025-01-10 07:46:07.988687+10',NULL,NULL,'','',NULL,'',0,NULL,'',NULL,false,NULL),
      ('00000000-0000-0000-0000-000000000000','aabbcc02-0002-4a2a-aabb-cc02cc02cc02','authenticated','authenticated','abc2@housing.ce','$2a$10$RpraqBFICv/T3vENeJE1UeEYzTZ8GO9opgaJ6janMS1ro6a6X8qN.','2025-01-10 07:46:08.002138+10',NULL,'',NULL,'',NULL,'','',NULL,'2025-01-10 07:46:08.002138+10','{"provider": "email", "providers": ["email"]}','{}',NULL,'2025-01-10 07:46:07.988687+10','2025-01-10 07:46:07.988687+10',NULL,NULL,'','',NULL,'',0,NULL,'',NULL,false,NULL);
+
+-- Phones for the housing.ce corporate-body test users (same scheme as above).
+UPDATE auth.users SET phone = '+447700603684', phone_confirmed_at = email_confirmed_at WHERE email = 'abc1@housing.ce';
+UPDATE auth.users SET phone = '+447700797156', phone_confirmed_at = email_confirmed_at WHERE email = 'abc2@housing.ce';
 
 INSERT INTO myenergy.customer_corporate_bodies (customer, corporate_body) VALUES
     ('aabbcc01-0001-4a1a-aabb-cc01cc01cc01', 'c0ffee01-c0fe-4c0f-ee01-c0ffee01c0fe'),
