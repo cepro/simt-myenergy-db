@@ -2,23 +2,51 @@
 
 [![Build Test CI](https://github.com/cepro/myenergy-db/actions/workflows/build-test.yml/badge.svg)](https://github.com/cepro/myenergy-db/actions/workflows/build-test.yml)
 
-Config, SQL, functions for the supabase database.
+Config, SQL, and functions for the MyEnergy database (Timescale / PostgreSQL).
 
 ## Scripts
 
-- db-up - start supabase local instance
-- db-down - stop supabase local instance
-- db-reset - run supa-reset
-- supa-up - start supabase local
-- supa-down - stop supabase local
-- supa-reset - run 'supabase db reset' to reset the db
-- supa-seed - seed data into supabase for local development
-- supa-diff-local - diff local supabase database for schema changes scripts
-- template-supa-migrations - substitute variables into supabase sqitch migration scripts
+All scripts live in `bin/`.
+
+### Database lifecycle
+
+- `db-up` - start the local Timescale container (creates the container and
+  volume on first run)
+- `db-down` - stop and remove the local DB container
+- `volume-clean` - remove leftover Supabase Docker volumes for this project
+
+### Data & schema
+
+- `seed` - load seed data from `sqitch/seed/seed.sql`
+- `reset-contract-signatures` - reset contract signatures
+  (`sqitch/seed/reset-contract-signatures.sql`)
+- `dump-local-timescale-data` - dump `myenergy` schema *data* from the local DB
+  into `dumps/`
+- `dump-local-timescale-schema` - dump `myenergy` schema *DDL* from the local
+  DB into `dumps/`
+- `restore-local-timescale-data` - restore a dump file into the local DB
+- `dump-remote-supabase-db-data` - dump `public` schema *data* from the remote
+  Supabase DB into `dumps/`
+- `dump-remote-supabase-db-schema` - dump `myenergy` schema *DDL* from the
+  remote Timescale DB into `dumps/`
+- `dump-remote-supabase-auth-data` - dump `auth.users` (and related tables)
+  from the remote Supabase DB into `dumps/`
+
+### Utilities
+
+- `jwt-create` - mint a Supabase JWT from a secret file
+- `test` - run the pgTAP test suite (see [Testing](#testing))
+
+### Internal helpers
+
+- `psql-wrapper` - run a SQL file against the local DB via docker `psql`
+  (used by `seed`, `reset-contract-signatures`)
+- `pg_prove` - run `pg_prove` inside docker (used by `test`)
+- `library.sh` - shared shell variables/helpers
 
 ## Migrations
 
-A set of migration scripts is maintained for supabase.
+A set of migration scripts is maintained for the database.
 
 [Sqitch](https://sqitch.org) is used to manage migrations include applying
 deployments and rollbacks.
@@ -30,7 +58,7 @@ deployments and rollbacks.
 
 ## Testing
 
-Tests use [pg_prove](https://pgtap.org/) and are run against a local Supabase instance.
+Tests use [pg_prove](https://pgtap.org/) and are run against a local Timescale instance.
 
 ```sh
 # Run all tests
