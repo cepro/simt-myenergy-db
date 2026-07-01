@@ -28,3 +28,4 @@
 0023_sync_registered_proprietors_to_customer_accounts 2026-05-20T00:00:00Z Chris Hatch <chris@cepro.energy> # Add trigger to sync registered_proprietors inserts to customer_accounts (role='owner') for solar accounts
 0024_contract_signatures_backend_grants 2026-06-20T00:00:00Z Chris Hatch <chris@cepro.energy> # Grant public_backend INSERT/UPDATE/DELETE on contract_signatures for PostGraphile mutations
 0025_sse_notify_triggers 2026-06-21T00:00:00Z Chris Hatch <chris@cepro.energy> # NOTIFY triggers that feed the accounts service SSE change feed
+0026_docuseal_multi_signature 2026-06-29T00:00:00Z Chris Hatch <chris@cepro.energy> # Multi-party DocuSeal signing: contract_terms.is_multi_party flag, contracts.audit_log_url, contract_signing_submitters table

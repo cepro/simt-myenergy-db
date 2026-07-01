@@ -9,7 +9,7 @@ SELECT extensions.plan(4);
 
 SELECT is((SELECT current_role), 'tsdbadmin', 'intial role');
 
-SELECT is((SELECT count(*)::int FROM contract_terms_esco), 4, 'contract_terms_esco count');
+SELECT is((SELECT count(*)::int FROM contract_terms_esco), 5, 'contract_terms_esco count');
 
 -- verify trigger catches attempt to add terms from a different esco
 
