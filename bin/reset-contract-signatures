@@ -1,0 +1,8 @@
+#!/bin/sh
+set -e
+
+PROJECT_ROOT=`dirname $0`/..
+SCRIPT_DIR=$PROJECT_ROOT/sqitch/seed
+SCRIPT_FILE=reset-contract-signatures.sql
+
+$PROJECT_ROOT/bin/psql-wrapper $SCRIPT_DIR $SCRIPT_FILE
