@@ -1,4 +1,3 @@
--- Fixed test in 006_customer_status.sql
 BEGIN;
 
 CREATE EXTENSION IF NOT EXISTS pgtap SCHEMA extensions;
@@ -8,13 +7,14 @@ SET search_path TO myenergy,extensions,public;
 SELECT extensions.plan(35); -- Updated plan count to include new tests
 
 
-SELECT is((SELECT count(*)::int FROM customers where status = 'pending'), 41, 'pending customers returned');
+SELECT is((SELECT count(*)::int FROM customers where status = 'pending'), 40, 'pending customers returned');
 SELECT is((SELECT count(*)::int FROM customers where status = 'preonboarding'), 0, 'preonboarding customers returned');
 -- ownocc12@wl.ce   - all flags set and prepay meter on but supply contract not yet signed so still onboarding
 -- ownocc1@hm.ce    - HMCE solar contract bound to new solar account in seed; not yet signed
+-- ownoccsea@hm.ce  - HMCE supply contract bound to Plot-SEA-Landlord supply account in seed; not yet signed
 -- multi17a@hm.ce   - co-proprietor on Plot-17; multi-party solar contract bound, not yet signed
 -- multi17b@hm.ce   - co-proprietor on Plot-17; multi-party solar contract bound, not yet signed
-SELECT is((SELECT count(*)::int FROM customers where status = 'onboarding'), 4, 'onboarding customers returned');
+SELECT is((SELECT count(*)::int FROM customers where status = 'onboarding'), 5, 'onboarding customers returned');
 -- occ11@wl.ce      - supply contract signed but meter not in prepay mode - thus prelive
 -- occ13@wl.ce      - same as occ11@wl.ce
 SELECT is((SELECT count(*)::int FROM customers where status = 'prelive'), 2, 'prelive customers returned');

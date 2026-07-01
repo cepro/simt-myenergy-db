@@ -334,6 +334,19 @@ UPDATE myenergy.accounts
  WHERE property = (SELECT id FROM myenergy.properties WHERE plot = 'Plot-01' AND esco = (SELECT id FROM myenergy.escos WHERE code = 'hmce'))
    AND type = 'solar';
 
+-- Bind the HMCE supply contract to ownoccsea@hm.ce's supply account on
+-- Plot-SEA-Landlord. Without this the account has no current_contract and
+-- myenergy.customer_status() returns 'preonboarding' (contract_count=0)
+-- instead of 'onboarding'. Mirrors the ownocc1@hm.ce binding above.
+UPDATE myenergy.accounts
+   SET current_contract = '43b17cf9-9a0d-44b2-9fe7-a6168429a673'::uuid
+ WHERE id = (SELECT ca.account
+               FROM myenergy.customer_accounts ca
+               JOIN myenergy.customers cust ON cust.id = ca.customer
+              WHERE cust.email = 'ownoccsea@hm.ce'
+                AND ca.role = 'occupier'
+                AND ca.account IN (SELECT id FROM myenergy.accounts WHERE type = 'supply'));
+
 -- Bind the unit-test multi-party contract 00d21c76-...252e0 to the single
 -- existing Plot-17 solar account so AccountsService#contracts() surfaces it for
 -- the multi-party embed path.
