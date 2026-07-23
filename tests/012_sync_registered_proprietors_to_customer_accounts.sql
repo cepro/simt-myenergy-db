@@ -163,12 +163,13 @@ SELECT is(
 -- Test: customer_status function works with signed boolean (not signed_date)
 --
 
--- Verify customer_status uses signed boolean for existing seeded customer
--- occ11@wl.ce has a signed supply contract and should be prelive/live after flags are set
+-- Verify status for an existing seeded customer with a signed supply contract.
+-- After 0027 dropped the prepay gate, occ11 (all flags set, signed supply) is
+-- live, not prelive.
 SELECT is(
     (SELECT status::text FROM myenergy.customers WHERE email = 'occ11@wl.ce'),
-    'prelive',
-    'occ11@wl.ce with signed supply contract is prelive'
+    'live',
+    'occ11@wl.ce with signed supply contract is live'
 );
 
 --
