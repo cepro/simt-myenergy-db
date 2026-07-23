@@ -15,12 +15,15 @@ SELECT is((SELECT count(*)::int FROM customers where status = 'preonboarding'), 
 -- multi17a@hm.ce   - co-proprietor on Plot-17; multi-party solar contract bound, not yet signed
 -- multi17b@hm.ce   - co-proprietor on Plot-17; multi-party solar contract bound, not yet signed
 SELECT is((SELECT count(*)::int FROM customers where status = 'onboarding'), 5, 'onboarding customers returned');
--- occ11@wl.ce      - supply contract signed but meter not in prepay mode - thus prelive
--- occ13@wl.ce      - same as occ11@wl.ce
-SELECT is((SELECT count(*)::int FROM customers where status = 'prelive'), 2, 'prelive customers returned');
+-- Migration 0027 dropped the dead prepay meter-readiness gate from
+-- customer_status(), so fully-onboarded customers can no longer land in
+-- 'prelive'. occ11 and occ13 (signed supply, all flags set) are now live.
+SELECT is((SELECT count(*)::int FROM customers where status = 'prelive'), 0, 'no prelive customers (prepay gate removed in 0027)');
 -- a@wl.ce          - cepro admin user - always live
--- own11_13@wl.ce   - owner / not occupier - signed both solar contracts - status not effected by supply flag 
-SELECT is((SELECT count(*)::int FROM customers where status = 'live'), 4, 'live customers returned');
+-- own11_13@wl.ce   - owner / not occupier - signed both solar contracts - status not effected by supply flag
+-- occ11@wl.ce      - supply contract signed, all flags set - now live (was prelive before 0027)
+-- occ13@wl.ce      - same as occ11@wl.ce
+SELECT is((SELECT count(*)::int FROM customers where status = 'live'), 6, 'live customers returned');
 
 
 --
@@ -150,19 +153,18 @@ SELECT results_eq('cust_status(''occ11@wl.ce'')', $$ VALUES('preonboarding') $$,
 UPDATE customers SET allow_onboard_transition = true WHERE email = 'occ11@wl.ce';
 SELECT results_eq('cust_status(''occ11@wl.ce'')', $$ VALUES('live') $$, 'customer is live after allow_onboard_transition');
 
--- Test prelive vs live transitions
-
--- moves to prelive when the meter is not in prepay mode
+-- prepay_enabled no longer affects status: 0027 dropped the dead prepay
+-- gate, so a fully-onboarded customer stays live regardless of prepay_enabled.
 EXECUTE meter_prepay_update(false, 'occ11@wl.ce');
 
 -- explicit recompute customer_status
 UPDATE customers SET status = myenergy.customer_status(customers) WHERE email = 'occ11@wl.ce';
 
-SELECT results_eq('cust_status(''occ11@wl.ce'')', $$ VALUES('prelive') $$, 'customer is prelive when prepay_enabled is false');
+SELECT results_eq('cust_status(''occ11@wl.ce'')', $$ VALUES('live') $$, 'customer stays live when prepay_enabled is false (gate removed in 0027)');
 
 EXECUTE meter_prepay_update(true, 'occ11@wl.ce');
 UPDATE customers SET status = myenergy.customer_status(customers) WHERE email = 'occ11@wl.ce';
-SELECT results_eq('cust_status(''occ11@wl.ce'')', $$ VALUES('live') $$, 'customer is live when prepay_enabled is true');
+SELECT results_eq('cust_status(''occ11@wl.ce'')', $$ VALUES('live') $$, 'customer stays live when prepay_enabled is true');
 
 
 
@@ -205,19 +207,18 @@ SELECT results_eq('cust_status(''ownocc12@wl.ce'')', $$ VALUES('preonboarding') 
 UPDATE customers SET allow_onboard_transition = true WHERE email = 'ownocc12@wl.ce';
 SELECT results_eq('cust_status(''ownocc12@wl.ce'')', $$ VALUES('live') $$, 'customer is live after allow_onboard_transition');
 
--- Test prelive vs live transitions
-
--- moves to prelive when the meter is not in prepay mode
+-- prepay_enabled no longer affects status: 0027 dropped the dead prepay
+-- gate, so a fully-onboarded customer stays live regardless of prepay_enabled.
 EXECUTE meter_prepay_update(false, 'ownocc12@wl.ce');
 
 -- explicit recompute customer_status
 UPDATE customers SET status = myenergy.customer_status(customers) WHERE email = 'ownocc12@wl.ce';
 
-SELECT results_eq('cust_status(''ownocc12@wl.ce'')', $$ VALUES('prelive') $$, 'customer is prelive when prepay_enabled is false');
+SELECT results_eq('cust_status(''ownocc12@wl.ce'')', $$ VALUES('live') $$, 'customer stays live when prepay_enabled is false (gate removed in 0027)');
 
 EXECUTE meter_prepay_update(true, 'ownocc12@wl.ce');
 UPDATE customers SET status = myenergy.customer_status(customers) WHERE email = 'ownocc12@wl.ce';
-SELECT results_eq('cust_status(''ownocc12@wl.ce'')', $$ VALUES('live') $$, 'customer is live when prepay_enabled is true');
+SELECT results_eq('cust_status(''ownocc12@wl.ce'')', $$ VALUES('live') $$, 'customer stays live when prepay_enabled is true');
 
 
 --
