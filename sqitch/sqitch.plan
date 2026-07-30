@@ -30,3 +30,4 @@
 0025_sse_notify_triggers 2026-06-21T00:00:00Z Chris Hatch <chris@cepro.energy> # NOTIFY triggers that feed the accounts service SSE change feed
 0026_docuseal_multi_signature 2026-06-29T00:00:00Z Chris Hatch <chris@cepro.energy> # Multi-party DocuSeal signing: contract_terms.is_multi_party flag, contracts.audit_log_url, contract_signing_submitters table
 0027_customer_status_drop_prepay_gate 2026-07-22T00:00:00Z Chris Hatch <chris@cepro.energy> # Drop the dead prepay meter-readiness gate from customer_status() and remove its prepay_enabled parameter
+0028_tenure_registered_proprietors_aware 2026-07-30T00:00:00Z Chris Hatch <chris@cepro.energy> # Make property tenure aware of registered_proprietors (owners) and re-evaluate it on RP changes
