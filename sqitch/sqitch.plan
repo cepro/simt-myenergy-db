@@ -31,3 +31,4 @@
 0026_docuseal_multi_signature 2026-06-29T00:00:00Z Chris Hatch <chris@cepro.energy> # Multi-party DocuSeal signing: contract_terms.is_multi_party flag, contracts.audit_log_url, contract_signing_submitters table
 0027_customer_status_drop_prepay_gate 2026-07-22T00:00:00Z Chris Hatch <chris@cepro.energy> # Drop the dead prepay meter-readiness gate from customer_status() and remove its prepay_enabled parameter
 0028_tenure_registered_proprietors_aware 2026-07-30T00:00:00Z Chris Hatch <chris@cepro.energy> # Make property tenure aware of registered_proprietors (owners) and re-evaluate it on RP changes
+0029_payments_submittable_exclude_submitted 2026-08-31T00:00:00Z Chris Hatch <chris@cepro.energy> # Replay protection: submittable_payments() excludes rows that already have a payment_intent or submitted_at (26-27 Aug duplicate-charge incident)
