@@ -13,13 +13,22 @@ BEGIN
     RAISE EXCEPTION 'submittable_payments() does not exclude already-submitted payments';
   END IF;
 
-  -- ...and the partial index exists.
+  -- ...the partial index exists...
   IF NOT EXISTS (
     SELECT 1 FROM pg_indexes
      WHERE schemaname = 'myenergy' AND tablename = 'payments'
        AND indexname = 'payments_pending_unsubmitted_idx'
   ) THEN
     RAISE EXCEPTION 'partial index payments_pending_unsubmitted_idx missing';
+  END IF;
+
+  -- ...and the unique topups_payments.payment_id guard exists.
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_indexes
+     WHERE schemaname = 'myenergy' AND tablename = 'topups_payments'
+       AND indexname = 'topups_payments_payment_id_key'
+  ) THEN
+    RAISE EXCEPTION 'unique index topups_payments_payment_id_key missing';
   END IF;
 END $$;
 

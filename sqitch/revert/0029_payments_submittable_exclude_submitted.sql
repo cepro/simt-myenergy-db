@@ -19,5 +19,6 @@ $$;
 ALTER FUNCTION myenergy.submittable_payments() OWNER TO :"adminrole";
 
 DROP INDEX IF EXISTS myenergy.payments_pending_unsubmitted_idx;
+DROP INDEX IF EXISTS myenergy.topups_payments_payment_id_key;
 
 COMMIT;
