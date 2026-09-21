@@ -10,8 +10,9 @@ BEGIN
         JOIN pg_namespace n ON n.oid = p.pronamespace
         WHERE n.nspname = 'myenergy'
           AND p.proname = 'uncorrelated_balance_jumps'
+          AND p.pronargs = 9
     ) THEN
-        RAISE EXCEPTION 'myenergy.uncorrelated_balance_jumps is missing';
+        RAISE EXCEPTION 'myenergy.uncorrelated_balance_jumps(uuid, timestamptz, timestamptz, numeric, boolean, integer, integer, boolean, numeric) is missing';
     END IF;
 END;
 $$;

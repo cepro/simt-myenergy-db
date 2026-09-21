@@ -2,6 +2,6 @@
 
 BEGIN;
 
-DROP FUNCTION IF EXISTS myenergy.uncorrelated_balance_jumps(uuid, timestamptz, timestamptz, numeric, integer, boolean);
+DROP FUNCTION IF EXISTS myenergy.uncorrelated_balance_jumps(uuid, timestamptz, timestamptz, numeric, boolean, integer, integer, boolean, numeric);
 
 COMMIT;
