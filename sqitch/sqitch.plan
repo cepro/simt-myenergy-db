@@ -33,3 +33,5 @@
 0028_tenure_registered_proprietors_aware 2026-07-30T00:00:00Z Chris Hatch <chris@cepro.energy> # Make property tenure aware of registered_proprietors (owners) and re-evaluate it on RP changes
 0029_payments_submittable_exclude_submitted 2026-08-31T00:00:00Z Chris Hatch <chris@cepro.energy> # Replay protection: submittable_payments() excludes rows that already have a payment_intent or submitted_at (26-27 Aug duplicate-charge incident)
 0030_solar_credits_exclude_expired_contracts 2026-09-22T00:00:00Z Chris Hatch <chris@cepro.energy> # Exclude properties with ended solar contracts from solar credit apply; lock RPC to anon
+0031_event_log_type_topup_applied 2026-09-22T00:00:00Z Chris Hatch <chris@cepro.energy> # Name meter event type 48 (credit token applied / topup applied), inferred from topup correlation
+0032_balance_jump_correlation 2026-09-22T00:00:00Z Chris Hatch <chris@cepro.energy> # Diagnostic function: flag prepay balance jumps not correlated with event 48 (tight window) or a myenergy.topups row (broad window); credits_only and likely_ec_grant filters
