@@ -56,8 +56,10 @@
 -- With the default only_uncorrelated := true only jumps that are missing at
 -- least one signal are returned; pass false to see every jump with its flags.
 --
--- NOTE: flows.meter_prepay_balance is a Timescale hypertable. On MGF always
--- pass a meter and/or a time range.
+-- Defaults inspect the past week, ending at now(). Explicit bounds support
+-- shorter alert windows or historical investigations. NULL bounds allow an
+-- unbounded diagnostic scan; use those deliberately on the hypertable.
+-- Time ranges are half-open: [from_ts, to_ts).
 --
 -- 3. myenergy.untracked_prepay_credits() - alert-facing wrapper.
 --
@@ -72,13 +74,14 @@
 -- 'missing_event_48' rows because those have a recorded topup and are
 -- therefore tracked (that class is a sync-health signal, alerted separately).
 --
--- Defaults are shaped for a Grafana alert rule that evaluates a disjoint,
--- mature slice so each jump is assessed exactly once:
---     since = now() - 3h, until = now() - 1h, maturity = 1h
--- i.e. "the 3h-to-1h-ago bucket". Every jump falls in exactly one evaluation
--- window and cannot re-fire. The underlying function is called with a
--- one-hour-wider from_ts so lag() has context for a jump that sits exactly on
--- the `since` boundary.
+-- Defaults inspect the past week, excluding the most recent hour so data has
+-- time to arrive. Alert rules can supply a shorter range, e.g. since =>
+-- now() - interval '24 hours'. Repeated rolling queries overlap: use Grafana
+-- alert state and notification repeat intervals to control repeat notices.
+-- For disjoint evaluation, callers must supply adjacent [since, until) bounds
+-- and persist their last successfully evaluated boundary.
+-- The diagnostic fetches the actual preceding reading for each meter, even
+-- across long gaps, so a jump on the lower boundary is still detected.
 --
 -- See workspace-simt/prepay-untracked-credits-grafana-alert.yaml for the draft
 -- rule and workspace-simt/prepay-untracked-credits-dashboard.md for dashboards.
@@ -91,8 +94,8 @@ ON CONFLICT DO NOTHING;
 
 CREATE OR REPLACE FUNCTION myenergy.uncorrelated_balance_jumps(
     meter_id_in          uuid        DEFAULT NULL,
-    from_ts              timestamptz DEFAULT NULL,
-    to_ts                timestamptz DEFAULT NULL,
+    from_ts              timestamptz DEFAULT now() - interval '7 days',
+    to_ts                timestamptz DEFAULT now(),
     min_abs_diff         numeric     DEFAULT 1.0,
     credits_only         boolean     DEFAULT false,
     event_window_minutes integer     DEFAULT 60,
@@ -119,17 +122,38 @@ STABLE
 SECURITY DEFINER
 SET search_path TO ''
 AS $$
-WITH readings AS (
+WITH in_range AS MATERIALIZED (
+    SELECT b.meter_id, b.timestamp, b.balance
+    FROM flows.meter_prepay_balance b
+    WHERE (meter_id_in IS NULL OR b.meter_id = meter_id_in)
+      AND (from_ts IS NULL OR b.timestamp >= from_ts)
+      AND (to_ts   IS NULL OR b.timestamp < to_ts)
+),
+context_readings AS (
+    SELECT r.meter_id, r.timestamp, r.balance
+    FROM in_range r
+    UNION ALL
+    -- One predecessor per meter supplies lag() context without scanning all
+    -- historical readings or assuming a maximum gap between observations.
+    SELECT previous.meter_id, previous.timestamp, previous.balance
+    FROM (SELECT DISTINCT r.meter_id FROM in_range r) meters
+    CROSS JOIN LATERAL (
+        SELECT b.meter_id, b.timestamp, b.balance
+        FROM flows.meter_prepay_balance b
+        WHERE b.meter_id = meters.meter_id
+          AND b.timestamp < from_ts
+        ORDER BY b.timestamp DESC
+        LIMIT 1
+    ) previous
+),
+readings AS (
     SELECT b.meter_id,
            b.timestamp,
            b.balance,
            lag(b.balance) OVER (
                PARTITION BY b.meter_id ORDER BY b.timestamp
            ) AS prev_balance
-    FROM flows.meter_prepay_balance b
-    WHERE (meter_id_in IS NULL OR b.meter_id = meter_id_in)
-      AND (from_ts IS NULL OR b.timestamp >= from_ts)
-      AND (to_ts   IS NULL OR b.timestamp <= to_ts)
+    FROM context_readings b
 ),
 jumps AS (
     SELECT r.meter_id,
@@ -139,6 +163,7 @@ jumps AS (
            r.balance - r.prev_balance  AS jump_amount
     FROM readings r
     WHERE r.prev_balance IS NOT NULL
+      AND (from_ts IS NULL OR r.timestamp >= from_ts)
       AND abs(r.balance - r.prev_balance) >= min_abs_diff
       AND (NOT credits_only OR r.balance > r.prev_balance)
 ),
@@ -203,7 +228,7 @@ ALTER FUNCTION myenergy.uncorrelated_balance_jumps(uuid, timestamptz, timestampt
     OWNER TO :"adminrole";
 
 COMMENT ON FUNCTION myenergy.uncorrelated_balance_jumps(uuid, timestamptz, timestamptz, numeric, boolean, integer, integer, boolean, numeric)
-    IS 'List prepay balance jumps with flags for correlation with meter event type 48 (tight window) and myenergy.topups (broad window), plus direction and an emergency-credit-grant heuristic. Default returns only jumps missing at least one signal.';
+    IS 'List prepay balance jumps with flags for correlation with meter event type 48 (tight window) and myenergy.topups (broad window), plus direction and an emergency-credit-grant heuristic. Defaults to the past week, [from_ts, to_ts), and only jumps missing at least one signal.';
 
 REVOKE EXECUTE ON FUNCTION myenergy.uncorrelated_balance_jumps(uuid, timestamptz, timestamptz, numeric, boolean, integer, integer, boolean, numeric) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION myenergy.uncorrelated_balance_jumps(uuid, timestamptz, timestamptz, numeric, boolean, integer, integer, boolean, numeric) TO public_backend, grafanareader;
@@ -230,7 +255,7 @@ SECURITY DEFINER
 SET search_path TO ''
 AS $$
 WITH bounds AS (
-    SELECT COALESCE(since, now() - interval '3 hours') AS since_ts,
+    SELECT COALESCE(since, now() - interval '7 days') AS since_ts,
            COALESCE(until, now() - interval '1 hour')  AS until_ts
 )
 SELECT u.meter_id,
@@ -243,7 +268,7 @@ SELECT u.meter_id,
        u.correlation
 FROM bounds b
 CROSS JOIN LATERAL myenergy.uncorrelated_balance_jumps(
-        from_ts              => b.since_ts - interval '1 hour',
+        from_ts              => b.since_ts,
         to_ts                => b.until_ts,
         min_abs_diff         => 1.0,
         credits_only         => true,
@@ -253,7 +278,7 @@ CROSS JOIN LATERAL myenergy.uncorrelated_balance_jumps(
         ec_tolerance         => ec_tolerance
     ) u
 WHERE u.jump_at >= b.since_ts
-  AND u.jump_at <= b.until_ts
+  AND u.jump_at < b.until_ts
   AND u.jump_at <= now() - maturity
   AND NOT u.has_topup
   AND NOT u.likely_ec_grant
@@ -264,7 +289,7 @@ ALTER FUNCTION myenergy.untracked_prepay_credits(timestamptz, timestamptz, inter
     OWNER TO :"adminrole";
 
 COMMENT ON FUNCTION myenergy.untracked_prepay_credits(timestamptz, timestamptz, interval, numeric)
-    IS 'Untracked prepay credits: upward balance jumps with no myenergy.topups record and no emergency-credit signature. Default window is the mature [now-3h, now-1h] slice for once-only Grafana alert evaluation.';
+    IS 'Untracked prepay credits: upward balance jumps with no myenergy.topups record and no emergency-credit signature. Default window is [now-7d, now-1h), with a one-hour maturity delay. Rolling evaluations overlap; callers manage alert notification state or supply disjoint bounds.';
 
 REVOKE EXECUTE ON FUNCTION myenergy.untracked_prepay_credits(timestamptz, timestamptz, interval, numeric) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION myenergy.untracked_prepay_credits(timestamptz, timestamptz, interval, numeric) TO public_backend, grafanareader;
