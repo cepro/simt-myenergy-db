@@ -442,6 +442,12 @@ INSERT INTO myenergy.microgrid_tariffs (esco,period_start,discount_rate_basis_po
 	 ('363ff821-3a56-4b43-8227-8e53c45fbcdb'::uuid,'2024-07-01',25,15.00,10.00,0.25),
 	 ('363ff821-3a56-4b43-8227-8e53c45fbcdb'::uuid,'2024-10-01',25,15.00,10.00,0.25);
 
+-- The benchmark_tariffs insert above triggers generate_new_quarter_tariffs(), which
+-- creates rows for every supply occupier already onboarding/prelive/live (e.g.
+-- occ11/occ13 once their signed contract recomputed their status). Clear those so
+-- the hand-picked rows below are the whole customer_tariffs fixture.
+DELETE FROM myenergy.customer_tariffs;
+
 INSERT INTO myenergy.customer_tariffs (customer,period_start,discount_rate_basis_points) VALUES
 	 -- Plot11 occupier
 	 ((select id from myenergy.customers where email = 'occ11@wl.ce')::uuid,'2024-04-01',0),
